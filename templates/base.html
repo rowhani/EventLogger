@@ -1,85 +1,71 @@
-<!DOCTYPE html>
-<html class="no-js">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width">
+﻿{% extends 'global.html' %}
 
-        <link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap/3.1.1/css/bootstrap.min.css">
-        <style>
-            body {
-                padding-top: 50px;
-                padding-bottom: 20px;
-            }
-        </style>
-        <link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap/3.1.1/css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}libs/font-awesome/4.0.3/css/font-awesome.min.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/main.css">
+{% block body %}
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/" title="خانه">
+					<image class="logo" alt="رویداد نگار" src="{{ STATIC_URL }}images/logo.png" />
+					رویداد نگار
+				</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul id="top-nav-links" class="nav navbar-nav" data-active-link-id="{{ active_link_id }}">
+					<li id="home-link"><a href="#">خانه</a></li>
+					<li id="calendar-link"><a href="#">تقویم</a></li>
+					<li id="tags-link"><a href="#about">دسته ها</a></li>
+					<li id="search-link"><a href="#contact">جستجو</a></li>
+					<li><button type="button" class="btn btn-success navbar-btn" data-toggle="modal"><span class="glyphicon glyphicon-plus"></span> اضافه کردن یک رویداد جدید</button></li>
+					<!--<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#">Action</a></li>
+							<li><a href="#">Another action</a></li>
+							<li><a href="#">Something else here</a></li>
+							<li class="divider"></li>
+							<li class="dropdown-header">Nav header</li>
+							<li><a href="#">Separated link</a></li>
+							<li><a href="#">One more separated link</a></li>
+						</ul>
+					</li>-->
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a>خوش آمدید {{ request.user }}</a></li>
+					<li><a href="#" onclick="alert('Not Implemented!')">تنظیمات</a></li>
+					<li><a href="{% url 'logout' %}">خروج</a></li>
+				</ul>
+			</div><!--/.navbar-collapse -->
+		</div>
+	</div>
 
-        <script src="{{ STATIC_URL }}libs/modernizr/2.6.2/modernizr-2.6.2.min.js"></script>
-    </head>
-    <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Project name</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
-          </ul>
-          <form class="navbar-form navbar-right">
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
-        </div><!--/.navbar-collapse -->
-      </div>
-    </div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-3">
+				<div class="panel panel-success">
+					<div class="panel-heading">تقویم</div>
+					<div class="panel-body">
+						Basic panel example
+					</div>
+				</div>
+				<div class="panel panel-info">
+					<div class="panel-heading">رویدادهای اخیر</div>
+					<div class="panel-body">
+						Basic panel example
+					</div>
+				</div>
+			</div><!--/.right-sidebar -->
+			<div class="col-lg-9">
+				<div class="container-fluid">
+					{% block content %}{% endblock %}
+				</div>
+			</div><!--/.content-body -->
+		</div>
+	</div>
 
-    {% block content %}{% endblock %}
-
-    <footer>
-        <p>&copy; Company 2013</p>
-    </footer>
-
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}libs/jquery/2.1.0/jquery-2.1.0.min.js"><\/script>')</script>
-
-    <script src="{{ STATIC_URL }}libs/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-
-    <script src="{{ STATIC_URL }}js/main.js"></script>
-
-    <script>
-        var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-        (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-        g.src='//www.google-analytics.com/ga.js';
-        s.parentNode.insertBefore(g,s)}(document,'script'));
-    </script>
-    </body>
-</html>
+	<div id="app-modal" class="modal fade" style="display: none" data-focus-on="input:first"></div>
+{% endblock %}

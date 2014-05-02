@@ -1,22 +1,67 @@
+/* Common */
 
+body 
+{
+	padding-top: 40px;
+	padding-bottom: 20px;
+}
 
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
+.error-msg 
+{
+	margin: .5em 0;
+	display: block;
+	color: #dd4b39;
+	line-height: 17px;
+}
 
+.logo 
+{
+	height: 32px;
+	width: 32px;
+	margin-top: -5px; 
+}
 
+.navbar-brand
+{
+	width: 100%;
+}
 
+.navbar-header
+{
+	width: 140px;
+}
 
+/* Sticky Footer */
 
-
-
-
-
-
-
-
-
-
-
-
-
+html,
+body
+{
+	height: 100%;
+}
+.wrapper 
+{
+	min-height: 100%;
+	height: auto!important;
+	height: 100%;
+	margin: 0 auto -60px;
+}
+footer, 
+.push  
+{
+	height: 60px;
+}
+footer 
+{
+	background-color: #eee;
+	padding: 15px;
+	line-height: 30px;
+	margin-top: 30px;
+}
+@media (max-width: 767px) 
+{
+	footer 
+	{
+		margin-left: -15px;
+		margin-right: -15px;
+	}
+}

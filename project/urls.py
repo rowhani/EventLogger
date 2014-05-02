@@ -4,7 +4,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.views import serve
 from django.contrib import admin
 from project.app.models import *
-from project.app.views import HomeView
+from project.app.views import *
 
 # admin
 
@@ -28,15 +28,15 @@ admin.autodiscover()
 # patterns
 
 urlpatterns = patterns('',
-    # Examples:
-    url(r'^$', HomeView.as_view(), name='home'),
+    # Pages:
+    url(r'^$', index_view, name='index'),
+    url(r'^login$', LoginView.as_view(), name='login'),
+    url(r'^logout$', logout_view, name='logout'),
 
     # static
     url(r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/'), serve,
         {'show_indexes': True, 'insecure': False}),
-    # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^admin_tools/', include('admin_tools.urls')),
 )

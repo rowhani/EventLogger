@@ -113,6 +113,8 @@ ROOT_URLCONF = 'project.urls'
 # disabled - outsite the app
 WSGI_APPLICATION = 'wsgihandler.application'
 
+LOGIN_URL = "/login"
+
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
