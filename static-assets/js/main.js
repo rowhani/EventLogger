@@ -1,10 +1,27 @@
+/********* Common *********/
 
 $(document).ready(function() {
 	var link_id = ($("#top-nav-links").data("active-link-id") || "home") + "-link";
 	$("li#" + link_id).addClass("active");
+	
+	$(".required-field").livequery(function() {
+		var label = $(this);
+		label.parent().find(":input").attr("required", "required");
+		label.width(label.width() + 10);
+	});
+	
+	$(".modal-header").livequery(function() {
+		$(this).find("h3").addClass("alert alert-info");
+	});
+	
+	$(".form-group").livequery(function() {
+		$(this).addClass("well");
+	});	
+	
+	$(".help-block").livequery(function() {
+		$(this).remove();
+	});	
 });
-
-
 
 /********* Modal *********/
 
@@ -40,7 +57,7 @@ $(document).ready(function() {
             e.preventDefault();
             $("body").modalmanager("loading");     
             $.modalPanel.empty();
-            $.modalPanel.load($(this).attr("href"), "", function() {
+            $.modalPanel.load($(this).attr("href") || $(this).data("target"), "", function() {
                 $.modalPanel.modal({ backdrop: "static" });
                 $.modalPanel.find("form").submit(modal_form_submit);
                 $.modalPanel.find("form input").keypress(modal_form_keypress);
@@ -67,4 +84,3 @@ $(document).ready(function() {
         });
     });
 });
-

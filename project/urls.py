@@ -25,6 +25,11 @@ admin.site.register(Attachment, AttachmentAdmin)
 
 admin.autodiscover()
 
+# error handling
+
+handler404 = 'app.views.error_404_view'
+handler500 = 'app.views.error_500_view'
+
 # patterns
 
 urlpatterns = patterns('',
@@ -32,6 +37,7 @@ urlpatterns = patterns('',
     url(r'^$', index_view, name='index'),
     url(r'^login$', LoginView.as_view(), name='login'),
     url(r'^logout$', logout_view, name='logout'),
+    url(r'^add_event$', add_event_view, name='add_event'),
 
     # static
     url(r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/'), serve,

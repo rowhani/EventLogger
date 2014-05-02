@@ -59,11 +59,11 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = None
+TIME_ZONE = "Asia/Tehran"
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fa'
 
 SITE_ID = 1
 
@@ -159,10 +159,7 @@ CORE_APPS = (
 EXTERNAL_APPS = (
     'django_extensions',
     'south',
-    # If you're using Django 1.7.x or later
-    #'debug_toolbar.apps.DebugToolbarConfig',
-    # If you're using Django 1.6.x or earlier
-    'debug_toolbar',
+    'django_forms_bootstrap'
 )
 
 LOCAL_APPS = (

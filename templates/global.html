@@ -10,10 +10,11 @@
 
         <link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap/3.1.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap/3.1.1/css/bootstrap-rtl.min.css">
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/bootstrap-modal/css/bootstrap-modal-bs3patch.css">
-		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/bootstrap-modal/css/bootstrap-modal.css">
-		<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap/3.1.1/css/bootstrap-rtl.min.css">		
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/bootstrap-modal/css/bootstrap-modal.css">		
         <link rel="stylesheet" href="{{ STATIC_URL }}libs/font-awesome/4.0.3/css/font-awesome.min.css">
+
         <link rel="stylesheet" href="{{ STATIC_URL }}css/main.css">
 
         <script src="{{ STATIC_URL }}libs/modernizr/2.6.2/modernizr-2.6.2.min.js"></script>
@@ -32,14 +33,18 @@
 		<footer dir="ltr">
 			<span class="pull-right"><span class="glyphicon glyphicon-copyright-mark"></span> 2014 Artman, All Rights Reserved</span>
 		</footer>
+		
+		<div id="app-modal" class="modal fade" style="display: none" data-focus-on="input:first"></div>
 
 		<script src="{{ STATIC_URL }}libs/jquery/2.1.0/jquery-2.1.0.min.js"></script>
 		<script src="{{ STATIC_URL }}libs/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="{{ STATIC_URL }}libs/bootstrap-modal/js/bootstrap-modalmanager.js"></script>
 		<script type="text/javascript" src="{{ STATIC_URL }}libs/bootstrap-modal/js/bootstrap-modal.js"></script>
-		<script src="{{ STATIC_URL }}js/jquery.livequery.min.js"></script>
+		<script src="{{ STATIC_URL }}js/jquery.livequery.min.js"></script>			
 		
 		<script src="{{ STATIC_URL }}js/main.js"></script>
+		
+		{% block scripts %}{% endblock %}
 
 		<!--<script>
 			var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
