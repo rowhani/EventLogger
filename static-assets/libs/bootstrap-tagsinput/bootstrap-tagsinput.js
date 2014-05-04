@@ -283,7 +283,8 @@
           highlighter: function (text) {
             var regex = new RegExp( '(' + this.query + ')', 'gi' );
             return text.replace( regex, "<strong>$1</strong>" );
-          }
+          },
+		  minLength: 0
         });
       }
 

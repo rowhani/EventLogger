@@ -15,12 +15,14 @@ $(document).ready(function() {
 	});
 	
 	$(".form-group").livequery(function() {
-		$(this).addClass("well");
+		$(this).addClass("well well-sm");
 	});	
 	
 	$(".help-block").livequery(function() {
 		$(this).remove();
 	});	
+	
+	$('ul.nav a[href="' + window.location.hash + '"]').tab('show');
 });
 
 /********* Modal *********/

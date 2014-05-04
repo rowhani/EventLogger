@@ -9,6 +9,7 @@ class Person(models.Model):
     birth_place = models.ForeignKey("Location", null=True, blank=True, related_name="birth_persons") 
     death_date = models.DateTimeField(null=True, blank=True)
     death_place = models.ForeignKey("Location", null=True, blank=True, related_name="death_persons") 
+    photo = models.CharField(max_length=1000, null=True, blank=True)
     
     def __unicode__(self):
         return "%s %s" % (slef.first_name, self.last_name)
@@ -27,13 +28,14 @@ class Event(models.Model):
     class Meta: db_table = "Event"
     subject = models.CharField(max_length=200)
     description = models.TextField()
-    location = models.ForeignKey("Location")
+    location = models.ForeignKey("Location", null=True, blank=True)
     date_happened = models.DateTimeField()
     date_ended = models.DateTimeField(null=True, blank=True)
+    photo = models.CharField(max_length=1000, null=True, blank=True)
     person = models.ForeignKey("Person", null=True, blank=True)
     actions_taken = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField('Tag', through='EventTags')
-    related_events = models.ManyToManyField("self")
+    related_events = models.ManyToManyField("self", null=True, blank=True)
     
     def __unicode__(self):
         return "%s - %s - %s" % (slef.subject, self.location, self.date_happened)

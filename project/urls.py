@@ -35,8 +35,11 @@ handler500 = 'app.views.error_500_view'
 urlpatterns = patterns('',
     # Pages:
     url(r'^$', index_view, name='index'),
+    
     url(r'^login$', LoginView.as_view(), name='login'),
     url(r'^logout$', logout_view, name='logout'),
+    
+    url(r'^event$', list_event_view, name='list_event'),
     url(r'^event/add$', add_event_view, name='add_event'),
 
     # static

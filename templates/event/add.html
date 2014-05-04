@@ -1,29 +1,84 @@
-﻿<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-tagsinput/bootstrap-tagsinput.css">
+﻿{% extends 'base.html' %}
+
+{% block head %}
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-tagsinput/bootstrap-tagsinput.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-jalali-datepicker/bootstrap-datepicker.min.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-wysihtml5/bootstrap-wysihtml5.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-wysihtml5/lib/css/wysiwyg5-color.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/chosen-bootstrap/chosen.bootstrap.min.css">
+{% endblock %}
 
 {% load bootstrap_tags %}
-<form action="{% url 'add_event' %}" method="post" class="form-horizontal" role="form">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>		
-		<h3>اضافه کردن رویداد جدید</h3>
-	</div>
-	<div class="modal-body">
-		{% csrf_token %}
-		{{ form|as_bootstrap }}
-	</div>
-	<div class="modal-footer">
-		<button type="button" data-dismiss="modal" class="btn btn-default">لغو</button>
-		<button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
-	</div>
-</form>
 
-<script src="{{ STATIC_URL }}libs/bootstrap-tagsinput/bootstrap3-typeahead.js"></script>
-<script src="{{ STATIC_URL }}libs/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
-<script>
-	$(document).ready(function() {		
-		$('[data-role=sourcetagsinput]').tagsinput({
-			typeahead: {
-				source: {{ all_tags|safe }},
-			}
+{% block title %}اضافه کردن رویداد جدید{% endblock %}
+
+{% block header %}اضافه کردن رویداد جدید{% endblock %}
+
+{% block content %}	
+	<p><strong>پر کردن مواردی که با * مشخص شده اند الزامی است.</strong></p>
+	<form action="{% url 'add_event' %}" method="post" class="form-horizontal" role="form">
+		{% csrf_token %}
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#event-tab" data-toggle="tab">اطلاعات رویداد</a></li>
+			<li><a href="#location-tab" data-toggle="tab">مکان رویداد</a></li>
+			<li><a href="#person-tab" data-toggle="tab">اطلاعات شخصی</a></li>
+			<li><a href="#attachment-tab" data-toggle="tab">ضمائم</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane active" id="event-tab">
+				{{ event_form|as_bootstrap }}
+			</div>
+			<div class="tab-pane" id="location-tab">
+				{{ location_form|as_bootstrap }}
+			</div>
+			<div class="tab-pane" id="person-tab">
+				{{ person_form|as_bootstrap }}
+			</div>
+			<div class="tab-pane" id="attachment-tab">
+				{{ attachment_form|as_bootstrap }}
+			</div>
+		</div>	
+	    <br/>
+		<div class="form-actions pull-right">
+			<a href="{% url 'list_event' %}" class="btn btn-default">لغو</a>
+			<button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+		</div>				
+	</form>	
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ STATIC_URL }}libs/bootstrap-tagsinput/bootstrap3-typeahead.js"></script>
+	<script src="{{ STATIC_URL }}libs/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/bootstrap-jalali-datepicker/bootstrap-datepicker.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/bootstrap-jalali-datepicker/bootstrap-datepicker.fa.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/bootstrap-wysihtml5/lib/js/wysihtml5.min.js"></script>
+    <script src="{{ STATIC_URL }}libs/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
+	<script src="{{ STATIC_URL }}libs/chosen-bootstrap/chosen.jquery.js"></script>
+	<script>
+		$(document).ready(function() {
+			$('[data-role=sourcetagsinput]').attr("placeholder", "یک دسته اضافه کنید").tagsinput({
+				typeahead: {
+					source: {{ all_tags|safe }},
+					showHintOnFocus: true
+				}
+			});
+			
+			$("#id_date_happened, #id_date_ended").datepicker({
+				changeMonth: true,
+				changeYear: true
+			}); 
+			
+			$("#id_description, #id_actions_taken").attr("dir", "rtl").wysihtml5({
+				image: false,
+				color: true,
+				html: true
+			});
+			
+			$("#id_related_events").addClass("chosen-rtl").chosen({
+				placeholder_text: "انتخاب کنید...",
+				no_results_text: "هیچ گزینه ای یافت نشد مطابق"
+			});
+			$("#id_related_events").chosen({ allow_single_deselect: true });
 		});
-	})
-</script>
+	</script>
+{% endblock %}

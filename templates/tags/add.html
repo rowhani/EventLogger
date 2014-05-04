@@ -1,0 +1,36 @@
+﻿{% extends 'base.html' %}
+
+{% block head %}<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-tagsinput/bootstrap-tagsinput.css">{% endblock %}
+
+{% load bootstrap_tags %}
+
+{% block content %}
+	<form action="{% url 'add_event' %}" method="post" class="form-horizontal" role="form">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>		
+			<h3>اضافه کردن رویداد جدید</h3>
+		</div>
+		<div class="modal-body">
+			{% csrf_token %}
+			{{ form|as_bootstrap }}
+		</div>
+		<div class="modal-footer">
+			<button type="button" data-dismiss="modal" class="btn btn-default">لغو</button>
+			<button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+		</div>
+	</form>	
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ STATIC_URL }}libs/bootstrap-tagsinput/bootstrap3-typeahead.js"></script>
+	<script src="{{ STATIC_URL }}libs/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
+	<script>
+		$(document).ready(function() {		
+			$('[data-role=sourcetagsinput]').tagsinput({
+				typeahead: {
+					source: {{ all_tags|safe }},
+				}
+			});
+		})
+	</script>
+{% endblock %}

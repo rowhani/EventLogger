@@ -4,6 +4,12 @@ body
 {
 	padding-top: 40px;
 	padding-bottom: 20px;
+	background-color: #fbfbfb;
+}
+
+.panel.content 
+{
+	padding: 10px;
 }
 
 .error-msg 
@@ -117,8 +123,16 @@ input[type=checkbox]
 
 .bootstrap-tagsinput 
 {
-	width: 97%; 
-	height: 100px;
+	width: 100%; 
+	heights: 100px;
+}
+
+.wysihtml5-toolbar 
+{
+	margin-top: 10px!important;
+	margin-bottom: -7px!important;
+	float: right;
+	text-align: right;
 }
 
 /* Sticky Footer */

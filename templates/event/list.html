@@ -1,0 +1,9 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}رویداد ها{% endblock %}
+
+{% block header %}لیست رویداد ها{% endblock %}
+
+{% block content %}
+    <a class="btn btn-success pull-right" href="{% url 'add_event' %}"><span class="glyphicon glyphicon-plus"></span> اضافه کردن رویداد جدید</a>
+{% endblock %}
