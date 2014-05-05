@@ -1,28 +1,31 @@
-/********* Common *********/
+﻿/********* Common *********/
 
 $(document).ready(function() {
 	var link_id = ($("#top-nav-links").data("active-link-id") || "home") + "-link";
 	$("li#" + link_id).addClass("active");
 	
+	$('ul.nav a[href="' + window.location.hash + '"]').tab('show');
+	
 	$(".required-field").livequery(function() {
 		var label = $(this);
 		label.parent().find(":input").attr("required", "required");
-		label.width(label.width() + 10);
+		label.append('<span class="icon-required" title="این فیلد الزامی است"></span>');
 	});
 	
 	$(".modal-header").livequery(function() {
 		$(this).find("h3").addClass("alert alert-info");
 	});
+		
+	$(".form-horizontal .form-group > div").addClass("col-lg-10");
+	$(".form-horizontal .form-group > label").addClass("col-lg-2");
 	
-	$(".form-group").livequery(function() {
-		$(this).addClass("well well-sm");
-	});	
+	$(".bootstrap-filestyle input").livequery(function() {
+		$(this).addClass("form-control");
+	});
 	
-	$(".help-block").livequery(function() {
-		$(this).remove();
-	});	
-	
-	$('ul.nav a[href="' + window.location.hash + '"]').tab('show');
+	/*$(":input").on('focus', function() {
+		$('ul.nav a[href="' + $(this).closest(".tab-pane").attr("id") + '"]').tab('show');
+	});*/
 });
 
 /********* Modal *********/

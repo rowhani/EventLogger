@@ -11,9 +11,6 @@ from project.app.views import *
 class PersonAdmin(admin.ModelAdmin): pass
 admin.site.register(Person, PersonAdmin)
 
-class LocationAdmin(admin.ModelAdmin): pass
-admin.site.register(Location, LocationAdmin)
-
 class EventAdmin(admin.ModelAdmin): pass
 admin.site.register(Event, EventAdmin)
 

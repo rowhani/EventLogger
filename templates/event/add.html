@@ -10,38 +10,55 @@
 
 {% load bootstrap_tags %}
 
-{% block title %}اضافه کردن رویداد جدید{% endblock %}
+{% block title %}ایجاد رویداد{% endblock %}
 
-{% block header %}اضافه کردن رویداد جدید{% endblock %}
+{% block header %}ایجاد رویداد{% endblock %}
 
 {% block content %}	
-	<p><strong>پر کردن مواردی که با * مشخص شده اند الزامی است.</strong></p>
-	<form action="{% url 'add_event' %}" method="post" class="form-horizontal" role="form">
+	<p class="alert alert-danger"><strong>پر کردن مواردی که با <span class="icon-required"></span> مشخص شده اند الزامی است.</strong></p>
+	<form action="{% url 'add_event' %}" method="post" class="form-horizontal" role="form" enctype="multipart/form-data" novalidate>
 		{% csrf_token %}
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="#event-tab" data-toggle="tab">اطلاعات رویداد</a></li>
-			<li><a href="#location-tab" data-toggle="tab">مکان رویداد</a></li>
 			<li><a href="#person-tab" data-toggle="tab">اطلاعات شخصی</a></li>
-			<li><a href="#attachment-tab" data-toggle="tab">ضمائم</a></li>
 		</ul>
 		<div class="tab-content">
 			<div class="tab-pane active" id="event-tab">
+				<p class="alert alert-warning alert-sm">اطلاعات این بخش برای رویدادهای جمعی یا شخصی مورد نیاز است.</p>
 				{{ event_form|as_bootstrap }}
 			</div>
-			<div class="tab-pane" id="location-tab">
-				{{ location_form|as_bootstrap }}
-			</div>
 			<div class="tab-pane" id="person-tab">
-				{{ person_form|as_bootstrap }}
-			</div>
-			<div class="tab-pane" id="attachment-tab">
-				{{ attachment_form|as_bootstrap }}
+				<p class="alert alert-warning alert-sm">اگر این رویداد متوجه شخص خاصی نیست قسمت اطلاعات شخصی را خالی بگذارید.</p>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<label><input type="radio" name="person_type" value="select"/> یک شخص را از لیست زیر انتخاب کنید </label>
+					</div>
+					<div class="panel-body" >						
+						<div class="person-select-panel">
+							<select class="form-control" id="existing_persons" name="existing_persons">
+								{% for person in all_persons %}
+									<option value="{{ person.0 }}">{{ person.1 }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<label><input type="radio" name="person_type" value="create"/> اطلاعات یک شخص جدید را وارد نمایید </label>
+					</div>
+					<div class="panel-body" >
+						<div class="person-create-panel">
+							{{ person_form|as_bootstrap }}
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>	
 	    <br/>
 		<div class="form-actions pull-right">
-			<a href="{% url 'list_event' %}" class="btn btn-default">لغو</a>
 			<button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+			<a href="{% url 'list_event' %}" class="btn btn-default">لغو</a>
 		</div>				
 	</form>	
 {% endblock %}
@@ -54,16 +71,20 @@
 	<script src="{{ STATIC_URL }}libs/bootstrap-wysihtml5/lib/js/wysihtml5.min.js"></script>
     <script src="{{ STATIC_URL }}libs/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
 	<script src="{{ STATIC_URL }}libs/chosen-bootstrap/chosen.jquery.js"></script>
+	<script src="{{ STATIC_URL }}js/bootstrap-filestyle.js"></script>
 	<script>
 		$(document).ready(function() {
-			$('[data-role=sourcetagsinput]').attr("placeholder", "یک دسته اضافه کنید").tagsinput({
+			window.location.hash = "{{ hash }}";
+			$('ul.nav a[href="#{{ hash }}"]').tab('show');
+			
+			$('#id_tags').attr("placeholder", "یک دسته انتخاب یا ایجاد کنید...").tagsinput({
 				typeahead: {
 					source: {{ all_tags|safe }},
 					showHintOnFocus: true
 				}
 			});
 			
-			$("#id_date_happened, #id_date_ended").datepicker({
+			$("#id_date_happened, #id_date_ended, #id_birth_date, #id_death_date").datepicker({
 				changeMonth: true,
 				changeYear: true
 			}); 
@@ -73,12 +94,41 @@
 				color: true,
 				html: true
 			});
+			$(".wysihtml5-toolbar a.dropdown-toggle").attr('tabindex', '-1');
 			
-			$("#id_related_events").addClass("chosen-rtl").chosen({
+			$("#id_related_events, #existing_persons").addClass("chosen-rtl").chosen({
 				placeholder_text: "انتخاب کنید...",
 				no_results_text: "هیچ گزینه ای یافت نشد مطابق"
 			});
 			$("#id_related_events").chosen({ allow_single_deselect: true });
+			
+			$(":file").filestyle({
+				classInput: "right-space",
+				buttonText: "انتخاب فایل",
+				buttonBefore: true,
+				classIcon: "glyphicon glyphicon-folder-open"
+			});				
+			
+			$("input[name=person_type]").on("change", function() {
+				if ($(this).val() == "select") {
+					$(".person-create-panel").addClass("well well-sm").find("*:not(.bootstrap-filestyle input)").each(function() {
+						$(this).attr("disabled", "disabled").addClass("disabled");
+					});
+					$(".person-select-panel").removeClass("well well-sm").find("*:not(.bootstrap-filestyle input)").each(function() {
+						$(this).removeAttr("disabled").removeClass("disabled");
+					});
+				}
+				else {
+					$(".person-select-panel").addClass("well well-sm").find("*:not(.bootstrap-filestyle input)").each(function() {
+						$(this).attr("disabled", "disabled").addClass("disabled");
+					})
+					$(".person-create-panel").removeClass("well well-sm").find("*:not(.bootstrap-filestyle input)").each(function() {
+						$(this).removeAttr("disabled").removeClass("disabled");
+					});
+				}
+				$("#existing_persons").trigger("chosen:updated");
+			});			
+			$("input[name=person_type][value={{ person_type }}]").attr("checked", "checked").trigger("change");
 		});
 	</script>
 {% endblock %}

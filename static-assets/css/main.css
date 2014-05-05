@@ -20,9 +20,19 @@ body
 	line-height: 17px;
 }
 
-label.required-field:after
+.icon-required 
 {
-	content: "*";
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAANCAYAAACUwi84AAAAV0lEQVQYV2NgoBq4dvna/6W+Xv+vb1j/H0Xi7e3b/4/19YAlQApAbBgfrAAmgY5BiuCm/Pz8+f/WpBi4JMg6FGvOL5gH1wWitxfmYXcHyCSQlRgOHewAAOFhWxHuxtuOAAAAAElFTkSuQmCC);
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	width: 10px;
+	text-align: left;
+	margin-left: 2px;
+	display: inline-block;
+	height: 14px;
+	line-height: 14px;
+	vertical-align: text-top;
+	margin-top: 1px;
 }
 
 .form-horizontal .control-label
@@ -55,6 +65,29 @@ label.required-field:after
 .left-space
  {
 	margin-left: 5px;
+}
+
+.bootstrap-filestyle
+{
+	width: 100%;
+	max-width: 100%;
+}
+
+.bootstrap-filestyle label 
+{
+	width: 19%;
+	margin-right: 0!important;
+}
+
+.bootstrap-filestyle input 
+{
+	display: inline;
+	width: 80%;
+}
+
+.nav-tabs>li>a
+{
+	margin-right: 0;
 }
 
 form 
@@ -124,7 +157,7 @@ input[type=checkbox]
 .bootstrap-tagsinput 
 {
 	width: 100%; 
-	heights: 100px;
+	margin-bottom: 0!important;
 }
 
 .wysihtml5-toolbar 
@@ -133,6 +166,33 @@ input[type=checkbox]
 	margin-bottom: -7px!important;
 	float: right;
 	text-align: right;
+}
+
+.chosen-container .chosen-drop,
+.chosen-container-single-nosearch .chosen-search input
+{
+	left: 0!important;
+}
+
+.chosen-container-single .chosen-drop,
+.chosen-hide-drop .chosen-drop
+{
+	display: none;
+}
+
+.chosen-container-active.chosen-with-drop .chosen-drop
+{
+	display: block;
+}
+
+.alert-sm 
+{
+	padding: 5px;
+}
+
+.help-block 
+{
+	font-size: 12px;
 }
 
 /* Sticky Footer */

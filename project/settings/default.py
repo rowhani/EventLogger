@@ -169,6 +169,9 @@ LOCAL_APPS = (
 # the order is important!
 INSTALLED_APPS = ADMIN_TOOL_APPS + CORE_APPS + LOCAL_APPS + EXTERNAL_APPS
 
+EVENT_IMAGES_DIR = '%s/static-assets/images/events' % ABSOLUTE_PROJECT_ROOT
+PERSON_IMAGES_DIR = '%s/static-assets/images/persons' % ABSOLUTE_PROJECT_ROOT
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
