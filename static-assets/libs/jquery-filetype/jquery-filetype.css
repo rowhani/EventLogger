@@ -1,0 +1,77 @@
+span.file-text
+{
+    display: inline-block;
+    line-height: 16px;
+}
+span.file-text:hover 
+{
+    text-decoration: underline;    
+}
+span.file-icon { 
+    background-image: url(sprite-file-icons.png);
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 16px;
+    margin: 0 5px 0 2px;
+    position: relative;
+    top: 3px;
+    width: 16px;
+}
+.pdf span.file-icon {
+	background-position: 0 -21px!important;
+}
+.png span.file-icon,
+.jpg span.file-icon,
+.png span.file-icon,
+.bmp span.file-icon {
+	background-position: 0 -86px!important;
+}
+.doc span.file-icon {
+	background-position: 0 -105px!important;
+}
+.xls span.file-icon{
+	background-position: 0 -126px!important;
+}
+.ppt span.file-icon{
+	background-position: 0 -147px!important;
+}
+.docx span.file-icon{
+	background-position: 0 -168px!important;
+}
+.xlsx span.file-icon{
+	background-position: 0 -189px!important;
+}
+.txt span.file-icon{
+	background-position: 0 -210px!important;
+}
+.pptx span.file-icon{
+	background-position: 0 -231px!important;
+}
+.zip span.file-icon,
+.rar span.file-icon,
+.gzip span.file-icon,
+.arj span.file-icon{
+	background-position: 0 -253px!important;
+}
+.wav span.file-icon,
+.mp3 span.file-icon,
+.aif span.file-icon,
+.aiff span.file-icon,
+.m4a span.file-icon,
+.ogg span.file-icon,
+.wma span.file-icon {
+	background-position: 0 -273px!important;
+}
+.avi span.file-icon,
+.mov span.file-icon,
+.wmv span.file-icon {
+	background-position: 0 -294px!important;
+}
+.psd span.file-icon,
+.ai span.file-icon,
+.swf span.file-icon,
+.fla span.file-icon,
+.css span.file-icon,
+.js span.file-icon {
+	background-position: 0 0px;
+}

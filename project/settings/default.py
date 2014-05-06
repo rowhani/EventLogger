@@ -76,7 +76,7 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -169,8 +169,9 @@ LOCAL_APPS = (
 # the order is important!
 INSTALLED_APPS = ADMIN_TOOL_APPS + CORE_APPS + LOCAL_APPS + EXTERNAL_APPS
 
-EVENT_IMAGES_DIR = '%s/static-assets/images/events' % ABSOLUTE_PROJECT_ROOT
-PERSON_IMAGES_DIR = '%s/static-assets/images/persons' % ABSOLUTE_PROJECT_ROOT
+EVENT_IMAGES_DIR = '%s/static-assets/external-assets/event-images' % ABSOLUTE_PROJECT_ROOT
+PERSON_IMAGES_DIR = '%s/static-assets/external-assets/person-images' % ABSOLUTE_PROJECT_ROOT
+EVENT_ATTACHMENTS_DIR = '%s/static-assets/external-assets/attachments' % ABSOLUTE_PROJECT_ROOT
 
 
 # A sample logging configuration. The only tangible logging

@@ -4,7 +4,7 @@ body
 {
 	padding-top: 40px;
 	padding-bottom: 20px;
-	background-color: #fbfbfb;
+	background: #fbfbfb url(../images/body.png) repeat center 0;
 }
 
 .panel.content 
@@ -226,6 +226,45 @@ input[type=checkbox]
 	}
 }
 
+.page-header 
+{
+	border-bottom: 1px solid #ccc;
+}
+
+.shadowable-inverse
+{
+	-webkit-box-shadow: 0 0 7px 3px rgba(51,51,51,1);
+	box-shadow: 0 0 7px 3px rgba(51,51,51,1);
+}
+
+.shadowable-success
+{
+	-webkit-box-shadow: 0 0 7px 3px rgba(60,118,61,1);
+	box-shadow: 0 0 7px 3px rgba(60,118,61,1);
+}
+
+.shadowable-info
+{
+	-webkit-box-shadow: 0 0 7px 3px rgba(188,232,241,1);
+	box-shadow: 0 0 7px 3px rgba(188,232,241,1);
+}
+
+.main-body
+{
+	padding: 15px 20px 0 20px;
+	
+}
+
+.typeahead.dropdown-menu
+{
+	margin-right: 15px;
+}
+
+input[type=checkbox]
+{
+	float: right;
+}
+
 /* Sticky Footer */
 
 html,
@@ -247,7 +286,7 @@ footer,
 }
 footer 
 {
-	background-color: #eee;
+	background-color: #ccc;
 	padding: 15px;
 	line-height: 30px;
 	margin-top: 30px;

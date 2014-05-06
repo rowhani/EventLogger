@@ -1,4 +1,5 @@
 ﻿from django.db import models
+import jdatetime
 
 class Person(models.Model):
     class Meta: db_table = "Person"
@@ -12,8 +13,21 @@ class Person(models.Model):
     person_photo = models.CharField(max_length=1000, null=True, blank=True)
         
     def __unicode__(self):
-        return "%s %s (%s)" % (self.first_name, self.last_name, self.birth_place)
-    
+        if self.birth_place:
+            return "%s %s (%s)" % (self.first_name, self.last_name, self.birth_place)
+        else: 
+            return "%s %s" % (self.first_name, self.last_name)
+            
+    @property
+    def jalali_birth_date(self):
+        try: return jdatetime.date.fromgregorian(date=self.birth_date.date())
+        except: return self.birth_date
+        
+    @property
+    def jalali_death_date(self):
+        try: return jdatetime.date.fromgregorian(date=self.death_date.date())
+        except: return self.death_date
+            
 class Event(models.Model):
     class Meta: db_table = "Event"
     subject = models.CharField(max_length=200)
@@ -28,11 +42,24 @@ class Event(models.Model):
     related_events = models.ManyToManyField("self", null=True, blank=True)
         
     def __unicode__(self):
-        return "%s - %s - %s" % (self.subject, self.location, self.date_happened)
+        if self.jalali_date_happened:
+            return "%s - %s (%s)" % (self.subject, self.location, self.jalali_date_happened.strftime("%d/%m/%Y"))
+        else:
+            return "%s - %s" % (self.subject, self.location)
+        
+    @property
+    def jalali_date_happened(self):
+        try: return jdatetime.date.fromgregorian(date=self.date_happened.date())
+        except: return self.date_happened
+        
+    @property
+    def jalali_date_ended(self):
+        try: return jdatetime.date.fromgregorian(date=self.date_ended.date())
+        except: return self.date_ended
     
 class Tag(models.Model):
     class Meta: db_table = "Tag"
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=100, unique=True)
     events = models.ManyToManyField('Event', through='EventTags')
     
     def __unicode__(self):
