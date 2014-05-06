@@ -54,7 +54,7 @@ body
 
 .navbar-header
 {
-	width: 140px;
+	width: 150px;
 }
 
 .right-space 
@@ -193,6 +193,37 @@ input[type=checkbox]
 .help-block 
 {
 	font-size: 12px;
+}
+
+.navbar
+{
+	font-size: 14px;
+	font-family: Tahoma, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.glyphicon-white 
+{
+	color:white;
+}
+
+.navbar .divider-vertical 
+{
+	height: 50px;
+	margin: 0 9px;
+	border-right: 1px solid #ffffff;
+	border-left: 1px solid #f2f2f2;
+}
+.navbar-inverse .divider-vertical
+ {
+	border-right-color: #222222;
+	border-left-color: #111111;
+}
+@media (max-width: 767px) 
+{
+	.navbar-collapse .nav > .divider-vertical
+	{
+		display: none;
+	}
 }
 
 /* Sticky Footer */
