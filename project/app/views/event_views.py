@@ -107,6 +107,11 @@ class ExistingPersonsForm(ModelForm):
 def list_event_view(request, *args, **kwargs):
     active_link_id = "event"
     return render_to_response('event/list.html', locals(), context_instance = RequestContext(request))
+    
+@login_required
+def detail_event_view(request, event_id, *args, **kwargs):
+    active_link_id = "event"
+    return render_to_response('event/detail.html', locals(), context_instance = RequestContext(request))
    
 @login_required
 def modify_event_view(request, event_id=None, *args, **kwargs):
@@ -114,7 +119,8 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
     
     hash = 'event-tab'   
     main_person_form = PersonForm(auto_id='%s', prefix="main")
-    form_number = 1    
+    person_form_prefix = 'person_from'
+    person_form_number = 1    
     
     if event_id:
         action = reverse('edit_event', args=[event_id])
@@ -128,14 +134,12 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
         existing_persons_form = ExistingPersonsForm(request.POST, request.FILES, instance=event_instance, auto_id='%s')
         
         person_forms = []
-        new_persons = request.POST['new_persons'].strip().strip(",").strip("")  
-        if new_persons:
-            existing_persons_form.fields['new_persons'].initial = new_persons
-            for person_form_prefix in request.POST['new_persons'].split(","):
-                if person_form_prefix:
-                    form_number += 1
-                    person_forms.append(PersonForm(request.POST, request.FILES, auto_id='%s', prefix=person_form_prefix))
-        
+        person_form_prefixes = filter(lambda p: p, request.POST['new_persons'].split(","))    
+        existing_persons_form.fields['new_persons'].initial = ",".join(person_form_prefixes)
+        for prefix in person_form_prefixes:
+            person_forms.append(PersonForm(request.POST, request.FILES, auto_id='%s', prefix=prefix))
+        person_form_number = max(map(lambda p: int(p.replace(person_form_prefix, "")), person_form_prefixes) or [0]) + 1
+                
         error = False
         if not event_form.is_valid():
             error = True
@@ -203,9 +207,14 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
                     person.person_photo = save_request_file(settings.PERSON_IMAGES_DIR, request.FILES[person_photo])
                     person.save()
                 event.persons.add(person)
-            
-            #return redirect("/event")
-            return redirect("/event/edit/%s" % event.id)
+          
+            return redirect(reverse('edit_event', args=[event_id])) #redirect(reverse('detail_event', args=[event_id]))
+        else:
+            event_form.fields['date_happened'].widget.attrs.update({'data-ignore-convert':'1'})
+            event_form.fields['date_ended'].widget.attrs.update({'data-ignore-convert':'1'})
+            for person_form in person_forms:
+                person_form.fields['birth_date'].widget.attrs.update({'data-ignore-convert':'1'})
+                person_form.fields['death_date'].widget.attrs.update({'data-ignore-convert':'1'})
     else:
         event_form = EventForm(instance=event_instance, auto_id='%s')
         existing_persons_form = ExistingPersonsForm(instance=event_instance, auto_id='%s')
@@ -218,3 +227,4 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
         event_form.fields['related_events'].choices = filter(lambda r: r[0] != event_instance.id, event_form.fields['related_events'].choices)
       
     return render_to_response('event/add.html', locals(), context_instance = RequestContext(request))
+    

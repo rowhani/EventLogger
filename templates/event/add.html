@@ -105,10 +105,11 @@
 
 			$(".attachments-panel").linktype();
 			
-			var form_number = {{ form_number }};
+			var person_form_prefix = "{{ person_form_prefix }}"
+			var person_form_number = {{ person_form_number }};
 			
 			$("#add_person").click(function() {
-				var form_prefix = "person_form" + form_number;
+				var form_prefix = person_form_prefix + person_form_number;
 				var form = $(".main-person-form").clone().removeClass("hide main-person-form").attr('data-prefix', form_prefix).hide();				
 				form.find('*').each(function() {
 					var item = $(this);
@@ -125,7 +126,7 @@
 					data += ',';
 				}
 				$("#new_persons").val(data + form_prefix);
-				form_number += 1;
+				person_form_number += 1;
 				return false;
 			});
 			

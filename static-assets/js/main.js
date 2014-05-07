@@ -32,16 +32,16 @@ $(document).ready(function() {
 	$(".form-horizontal .form-group > label").livequery(function() {
 		$(this).addClass("col-lg-2");
 	});
-	
+	console.log($("[data-ignore-convert]").length);
 	$("[data-role=calendar]:visible").livequery(function() {
-		if (!$(this).hasClass("converted")) {
-			$(this).addClass("converted").val(convert_to_jalali($(this).val()));
+		if (!$(this).hasClass("converted") && !$(this).attr("data-ignore-convert")) {
+			$(this).addClass("converted").val(convert_to_jalali($(this).val()));		
+			$(this).datepicker({
+				changeMonth: true,
+				changeYear: true,
+				dateFormat: 'yy/mm/dd'
+			}); 
 		}
-		$(this).datepicker({
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy/mm/dd'
-		}); 
 	});
 	
 	$("[data-role=chosen]:visible").livequery(function() {
