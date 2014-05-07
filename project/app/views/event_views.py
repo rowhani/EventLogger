@@ -106,6 +106,8 @@ class ExistingPersonsForm(ModelForm):
 @login_required
 def list_event_view(request, *args, **kwargs):
     active_link_id = "event"
+    
+    events = Event.objects.all()
     return render_to_response('event/list.html', locals(), context_instance = RequestContext(request))
     
 @login_required
@@ -208,7 +210,7 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
                     person.save()
                 event.persons.add(person)
           
-            return redirect(reverse('edit_event', args=[event_id])) #redirect(reverse('detail_event', args=[event_id]))
+            return redirect(reverse('edit_event', args=[event.id])) #redirect(reverse('detail_event', args=[event_id]))
         else:
             event_form.fields['date_happened'].widget.attrs.update({'data-ignore-convert':'1'})
             event_form.fields['date_ended'].widget.attrs.update({'data-ignore-convert':'1'})

@@ -15,7 +15,7 @@ class Event(models.Model):
     related_events = models.ManyToManyField("self", null=True, blank=True, db_table="Event_Event")
         
     def __unicode__(self):
-        return "%s - %s" % (self.subject, self.location)
+        return "%s (%s)" % (self.subject, self.location)
         
     @property
     def jalali_date_happened(self):
@@ -26,6 +26,14 @@ class Event(models.Model):
     def jalali_date_ended(self):
         try: return jdatetime.date.fromgregorian(date=self.date_ended.date())
         except: return self.date_ended
+        
+    @property
+    def tags_string(self):
+        return ", ".join([unicode(t) for t in self.tags.all()])
+        
+    @property
+    def persons_string(self):
+        return ", ".join([unicode(p) for p in self.persons.all()])
 
 class Person(models.Model):
     class Meta: db_table = "Person"

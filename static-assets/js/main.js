@@ -32,7 +32,6 @@ $(document).ready(function() {
 	$(".form-horizontal .form-group > label").livequery(function() {
 		$(this).addClass("col-lg-2");
 	});
-	console.log($("[data-ignore-convert]").length);
 	$("[data-role=calendar]:visible").livequery(function() {
 		if (!$(this).hasClass("converted") && !$(this).attr("data-ignore-convert")) {
 			$(this).addClass("converted").val(convert_to_jalali($(this).val()));		
@@ -41,6 +40,12 @@ $(document).ready(function() {
 				changeYear: true,
 				dateFormat: 'yy/mm/dd'
 			}); 
+		}
+	});
+	
+	$(".convert-date").each(function() {
+		if (!$(this).hasClass("converted")) {
+			$(this).addClass("converted").text(convert_to_jalali($(this).text()));
 		}
 	});
 	
