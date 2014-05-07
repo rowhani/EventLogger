@@ -30,7 +30,7 @@ handler500 = 'app.views.error_500_view'
 # patterns
 
 urlpatterns = patterns('',
-    # Pages:
+    # views:
     url(r'^$', index_view, name='index'),
     
     url(r'^login$', LoginView.as_view(), name='login'),
@@ -41,9 +41,10 @@ urlpatterns = patterns('',
     url(r'^event/edit/(?P<event_id>\d+)$', modify_event_view, name='edit_event'),
 
     # static
-    url(r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/'), serve,
-        {'show_indexes': True, 'insecure': False}),
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/'), serve, {'show_indexes': True, 'insecure': False}),
+    
+    # admin
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^admin_tools/', include('admin_tools.urls')),
 )

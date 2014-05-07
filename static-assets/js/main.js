@@ -1,5 +1,13 @@
 ﻿/********* Common *********/
 
+function convert_to_jalali(date, format) {
+	if (date == null || date == '') {
+		return '';
+	}	
+	format = format || 'yy/mm/dd';
+	return $.datepicker.formatDate(format, new JalaliDate(new Date(date)))
+}
+
 $(document).ready(function() {
 	var link_id = ($("#top-nav-links").data("active-link-id") || "home") + "-link";
 	$("li#" + link_id).addClass("active");
@@ -9,23 +17,61 @@ $(document).ready(function() {
 	$(".required-field").livequery(function() {
 		var label = $(this);
 		label.parent().find(":input").attr("required", "required");
-		label.append('<span class="icon-required" title="این فیلد الزامی است"></span>');
+		if (!label.hasClass("required")) {
+			label.addClass("required").append('<span class="icon-required" title="این فیلد الزامی است"></span>');
+		}
 	});
 	
 	$(".modal-header").livequery(function() {
 		$(this).find("h3").addClass("alert alert-info");
 	});
 		
-	$(".form-horizontal .form-group > div").addClass("col-lg-10");
-	$(".form-horizontal .form-group > label").addClass("col-lg-2");
+	$(".form-horizontal .form-group > div").livequery(function() {
+		$(this).addClass("col-lg-10");
+	});
+	$(".form-horizontal .form-group > label").livequery(function() {
+		$(this).addClass("col-lg-2");
+	});
 	
+	$("[data-role=calendar]:visible").livequery(function() {
+		if (!$(this).hasClass("converted")) {
+			$(this).addClass("converted").val(convert_to_jalali($(this).val()));
+		}
+		$(this).datepicker({
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy/mm/dd'
+		}); 
+	});
+	
+	$("[data-role=chosen]:visible").livequery(function() {
+		$(this).addClass("chosen-rtl").chosen({
+			placeholder_text: "انتخاب کنید...",
+			no_results_text: "هیچ گزینه ای یافت نشد مطابق"
+		});
+	})
+	$("[data-role=chosen]:visible").livequery(function() {
+		$(this).chosen({ allow_single_deselect: true });
+	});
+
+	$(":file:visible").livequery(function() {
+		$(this).filestyle({
+			classInput: "right-space",
+			buttonText: "انتخاب فایل",
+			buttonBefore: true,
+			classIcon: "glyphicon glyphicon-file"
+		});	
+	});
 	$(".bootstrap-filestyle input").livequery(function() {
 		$(this).addClass("form-control");
 	});
 	
-	/*$(":input").on('focus', function() {
-		$('ul.nav a[href="' + $(this).closest(".tab-pane").attr("id") + '"]').tab('show');
-	});*/
+	$("[data-role=wysihtml5]:visible").attr("dir", "rtl").wysihtml5({
+		image: false,
+		color: true,
+		html: true
+	});
+	$(".wysihtml5-toolbar a.dropdown-toggle").attr('tabindex', '-1');
 });
 
 /********* Modal *********/

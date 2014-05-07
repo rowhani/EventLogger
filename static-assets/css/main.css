@@ -265,6 +265,11 @@ input[type=checkbox]
 	float: right;
 }
 
+.wysihtml5-sandbox
+{
+	height: 150px!important;
+}
+
 /* Sticky Footer */
 
 html,

@@ -1,0 +1,181 @@
+﻿{% extends 'base.html' %}
+
+{% block head %}
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-jalali-datepicker/bootstrap-datepicker.min.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-wysihtml5/bootstrap-wysihtml5.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-wysihtml5/lib/css/wysiwyg5-color.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/chosen-bootstrap/chosen.bootstrap.min.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/jquery-filetype/jquery-filetype.css">	
+{% endblock %}
+
+{% load bootstrap_tags %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block header %}{{ title }}{% endblock %}
+
+{% block content %}	
+	<p class="alert alert-danger"><strong>پر کردن مواردی که با <span class="icon-required"></span> مشخص شده اند الزامی است.</strong></p>
+	<form action="{{ action }}" method="post" class="form-horizontal" role="form" enctype="multipart/form-data" novalidate>
+		{% csrf_token %}
+		<input type="hidden" name="photo_path" value="{{ event_photo }}"/>
+		<input type="hidden" name="person_photo_path" value="{{ person_photo }}"/>
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#event-tab" data-toggle="tab">اطلاعات رویداد</a></li>
+			<li><a href="#person-tab" data-toggle="tab">اطلاعات شخصی</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane active" id="event-tab">
+				<p class="alert alert-warning alert-sm">اطلاعات این بخش برای رویدادهای جمعی یا شخصی مورد نیاز است.</p>
+				{{ event_form|as_bootstrap }}
+				{%if event_photo or attachments %}
+				<hr/>
+				{% endif %}
+				{%if event_photo %}
+					<div id="div_remove_photo" class="form-group">        
+						<label for="div_remove_photo" class="control-label">
+							حذف تصویر فعلی
+						</label>  
+						<div>
+							<input class="form-control" id="remove_photo" name="remove_photo" type="checkbox" value="1">
+							<div class="col-lg-2">
+								<span class="thumbnail">
+								  <img src="{{ STATIC_URL }}external-assets/event-images/{{ event_photo }}">
+								</span>
+							</div>
+						</div>        
+					</div>
+				{% endif %}
+				{%if attachments %}
+					<div id="div_remove_attachments" class="form-group">        
+						<label for="div_remove_attachments" class="control-label">
+							حذف ضمائم فعلی
+						</label>  
+						<div class="attachments" style="margin-top: 5px;">
+							{% for attachment in attachments %}
+								<p>
+									<input class="form-control" name="remove_attachments" type="checkbox" value="{{ attachment.id }}" style="margin-top: -5px">
+									<a href="{{ STATIC_URL }}external-assets/attachments/{{ attachment.filename }}">{{ attachment.name }}</a>
+								</p>
+							{% endfor %}
+						</div>        
+					</div>
+				{% endif %}
+			</div>
+			<div class="tab-pane" id="person-tab">
+				<p class="alert alert-warning alert-sm">اگر این رویداد متوجه شخص خاصی نیست قسمت اطلاعات شخصی را خالی بگذارید.</p>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<label><input type="radio" name="person_type" value="select"/> یک شخص را از لیست زیر انتخاب کنید </label>
+					</div>
+					<div class="panel-body" >						
+						<div class="person-select-panel">
+							<select class="form-control" id="existing_persons" name="existing_persons">
+								{% for person in all_persons %}
+									<option value="{{ person.0 }}">{{ person.1 }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<label><input type="radio" name="person_type" value="create"/> {{ person_create_title }} </label>
+					</div>
+					<div class="panel-body" >
+						<div class="person-create-panel">
+							{{ person_form|as_bootstrap }}							
+							{%if person_photo %}
+								<hr/>
+								<div id="div_remove_person_photo" class="form-group">        
+									<label for="div_remove_person_photo" class="control-label">
+										حذف تصویر فعلی
+									</label>  
+									<div>
+										<input class="form-control" id="remove_person_photo" name="remove_person_photo" type="checkbox" value="1">
+										<div class="col-lg-2">
+											<span class="thumbnail">
+											  <img src="{{ STATIC_URL }}external-assets/person-images/{{ person_photo }}">
+											</span>
+										</div>
+									</div>        
+								</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+	    <br/>
+		<div class="form-actions pull-right">
+			<button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+			<a href="{% url 'list_event' %}" class="btn btn-default">لغو</a>
+		</div>				
+	</form>	
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ STATIC_URL }}libs/bootstrap-jalali-datepicker/bootstrap-datepicker.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/bootstrap-jalali-datepicker/bootstrap-datepicker.fa.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/bootstrap-wysihtml5/lib/js/wysihtml5.min.js"></script>
+    <script src="{{ STATIC_URL }}libs/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
+	<script src="{{ STATIC_URL }}libs/chosen-bootstrap/chosen.jquery.js"></script>
+	<script src="{{ STATIC_URL }}js/bootstrap-filestyle.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-filetype/jquery-filetype.js"></script>	
+	<script>
+		$(document).ready(function() {
+			window.location.hash = "{{ hash }}";
+			$('ul.nav a[href="#{{ hash }}"]').tab('show');
+				
+			$("#id_date_happened, #id_date_ended, #id_birth_date, #id_death_date").datepicker({
+				changeMonth: true,
+				changeYear: true
+			}); 
+			
+			$("#id_description, #id_actions_taken").attr("dir", "rtl").wysihtml5({
+				image: false,
+				color: true,
+				html: true
+			});
+			$(".wysihtml5-toolbar a.dropdown-toggle").attr('tabindex', '-1');
+			
+			$("#existing_persons").val("{{ existing_persons }}");
+			
+			$("#id_related_events, #id_tags, #existing_persons").addClass("chosen-rtl").chosen({
+				placeholder_text: "انتخاب کنید...",
+				no_results_text: "هیچ گزینه ای یافت نشد مطابق"
+			});
+			$("#id_related_events").chosen({ allow_single_deselect: true });
+			
+			$(":file").filestyle({
+				classInput: "right-space",
+				buttonText: "انتخاب فایل",
+				buttonBefore: true,
+				classIcon: "glyphicon glyphicon-file"
+			});	
+
+			$(".attachments").linktype();
+			
+			$("input[name=person_type]").on("change", function() {
+				if ($(this).val() == "select") {
+					$(".person-create-panel").addClass("well well-sm").find("*:not(.bootstrap-filestyle input)").each(function() {
+						$(this).attr("disabled", "disabled").addClass("disabled");
+					});
+					$(".person-select-panel").removeClass("well well-sm").find("*:not(.bootstrap-filestyle input)").each(function() {
+						$(this).removeAttr("disabled").removeClass("disabled");
+					});
+				}
+				else {
+					$(".person-select-panel").addClass("well well-sm").find("*:not(.bootstrap-filestyle input)").each(function() {
+						$(this).attr("disabled", "disabled").addClass("disabled");
+					})
+					$(".person-create-panel").removeClass("well well-sm").find("*:not(.bootstrap-filestyle input)").each(function() {
+						$(this).removeAttr("disabled").removeClass("disabled");
+					});
+				}
+				$("#existing_persons").trigger("chosen:updated");
+			});			
+			$("input[name=person_type][value={{ person_type }}]").attr("checked", "checked").trigger("change");
+		});
+	</script>
+{% endblock %}
