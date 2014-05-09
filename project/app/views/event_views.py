@@ -8,6 +8,7 @@ from django.template import RequestContext
 from django.shortcuts import redirect, render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.conf import settings
 from django.forms import *
 from django.forms.models import construct_instance
@@ -106,14 +107,80 @@ class ExistingPersonsForm(ModelForm):
 @login_required
 def list_event_view(request, *args, **kwargs):
     active_link_id = "event"
-    
-    events = Event.objects.all()
     return render_to_response('event/list.html', locals(), context_instance = RequestContext(request))
     
+class EventListJson(BaseDatatableView):
+    model = Event
+    columns = ['photo', 'subject', 'date_happened', 'location', 'persons']
+    order_columns = ['', 'subject', 'date_happened', 'location', '']
+    max_display_length = 50
+
+    def render_column(self, row, column):  
+        if column == 'subject':
+            return '<a href="%s">%s</a> <span class="%s"></span>' % (reverse('detail_event', args=[row.id]), row.subject, "event-ended" if row.date_ended else '')
+        elif column == 'date_happened':
+            return '<span class="convert-date">%s</span>' % row.date_happened
+        elif column == 'photo':
+            return """
+                <div class="col-lg-12">
+                    <a href="%(detail_url)s">
+                        <span class="thumbnail" style="margin-bottom: 5px;">                           
+                            %(photo)s
+                        </span>
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a class="btn btn-success btn-xs" title="ویرایش" href="%(edit_url)s">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </a>
+                    <a class="btn btn-danger btn-xs" title="حذف" href="%(delete_url)s" data-confirm="آبا وافعا مایل به حذف رویداد %(subject)s هستید؟">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </a>
+                </div>""" % {
+                    "detail_url": reverse('detail_event', args=[row.id]),
+                    "edit_url": reverse('edit_event', args=[row.id]),
+                    "delete_url": reverse('delete_event', args=[row.id]),
+                    "subject": row.subject.encode('utf-8', 'ignore'),
+                    "photo": ('<img src="%sexternal-assets/event-images/%s"/>' % (settings.STATIC_URL, row.photo)).encode('utf-8', 'ignore') if row.photo else '<img src="%simages/unknown.png"/>' % settings.STATIC_URL
+                }
+        elif column == 'persons':
+            return ", ".join(['<a href="/person/%s">%s</a>' % (person.id, unicode(person)) for person in row.persons.all()])
+        else:
+            return super(EventListJson, self).render_column(row, column)
+
+    def filter_queryset(self, qs):
+        sSearch = self.request.GET.get('sSearch', None)
+        if sSearch:
+            qs = qs.filter(subject__icontains=sSearch)
+        return qs
+        
+    """def get_initial_queryset(self):
+        return MyModel.objects.all()"""
+        
+    """def prepare_results(self, qs):
+        # prepare list with output column data
+        # queryset is already paginated here
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.number,
+                "%s %s" % (item.customer_firstname, item.customer_lastname),
+                item.get_state_display(),
+                item.created.strftime("%Y-%m-%d %H:%M:%S"),
+                item.modified.strftime("%Y-%m-%d %H:%M:%S")
+            ])
+        return json_data"""
+
 @login_required
 def detail_event_view(request, event_id, *args, **kwargs):
     active_link_id = "event"
     return render_to_response('event/detail.html', locals(), context_instance = RequestContext(request))
+    
+@login_required
+def delete_event_view(request, event_id=None, *args, **kwargs):
+    event = get_object_or_404(Event, pk=int(event_id))
+    event.delete()
+    return redirect(reverse('list_event'))
    
 @login_required
 def modify_event_view(request, event_id=None, *args, **kwargs):

@@ -23,7 +23,13 @@ $(document).ready(function() {
 	});
 	
 	$(".modal-header").livequery(function() {
-		$(this).find("h3").addClass("alert alert-info");
+		var h3 = $(this).find("h3")
+		if (h3.hasClass("confirm-delete")) {
+			h3.addClass("alert alert-warning");
+		}
+		else {
+			h3.addClass("alert alert-info");
+		}
 	});
 		
 	$(".form-horizontal .form-group > div").livequery(function() {
@@ -43,7 +49,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	$(".convert-date").each(function() {
+	$(".convert-date").livequery(function() {
 		if (!$(this).hasClass("converted")) {
 			$(this).addClass("converted").text(convert_to_jalali($(this).text()));
 		}
@@ -131,7 +137,7 @@ $(document).ready(function() {
             var href = $(this).attr('href');
 
             if (!$('#dataConfirmModal').length) {
-                $('body').append('<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">�</button><h3 id="dataConfirmLabel">Please Confirm</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button><a class="btn btn-primary" id="dataConfirmOK">OK</a></div></div>');
+                $('body').append('<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><h3 id="dataConfirmLabel" class="confirm-delete">لطفا تایید کنید</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn btn-default" data-dismiss="modal" aria-hidden="true">خیر</button><a class="btn btn-danger" id="dataConfirmOK">بله</a></div></div>');
             } 
             $('#dataConfirmModal').find('.modal-body').text($(this).attr('data-confirm'));
             $('#dataConfirmOK').attr('href', href);

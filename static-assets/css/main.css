@@ -98,6 +98,7 @@ form
 table 
 {
 	width: 100%;
+	float: none!important;
 }
 
 .modal 
@@ -268,6 +269,20 @@ input[type=checkbox]
 .wysihtml5-sandbox
 {
 	height: 150px!important;
+}
+
+.dataTables_paginate,
+.dataTables_paginate *
+{
+	direction: ltr!important;
+	display: inline-flex;
+	margin: auto!important;
+	float: none!important;
+}
+
+.dataTables_wrapper
+{
+	text-align: center;
 }
 
 /* Sticky Footer */
