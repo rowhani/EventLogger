@@ -23,7 +23,6 @@
 	<form action="{{ action }}" method="post" class="form-horizontal" role="form" enctype="multipart/form-data" novalidate>
 		{% csrf_token %}
 		<input type="hidden" name="photo_path" value="{{ event_photo }}"/>
-		<input type="hidden" name="person_photo_path" value="{{ person_photo }}"/>
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="#event-tab" data-toggle="tab">اطلاعات رویداد</a></li>
 			<li><a href="#person-tab" data-toggle="tab">اشخاص مرتبط</a></li>
@@ -91,7 +90,7 @@
 	    <br/>
 		<div class="form-actions pull-right">
 			<button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
-			<a href="{% url 'list_event' %}" class="btn btn-default">لغو</a>
+			<a href="{% if not event_id %}{% url 'list_event' %}{% else %}{% url 'detail_event' event_id %}{% endif %}" class="btn btn-default">لغو</a>
 		</div>				
 	</form>	
 {% endblock %}

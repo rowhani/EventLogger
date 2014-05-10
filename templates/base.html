@@ -18,14 +18,21 @@
 				<ul id="top-nav-links" class="nav navbar-nav" data-active-link-id="{{ active_link_id }}">
 					<li id="home-link"><a href="/"><span class="glyphicon glyphicon-home"></span> خانه</a></li>
 					<li id="event-link"><a href="{% url 'list_event' %}"><span class="glyphicon glyphicon-list"></span> رویداد ها</a></li>
-					<li id="calendar-link"><a href="#"><span class="glyphicon glyphicon-calendar"></span> تقویم</a></li>
+					<li id="person-link"><a href="#"><span class="glyphicon glyphicon-user"></span> اشخاص</a></li>
 					<li id="tags-link"><a href="#"><span class="glyphicon glyphicon-th-large"></span> دسته ها</a></li>
+					<li id="calendar-link"><a href="#"><span class="glyphicon glyphicon-calendar"></span> تقویم</a></li>
 					<li id="search-link"><a href="#"><span class="glyphicon glyphicon-search"></span> جستجو</a></li>
-					<li id="setting-link"><a href="#" onclick="alert('Not Implemented!')"><span class="glyphicon glyphicon-cog"></span> تنظیمات</a></li>
+					{% if request.user.is_authenticated %}
+						<li id="setting-link"><a href="#"><span class="glyphicon glyphicon-cog"></span> تنظیمات</a></li>
+					{% endif %}
 				</ul>
-				<ul class="nav navbar-nav navbar-right">					
-					<li><a><span class="glyphicon glyphicon-user"></span> خوش آمدید {{ request.user }}</a></li>
-					<li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> خروج</a></li>
+				<ul class="nav navbar-nav navbar-right">
+					{% if request.user.is_authenticated %}									
+						<li><a><span class="glyphicon glyphicon-eye-open"></span> خوش آمدید {{ request.user }}</a></li>
+						<li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> خروج</a></li>					
+					{% else %}
+						<li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> ورود</a></li>
+					{% endif %}
 				</ul>
 			</div><!--/.navbar-collapse -->
 		</div>
@@ -42,6 +49,12 @@
 				</div>
 				<div class="panel panel-info shadowable-info">
 					<div class="panel-heading">رویدادهای اخیر</div>
+					<div class="panel-body">
+						Basic panel example
+					</div>
+				</div>
+				<div class="panel panel-warning shadowable-warning">
+					<div class="panel-heading">میانبر ها</div>
 					<div class="panel-body">
 						Basic panel example
 					</div>

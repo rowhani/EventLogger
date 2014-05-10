@@ -3,7 +3,8 @@ import uuid
 import jdatetime
 
 def validate_jalali_date(form, cleaned_data, field, check_required=False):
-    dt = form.data.get(field, None)
+    prefix_field = "%s-%s" % (form.prefix, field) if form.prefix else field
+    dt = form.data.get(prefix_field, None)
     if field in form._errors: del form._errors[field]
     if not dt:
         if check_required:
@@ -13,7 +14,8 @@ def validate_jalali_date(form, cleaned_data, field, check_required=False):
         except: form._errors[field] = "یک تاریخ/زمان معتبر وارد کنید."
         
 def validate_image(form, cleaned_data, field):
-    image = form.files.get(field, None)
+    prefix_field = "%s-%s" % (form.prefix, field) if form.prefix else field
+    image = form.files.get(prefix_field, None)
     if image:
         if not image.content_type.startswith('image'):
             form._errors[field] = ['تصویر معتبر نیست.']

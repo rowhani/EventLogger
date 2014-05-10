@@ -250,6 +250,12 @@ input[type=checkbox]
 	box-shadow: 0 0 7px 3px rgba(188,232,241,1);
 }
 
+.shadowable-warning
+{
+	-webkit-box-shadow: 0 0 7px 3px rgba(138,109,59,1);
+	box-shadow: 0 0 7px 3px rgba(138,109,59,1);
+}
+
 .main-body
 {
 	padding: 15px 20px 0 20px;
@@ -288,13 +294,13 @@ input[type=checkbox]
 .well.description
 {
 	background: lightyellow; /* Old browsers */
-	background: -moz-linear-gradient(top,  rgb(255, 255, 100) 0%, lightyellow 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(255, 255, 100)), color-stop(100%,lightyellow))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  rgb(255, 255, 100) 0%,lightyellow 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  rgb(255, 255, 100) 0%,lightyellow 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  rgb(255, 255, 100) 0%,lightyellow 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  rgb(255, 255, 100) 0%,lightyellow 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=rgb(255, 255, 100), endColorstr=lightyellow,GradientType=0 ); /* IE6-9 */
+	background: -moz-linear-gradient(top,  rgb(255, 255, 180) 0%, lightyellow 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(255, 255, 180)), color-stop(100%,lightyellow))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgb(255, 255, 180) 0%,lightyellow 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgb(255, 255, 180) 0%,lightyellow 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgb(255, 255, 180) 0%,lightyellow 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgb(255, 255, 180) 0%,lightyellow 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=rgb(255, 255, 180), endColorstr=lightyellow,GradientType=0 ); /* IE6-9 */
 }
 
 .bs-callout 
@@ -309,6 +315,16 @@ input[type=checkbox]
 	border-color: #5bc0de;
 }
 
+.panel-title
+ {
+	font-size: 18px;
+}
+
+.list-group,
+.table 
+{
+	margin-bottom: 0;
+}
 
 /* Sticky Footer */
 

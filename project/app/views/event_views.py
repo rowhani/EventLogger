@@ -104,7 +104,6 @@ class ExistingPersonsForm(ModelForm):
 
 ######## Views ########
 
-@login_required
 def list_event_view(request, *args, **kwargs):
     active_link_id = "event"
     
@@ -130,7 +129,7 @@ class EventListJson(BaseDatatableView):
                         </span>
                     </a>
                 </div>
-                <div class="text-center">
+                <div class="text-center %(hide)s">
                     <a class="btn btn-success btn-xs" title="ویرایش" href="%(edit_url)s">
                         <span class="glyphicon glyphicon-edit"></span>
                     </a>
@@ -142,6 +141,7 @@ class EventListJson(BaseDatatableView):
                     "edit_url": reverse('edit_event', args=[row.id]),
                     "delete_url": reverse('delete_event', args=[row.id]),
                     "subject": row.subject.encode('utf-8', 'ignore'),
+                    "hide": "hide" if not self.request.user.is_authenticated() else "",
                     "photo": ('<img src="%sexternal-assets/event-images/%s"/>' % (settings.STATIC_URL, row.photo)).encode('utf-8', 'ignore') if row.photo else '<img src="%simages/unknown.png"/>' % settings.STATIC_URL
                 }
         elif column == 'persons':
@@ -172,7 +172,6 @@ class EventListJson(BaseDatatableView):
             ])
         return json_data"""
 
-@login_required
 def detail_event_view(request, event_id, *args, **kwargs):
     active_link_id = "event"
     
@@ -280,7 +279,7 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
                     person.save()
                 event.persons.add(person)
           
-            return redirect(reverse('edit_event', args=[event.id])) #redirect(reverse('detail_event', args=[event_id]))
+            return redirect(reverse('detail_event', args=[event_id]))
         else:
             event_form.fields['date_happened'].widget.attrs.update({'data-ignore-convert':'1'})
             event_form.fields['date_ended'].widget.attrs.update({'data-ignore-convert':'1'})

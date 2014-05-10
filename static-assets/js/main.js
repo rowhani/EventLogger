@@ -1,7 +1,7 @@
 ﻿/********* Common *********/
 
 function convert_to_jalali(date, format) {
-	if (date == null || date == '') {
+	if (date == null || $.trim(date) == '' || $.trim(date) == 'None') {
 		return '';
 	}	
 	format = format || 'yy/mm/dd';
@@ -44,7 +44,8 @@ $(document).ready(function() {
 			$(this).datepicker({
 				changeMonth: true,
 				changeYear: true,
-				dateFormat: 'yy/mm/dd'
+				dateFormat: 'yy/mm/dd',
+				yearRange: '1350:1450'
 			}); 
 		}
 	});

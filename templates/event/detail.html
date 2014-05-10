@@ -4,9 +4,9 @@
 	<link rel="stylesheet" href="{{ STATIC_URL }}libs/jquery-filetype/jquery-filetype.css">	
 {% endblock %}
 
-{% block title %}رویداد {{ event.subject }}{% endblock %}
+{% block title %}جزئیات رویداد {{ event.subject }}{% endblock %}
 
-{% block header %}{{ event.subject }}{% endblock %}
+{% block header %}{{ event.subject }} <small>(جزئیات رویداد)</small>{% endblock %}
 
 {% block pre_header %}
 	<h4 class="pull-right" style="margin-top: 90px">
@@ -23,119 +23,153 @@
 {% endblock %}
 
 {% block content %}
-	<div class="well description col-lg-{% if event.photo %}9{% else %}12{% endif %}">
-		{{ event.description|safe }}	
+	{% if request.user.is_authenticated %}
+		<div class="pull-left">
+			<a class="btn btn-warning" href="{% url 'edit_event' event.id %}"><span class="glyphicon glyphicon-edit"></span> ویرایش</a>
+			<a class="btn btn-warning" href="{% url 'delete_event' event.id %}" data-confirm="آبا وافعا مایل به حذف رویداد {{ event.subject }} هستید؟"><span class="glyphicon glyphicon-trash"></span> حذف</a>
+		</div>
+		<div class="clearfix"></div><br/>
+	{% endif %}
+	<div class="col-lg-{% if event.photo %}9{% else %}12{% endif %}" title="شرح رویداد" style="padding-left: 0; padding-right: 0;">
+		<div class="well description">
+			{{ event.description|safe }}	
+		</div>
+		<div class="bs-callout bs-callout-info">
+			<h4>اقدامات انجام شده</h4>
+			<p>
+				{% if event.actions_taken %}
+					{{ event.actions_taken|safe }}
+				{% else %}
+					هیچ افدامی انجام نشده است.
+				{% endif %}
+			</p>
+		</div>
 	</div>
 	{% if event.photo %}
-	<div class="col-lg-3">
-		<span class="thumbnail">         
-			<img src="{{ STATIC_URL }}external-assets/event-images/{{ event.photo }}"/>
-		</span>
-	</div>
+		<div class="col-lg-3" style="padding-left: 0">
+			<span class="thumbnail">         
+				<img src="{{ STATIC_URL }}external-assets/event-images/{{ event.photo }}"/>
+			</span>
+		</div>
 	{% endif %}
-	<div class="clearfix"></div>	
-	<div class="bs-callout bs-callout-info">
-		<h4>اقدامات انجام شده</h4>
-		<p>
-			{% if event.actions_taken %}
-				{{ event.actions_taken }}
-			{% else %}
-				هیچ افدامی انجام نشده است.
-			{% endif %}
-		</p>
-	</div>
-	<br/>
-	<div class="panel panel-warning">
-		<div class="panel-heading">اشخاص مرتبط</div>
-		<div class="panel-body">
-			{% if event.persons.all %}
-				<table class="table" cellspacing="0" width="100%">
-					<thead>
-						<tr>
-							<th style="width: 10%!important"></th>
-							<th>نام</th>
-							<th>تاریخ تولد</th>
-							<th>محل تولد</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for item in event.persons.all %}
-							<tr>
-								<td>
-									<div class="col-lg-12">
-										<a href="/person/{{ item.id }}">
-											<span class="thumbnail" style="margin-bottom: 0px"> 											
-												{% if item.photo %}
-													<img src="{{ STATIC_URL }}external-assets/person-images/{{ item.photo }}"/>
-												{% else %}
-													<img src="{{ STATIC_URL }}images/unknown.png"/>
-												{%endif %}											
-											</span>
-										</a>
-									</div>
-								</td>
-								<td>
-									<a href="/person/{{ item.id }}">{{ item.first_name }} {{ item.last_name }}</a>
-									{% if item.death_date %}
-										<span class="label label-warning">متصاعد</span>
-									{% endif %}
-								</td>
-								<td class="convert-date">
-									{{ item.birth_date }}
-								</td>
-								<td>
-									{{ item.birth_place }}
-								</td>
-							</tr>
-						{%  endfor %}
-					</tbody>
-				</table>
-			{% else %}			
-				این رویداد جنبه عمومی دارد.
-			{% endif %}
-		</div>
-	</div>	
-	
-	<div class="panel panel-success">
-		<div class="panel-heading">دسته ها</div>
-		<div class="panel-body">	
-			{% if event.tags.all %}
-				{% for item in event.tags.all %}
-					<a href="/tag/{{ item.id }}">{{ event.name }}</a>{% if not forloop.last %},{% endif %}
-				{% endfor %}
-			{% else %}
-				هیچ دسته ای ثبت نشده است.
-			{% endif %}
-		</div>
-	</div>	
+	<div class="clearfix"></div><br/>
+	<div class="panel-group" id="accordion">
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">اشخاص مرتبط</a>
+				</h4>
+			</div>
+			<div id="collapseOne" class="panel-collapse collapse in">
+				<div class="panel-body">
+					{% if event.persons.all %}
+						<table class="table" cellspacing="0" width="100%">
+							<thead>
+								<tr>
+									<th style="width: 10%!important"></th>
+									<th>نام</th>
+									<th>تاریخ تولد</th>
+									<th>محل تولد</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for item in event.persons.all %}
+									<tr>
+										<td>
+											<div class="col-lg-12">
+												<a href="/person/{{ item.id }}">
+													<span class="thumbnail" style="margin-bottom: 0px"> 											
+														{% if item.person_photo %}
+															<img src="{{ STATIC_URL }}external-assets/person-images/{{ item.person_photo }}"/>
+														{% else %}
+															<img src="{{ STATIC_URL }}images/unknown.png"/>
+														{%endif %}											
+													</span>
+												</a>
+											</div>
+										</td>
+										<td>
+											<a href="/person/{{ item.id }}">{{ item.first_name }} {{ item.last_name }}</a>
+											{% if item.death_date %}
+												<span class="label label-warning">متصاعد</span>
+											{% endif %}
+										</td>
+										<td class="convert-date">
+											{{ item.birth_date }}
+										</td>
+										<td>
+											{{ item.birth_place }}
+										</td>
+									</tr>
+								{%  endfor %}
+							</tbody>
+						</table>
+					{% else %}			
+						این رویداد جنبه عمومی دارد.
+					{% endif %}
+				</div>
+			</div>
+		</div>	
+		
+		<div class="panel panel-success">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">دسته ها</a>
+				</h4>
+			</div>
+			<div id="collapseTwo" class="panel-collapse collapse">
+				<div class="panel-body">	
+					{% if event.tags.all %}
+						{% for item in event.tags.all %}
+							<a href="/tag/{{ item.id }}">{{ event.name }}</a>{% if not forloop.last %},{% endif %}
+						{% endfor %}
+					{% else %}
+						هیچ دسته ای ثبت نشده است.
+					{% endif %}
+				</div>
+			</div>
+		</div>	
 
-	<div class="panel panel-info">
-		<div class="panel-heading">ضمائم</div>
-		<div class="panel-body">	
-			{% if event.attachments.all %}
-				<ul class="list-group attachments-panel">				
-					{% for item in event.attachments.all %}
-						<li class="list-group-item"><a href="{{ STATIC_URL }}external-assets/attachments/{{ item.filename }}">{{ item.name }}</a></li>
-					{% endfor %}				
-				</ul>
-			{% else %}
-				هیچ فایلی ضمیمه نشده است.
-			{% endif %}
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">ضمائم</a>
+				</h4>
+			</div>
+			<div id="collapseThree" class="panel-collapse collapse">
+				<div class="panel-body">	
+					{% if event.attachments.all %}
+						<ul class="list-group attachments-panel">				
+							{% for item in event.attachments.all %}
+								<li class="list-group-item"><a href="{{ STATIC_URL }}external-assets/attachments/{{ item.filename }}">{{ item.name }}</a></li>
+							{% endfor %}				
+						</ul>
+					{% else %}
+						هیچ فایلی ضمیمه نشده است.
+					{% endif %}
+				</div>
+			</div>
 		</div>
-	</div>
-	
-	<div class="panel panel-default">
-		<div class="panel-heading">رویدادهای مرتبط</div>
-		<div class="panel-body">	
-			{% if event.related_events.all %}
-				<ul class="list-group">					
-					{% for item in event.related_events.all %}
-						<li class="list-group-item"><a href="{% url 'detail_event' item.id %}">{{ item }}</a></li>
-					{% endfor %}
-				</ul>			
-			{% else %}
-				هیچ پیوندی با رویداد دیگر ثبت نشده است.
-			{% endif %}
+		
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">رویدادهای مرتبط</a>
+				</h4>
+			</div>
+			<div id="collapseFour" class="panel-collapse collapse">
+				<div class="panel-body">	
+					{% if event.related_events.all %}
+						<ul class="list-group">					
+							{% for item in event.related_events.all %}
+								<li class="list-group-item"><a href="{% url 'detail_event' item.id %}">{{ item }}</a></li>
+							{% endfor %}
+						</ul>			
+					{% else %}
+						هیچ پیوندی با رویداد دیگر ثبت نشده است.
+					{% endif %}
+				</div>
+			</div>
 		</div>
 	</div>
 	

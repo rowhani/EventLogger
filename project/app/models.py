@@ -13,6 +13,8 @@ class Event(models.Model):
     persons = models.ManyToManyField("Person", null=True, blank=True, related_name="events", db_table="Event_Person")
     tags = models.ManyToManyField('Tag', null=True, blank=True, related_name="events", db_table="Event_Tag")
     related_events = models.ManyToManyField("self", null=True, blank=True, db_table="Event_Event")
+    #public
+    #active
         
     def __unicode__(self):
         return "%s (%s)" % (self.subject, self.location)

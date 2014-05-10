@@ -38,7 +38,7 @@ urlpatterns = patterns('',
     url(r'^logout$', logout_view, name='logout'),
     
     url(r'^event$', list_event_view, name='list_event'),
-    url(r'^event/json/$', login_required(EventListJson.as_view()), name='list_event_json'),
+    url(r'^event/json/$', EventListJson.as_view(), name='list_event_json'),
     url(r'^event/(?P<event_id>\d+)$', detail_event_view, name='detail_event'),
     url(r'^event/add$', modify_event_view, name='add_event'),
     url(r'^event/edit/(?P<event_id>\d+)$', modify_event_view, name='edit_event'),    
