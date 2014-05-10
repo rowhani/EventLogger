@@ -51,7 +51,7 @@ $(document).ready(function() {
 	
 	$(".convert-date").livequery(function() {
 		if (!$(this).hasClass("converted")) {
-			$(this).addClass("converted").text(convert_to_jalali($(this).text()));
+			$(this).addClass("converted").text(convert_to_jalali($(this).text(), $(this).data("date-format")));
 		}
 	});
 	

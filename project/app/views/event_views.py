@@ -107,6 +107,7 @@ class ExistingPersonsForm(ModelForm):
 @login_required
 def list_event_view(request, *args, **kwargs):
     active_link_id = "event"
+    
     return render_to_response('event/list.html', locals(), context_instance = RequestContext(request))
     
 class EventListJson(BaseDatatableView):
@@ -174,6 +175,8 @@ class EventListJson(BaseDatatableView):
 @login_required
 def detail_event_view(request, event_id, *args, **kwargs):
     active_link_id = "event"
+    
+    event = get_object_or_404(Event, pk=int(event_id))
     return render_to_response('event/detail.html', locals(), context_instance = RequestContext(request))
     
 @login_required

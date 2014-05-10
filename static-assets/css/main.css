@@ -285,6 +285,31 @@ input[type=checkbox]
 	text-align: center;
 }
 
+.well.description
+{
+	background: lightyellow; /* Old browsers */
+	background: -moz-linear-gradient(top,  rgb(255, 255, 100) 0%, lightyellow 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(255, 255, 100)), color-stop(100%,lightyellow))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgb(255, 255, 100) 0%,lightyellow 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgb(255, 255, 100) 0%,lightyellow 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgb(255, 255, 100) 0%,lightyellow 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgb(255, 255, 100) 0%,lightyellow 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=rgb(255, 255, 100), endColorstr=lightyellow,GradientType=0 ); /* IE6-9 */
+}
+
+.bs-callout 
+{
+	padding: 20px;
+	border-right: 3px solid #eee;
+}
+
+.bs-callout-info 
+{
+	background-color: #f4f8fa;
+	border-color: #5bc0de;
+}
+
+
 /* Sticky Footer */
 
 html,

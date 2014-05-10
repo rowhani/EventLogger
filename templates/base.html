@@ -49,7 +49,8 @@
 			</div><!--/.right-sidebar -->
 			<div class="col-lg-9">
 				<div class="container-fluid shadowable-inverse">
-					<div class="page-header">
+					{% block pre_header %}{% endblock %}
+					<div class="page-header alert">
 						<h1>{% block header %}{% endblock %}</h1>
 					</div>
 					<div class="panel panel-primary content">			
