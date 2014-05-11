@@ -115,6 +115,8 @@ WSGI_APPLICATION = 'wsgihandler.application'
 
 LOGIN_URL = "/login"
 
+CAPTCHA_FONT_SIZE = 28
+
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
@@ -159,7 +161,8 @@ CORE_APPS = (
 EXTERNAL_APPS = (
     'django_extensions',
     'south',
-    'django_forms_bootstrap'
+    'django_forms_bootstrap',
+    'captcha'
 )
 
 LOCAL_APPS = (

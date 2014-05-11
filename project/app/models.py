@@ -13,8 +13,7 @@ class Event(models.Model):
     persons = models.ManyToManyField("Person", null=True, blank=True, related_name="events", db_table="Event_Person")
     tags = models.ManyToManyField('Tag', null=True, blank=True, related_name="events", db_table="Event_Tag")
     related_events = models.ManyToManyField("self", null=True, blank=True, db_table="Event_Event")
-    #public
-    #active
+    status = models.CharField(max_length=15, blank=True, default='public', choices=[('public', 'public'), ('unconfirmed', 'unconfirmed'), ('hidden', 'hidden')])
         
     def __unicode__(self):
         return "%s (%s)" % (self.subject, self.location)
@@ -47,6 +46,7 @@ class Person(models.Model):
     death_date = models.DateTimeField(null=True, blank=True)
     death_place = models.CharField(max_length=1000, null=True, blank=True)
     person_photo = models.CharField(max_length=1000, null=True, blank=True)
+    status = models.CharField(max_length=15, blank=True, default='public', choices=[('public', 'public'), ('unconfirmed', 'unconfirmed'), ('hidden', 'hidden')])
         
     def __unicode__(self):
         if self.birth_place:

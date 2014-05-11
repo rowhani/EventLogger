@@ -12,6 +12,7 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.conf import settings
 from django.forms import *
 from django.forms.models import construct_instance
+from captcha.fields import CaptchaField
 
 from app.models import *
 from app.utils import *
@@ -19,7 +20,8 @@ from app.utils import *
 ######## Forms ########
 
 class EventForm(ModelForm):
-    attachments = FileField(label='ضمائم', widget=FileInput(attrs={'multiple': 'multiple'}), help_text='می توانید چندین فایل را ضمیمه کنید', required=False)
+    attachments = FileField(label='ضمائم', widget=FileInput(attrs={'multiple': 'multiple'}), help_text='می توانید چندین فایل را ضمیمه کنید.', required=False)
+    captcha = CaptchaField(label='کد امنیتی', error_messages={'invalid': 'کد امنیتی اشتیاه وارد شده است.'})
     
     class Meta:
         model = Event
@@ -44,9 +46,11 @@ class EventForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(EventForm, self ).__init__(*args, **kwargs)
         self.fields["photo"].widget = FileInput(attrs={"accept":"image/*"})
-        self.fields["tags"].help_text = "دسته هایی را که این رویداد شامل آنها می شود انتخاب کنید"
+        self.fields["photo"].help_text = "تصویر انتخاب شده جایگزین تصویر قبلی خواهد شد."
+        self.fields["tags"].help_text = "دسته هایی را که این رویداد شامل آنها می شود انتخاب کنید."
         self.fields["tags"].widget.attrs = {'data-role': 'chosen'}
         self.fields["related_events"].help_text = "رویدادهایی که قبلا اتفاق افتاده و مرتبط با این موضوع است، مانند دستگیری دوباره یک شخص و ...."
+        self.fields["related_events"].choices = Event.objects.filter(status="public").exclude(id=self.instance.id if self.instance else 0).values_list('id', 'subject')
         self.fields["related_events"].widget.attrs = {'data-role': 'chosen'}
         self.fields["date_happened"].widget.attrs = {'data-role': 'calendar'}
         self.fields["date_ended"].widget.attrs = {'data-role': 'calendar'}  
@@ -101,6 +105,7 @@ class ExistingPersonsForm(ModelForm):
         self.fields["persons"].label = "لیست اشخاص موجود"
         self.fields["persons"].help_text = "می توانید از لیست اشخاص موجود در سیستم انتخاب کنید."
         self.fields["persons"].widget.attrs = {'data-role': 'chosen'}
+        self.fields["persons"].choices = [(p.id, unicode(p)) for p in Person.objects.filter(status="public")]
 
 ######## Views ########
 
@@ -121,29 +126,51 @@ class EventListJson(BaseDatatableView):
         elif column == 'date_happened':
             return '<span class="convert-date">%s</span>' % row.date_happened
         elif column == 'photo':
-            return """
+            resp = """
                 <div class="col-lg-12">
                     <a href="%(detail_url)s">
                         <span class="thumbnail" style="margin-bottom: 5px;">                           
                             %(photo)s
                         </span>
                     </a>
-                </div>
-                <div class="text-center %(hide)s">
-                    <a class="btn btn-success btn-xs" title="ویرایش" href="%(edit_url)s">
-                        <span class="glyphicon glyphicon-edit"></span>
-                    </a>
-                    <a class="btn btn-danger btn-xs" title="حذف" href="%(delete_url)s" data-confirm="آبا وافعا مایل به حذف رویداد %(subject)s هستید؟">
-                        <span class="glyphicon glyphicon-trash"></span>
-                    </a>
                 </div>""" % {
                     "detail_url": reverse('detail_event', args=[row.id]),
-                    "edit_url": reverse('edit_event', args=[row.id]),
-                    "delete_url": reverse('delete_event', args=[row.id]),
-                    "subject": row.subject.encode('utf-8', 'ignore'),
-                    "hide": "hide" if not self.request.user.is_authenticated() else "",
                     "photo": ('<img src="%sexternal-assets/event-images/%s"/>' % (settings.STATIC_URL, row.photo)).encode('utf-8', 'ignore') if row.photo else '<img src="%simages/unknown.png"/>' % settings.STATIC_URL
                 }
+            if self.request.user.is_authenticated():  
+                resp += """
+                    <div class="text-center">
+                        <a class="btn btn-success btn-xs" title="ویرایش" href="%(edit_url)s">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                        <a class="btn btn-danger btn-xs" title="حذف" href="%(delete_url)s" data-confirm="آبا وافعا مایل به حذف رویداد %(subject)s هستید؟">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    """ % {
+                        "edit_url": reverse('edit_event', args=[row.id]),
+                        "delete_url": reverse('delete_event', args=[row.id]),
+                        "subject": row.subject.encode('utf-8', 'ignore')                    
+                    }
+                if row.status == 'public':
+                    resp += """
+                        <a class="btn btn-warning btn-xs" title="مخفی کردن" href="%s">
+                            <span class="glyphicon glyphicon-eye-close"></span>
+                        </a>
+                    """ % reverse('change_status_event', args=[row.id, 'hidden'])
+                elif row.status == 'hidden':
+                    resp += """
+                        <a class="btn btn-warning btn-xs" title="قابل مشاهده کردن" href="%s">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </a>
+                    """ % reverse('change_status_event', args=[row.id, 'public'])
+                elif row.status == 'unconfirmed':
+                    resp += """
+                        <a class="btn btn-warning btn-xs" title="تایید کردن" href="%s">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </a>
+                    """ % reverse('change_status_event', args=[row.id, 'public'])
+                resp += "</div>"
+            return resp
         elif column == 'persons':
             return ", ".join(['<a href="/person/%s">%s</a>' % (person.id, unicode(person)) for person in row.persons.all()])
         else:
@@ -151,26 +178,21 @@ class EventListJson(BaseDatatableView):
 
     def filter_queryset(self, qs):
         sSearch = self.request.GET.get('sSearch', None)
+        status_filter = self.request.GET.getlist('status_filter[]', [])
         if sSearch:
             qs = qs.filter(subject__icontains=sSearch)
+        if self.request.user.is_authenticated():
+            if status_filter:
+                qs = qs.filter(status__in=status_filter)
+        else:
+            qs = qs.filter(status='public')
         return qs
         
-    """def get_initial_queryset(self):
-        return MyModel.objects.all()"""
+    def get_initial_queryset(self):
+        return super(EventListJson, self ).get_initial_queryset()
         
-    """def prepare_results(self, qs):
-        # prepare list with output column data
-        # queryset is already paginated here
-        json_data = []
-        for item in qs:
-            json_data.append([
-                item.number,
-                "%s %s" % (item.customer_firstname, item.customer_lastname),
-                item.get_state_display(),
-                item.created.strftime("%Y-%m-%d %H:%M:%S"),
-                item.modified.strftime("%Y-%m-%d %H:%M:%S")
-            ])
-        return json_data"""
+    def prepare_results(self, qs):
+        return super(EventListJson, self ).prepare_results(qs)
 
 def detail_event_view(request, event_id, *args, **kwargs):
     active_link_id = "event"
@@ -179,12 +201,26 @@ def detail_event_view(request, event_id, *args, **kwargs):
     return render_to_response('event/detail.html', locals(), context_instance = RequestContext(request))
     
 @login_required
-def delete_event_view(request, event_id=None, *args, **kwargs):
+def delete_event_view(request, event_id, *args, **kwargs):
     event = get_object_or_404(Event, pk=int(event_id))
+    try: os.remove("%s/%s" % (settings.EVENT_IMAGES_DIR , event.photo))
+    except: pass
+    for attachment in event.attachments.all():
+        try: os.remove("%s/%s" % (settings.EVENT_ATTACHMENTS_DIR , attachment.filename))
+        except: pass
     event.delete()
     return redirect(reverse('list_event'))
+    
+@login_required 
+def change_status_event_view(request, event_id, status, *args, **kwargs):
+    event = get_object_or_404(Event, pk=int(event_id))
+    event.status = status
+    event.save()
+    if request.GET.get('show_detail', None) == '1':
+        return redirect(reverse('detail_event', args=[event.id]))
+    else:
+        return redirect(reverse('list_event'))
    
-@login_required
 def modify_event_view(request, event_id=None, *args, **kwargs):
     active_link_id = "event"
     
@@ -202,6 +238,7 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
         
     if request.method == 'POST': 
         event_form = EventForm(request.POST, request.FILES, instance=event_instance, auto_id='%s')
+        if request.user.is_authenticated(): del event_form.fields['captcha']
         existing_persons_form = ExistingPersonsForm(request.POST, request.FILES, instance=event_instance, auto_id='%s')
         
         person_forms = []
@@ -220,7 +257,7 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
                 error = True
                 hash = 'person-tab'
                         
-        if not error:
+        if not error:  
             # Save event
             event = construct_instance(event_form, event_form.instance, ['subject', 'date_happened', 'date_ended', 'location', 'description', 'actions_taken', 'related_events'])
             
@@ -235,6 +272,7 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
                     try: os.remove("%s/%s" % (settings.EVENT_IMAGES_DIR , event.photo))
                     except: pass
                     event.photo = None
+            if not request.user.is_authenticated(): event.status = 'unconfirmed'
             event.save()
                 
             # Save tags
@@ -273,13 +311,14 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
                 event.persons.add(person)
             for person_form in person_forms:
                 person = person_form.save()
+                if not request.user.is_authenticated(): person.status = 'unconfirmed'
                 person_photo = '%s-person_photo' % person_form.prefix
                 if person_photo in request.FILES:
                     person.person_photo = save_request_file(settings.PERSON_IMAGES_DIR, request.FILES[person_photo])
                     person.save()
                 event.persons.add(person)
           
-            return redirect(reverse('detail_event', args=[event_id]))
+            return redirect(reverse('detail_event', args=[event.id]))
         else:
             event_form.fields['date_happened'].widget.attrs.update({'data-ignore-convert':'1'})
             event_form.fields['date_ended'].widget.attrs.update({'data-ignore-convert':'1'})
@@ -288,14 +327,13 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
                 person_form.fields['death_date'].widget.attrs.update({'data-ignore-convert':'1'})
     else:
         event_form = EventForm(instance=event_instance, auto_id='%s')
+        if request.user.is_authenticated(): del event_form.fields['captcha']
         existing_persons_form = ExistingPersonsForm(instance=event_instance, auto_id='%s')
         person_forms = []
         
-    title = 'ایجاد رویداد' if not event_id else 'ویرایش رویداد'    
+    title = 'ارسال رویداد جدید' if not request.user.is_authenticated() else ('ایجاد رویداد جدید' if not event_id else 'ویرایش رویداد')
     event_photo = event_instance and event_instance.photo or ''
     attachments = event_instance.attachments.all() if event_instance else []
-    if event_instance: 
-        event_form.fields['related_events'].choices = filter(lambda r: r[0] != event_instance.id, event_form.fields['related_events'].choices)
       
-    return render_to_response('event/add.html', locals(), context_instance = RequestContext(request))
+    return render_to_response('event/modify.html', locals(), context_instance = RequestContext(request))
     

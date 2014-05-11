@@ -59,7 +59,8 @@ $(document).ready(function() {
 	$("[data-role=chosen]:visible").livequery(function() {
 		$(this).addClass("chosen-rtl").chosen({
 			placeholder_text: "انتخاب کنید...",
-			no_results_text: "هیچ گزینه ای یافت نشد مطابق"
+			no_results_text: "هیچ گزینه ای یافت نشد مطابق",
+			width: $(this).attr("data-width")? $(this).attr("data-width") + "!important": "100%"
 		});
 	})
 	$("[data-role=chosen]:visible").livequery(function() {
@@ -138,7 +139,7 @@ $(document).ready(function() {
             var href = $(this).attr('href');
 
             if (!$('#dataConfirmModal').length) {
-                $('body').append('<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><h3 id="dataConfirmLabel" class="confirm-delete">لطفا تایید کنید</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn btn-default" data-dismiss="modal" aria-hidden="true">خیر</button><a class="btn btn-danger" id="dataConfirmOK">بله</a></div></div>');
+                $('body').append('<div id="dataConfirmModal" class="modal fade" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><h3 id="dataConfirmLabel" class="confirm-delete">لطفا تایید کنید</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn btn-default" data-dismiss="modal" aria-hidden="true">خیر</button><a class="btn btn-danger" id="dataConfirmOK">بله</a></div></div>');
             } 
             $('#dataConfirmModal').find('.modal-body').text($(this).attr('data-confirm'));
             $('#dataConfirmOK').attr('href', href);

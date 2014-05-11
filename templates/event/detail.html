@@ -6,7 +6,23 @@
 
 {% block title %}جزئیات رویداد {{ event.subject }}{% endblock %}
 
-{% block header %}{{ event.subject }} <small>(جزئیات رویداد)</small>{% endblock %}
+{% block header %}
+	{{ event.subject }} 
+	<small>
+		(
+		{% if request.user.is_authenticated %}
+			{% if event.status == 'public' %}
+				<span class="glyphicon glyphicon-eye-open" title="این رویداد قابل مشاهده برای همه است"></span> 
+			{% elif event.status == 'hidden' %}
+				<span class="glyphicon glyphicon-eye-close" title="این رویداد مخفی است"></span> 
+			{% elif event.unconfirmed == 'hidden' %}
+				<span class="glyphicon glyphicon-ban-circle" title="این رویداد تایید نشده است"></span> 
+			{% endif %}
+		{% endif %}
+		جزئیات رویداد
+		)
+	</small>
+{% endblock %}
 
 {% block pre_header %}
 	<h4 class="pull-right" style="margin-top: 90px">
@@ -27,6 +43,13 @@
 		<div class="pull-left">
 			<a class="btn btn-warning" href="{% url 'edit_event' event.id %}"><span class="glyphicon glyphicon-edit"></span> ویرایش</a>
 			<a class="btn btn-warning" href="{% url 'delete_event' event.id %}" data-confirm="آبا وافعا مایل به حذف رویداد {{ event.subject }} هستید؟"><span class="glyphicon glyphicon-trash"></span> حذف</a>
+			{% if event.status == 'public' %}
+				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'hidden' %}?show_detail=1"><span class="glyphicon glyphicon-eye-close"></span> مخفی کردن</a>
+			{% elif event.status == 'hidden' %}
+				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-eye-open"></span> قابل مشاهده کردن</a>
+			{% elif event.unconfirmed == 'hidden' %}
+				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-ok"></span> تایید کردن</a>
+			{% endif %}
 		</div>
 		<div class="clearfix"></div><br/>
 	{% endif %}

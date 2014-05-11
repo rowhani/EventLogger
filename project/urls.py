@@ -43,9 +43,11 @@ urlpatterns = patterns('',
     url(r'^event/add$', modify_event_view, name='add_event'),
     url(r'^event/edit/(?P<event_id>\d+)$', modify_event_view, name='edit_event'),    
     url(r'^event/delete/(?P<event_id>\d+)$', delete_event_view, name='delete_event'), 
+    url(r'^event/change_status/(?P<event_id>\d+)/(?P<status>\w+)$', change_status_event_view, name='change_status_event'), 
 
     # static
     url(r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/'), serve, {'show_indexes': True, 'insecure': False}),
+    url(r'^captcha/', include('captcha.urls')),
     
     # admin
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
