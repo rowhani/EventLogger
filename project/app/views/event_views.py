@@ -216,6 +216,10 @@ def change_status_event_view(request, event_id, status, *args, **kwargs):
     event = get_object_or_404(Event, pk=int(event_id))
     event.status = status
     event.save()
+    if status == 'public':
+        for person in event.persons.all():
+            person.status = 'public'
+            person.save()
     if request.GET.get('show_detail', None) == '1':
         return redirect(reverse('detail_event', args=[event.id]))
     else:
