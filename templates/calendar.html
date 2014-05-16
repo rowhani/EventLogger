@@ -1,0 +1,37 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}تقویم{% endblock %}
+
+{% block header %}<span class="glyphicon glyphicon-calendar"></span> تقویم{% endblock %}
+	
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker.css" />
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/humanity.calendars.picker.css"/>
+{% endblock %}
+
+{% block content %}
+    <div class="calendars-picker"></div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.plus.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker-fa.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian-fa.js"></script>
+	<script>
+		$(document).ready(function() {  
+			$.browser = {msie: navigator.userAgent.match("MSIE"), version: 10};
+			$('.calendars-picker').calendarsPicker({
+				monthsToShow: [4, 3], 
+				changeMonth: true,
+				changeYear: true,
+				showOtherMonths: true,
+				selectOtherMonths: true,
+				calendar: $.calendars.instance('persian', 'fa'),
+				defaultDate: '1393/01/01',
+			});
+		});
+	</script>
+{% endblock %}

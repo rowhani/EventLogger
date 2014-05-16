@@ -10,7 +10,7 @@ class Event(models.Model):
     date_ended = models.DateTimeField(null=True, blank=True)
     photo = models.CharField(max_length=1000, null=True, blank=True)
     actions_taken = models.TextField(null=True, blank=True)
-    persons = models.ManyToManyField("Person", null=True, blank=True, related_name="events", db_table="Event_Person")
+    persons = models.ManyToManyField("Person", null=True, blank=True, db_table="Event_Person")
     tags = models.ManyToManyField('Tag', null=True, blank=True, related_name="events", db_table="Event_Tag")
     related_events = models.ManyToManyField("self", null=True, blank=True, db_table="Event_Event")
     status = models.CharField(max_length=15, blank=True, default='public', choices=[('public', 'public'), ('unconfirmed', 'unconfirmed'), ('hidden', 'hidden')])
@@ -46,6 +46,7 @@ class Person(models.Model):
     death_date = models.DateTimeField(null=True, blank=True)
     death_place = models.CharField(max_length=1000, null=True, blank=True)
     person_photo = models.CharField(max_length=1000, null=True, blank=True)
+    events = models.ManyToManyField("Event", null=True, blank=True, db_table="Event_Person")
     status = models.CharField(max_length=15, blank=True, default='public', choices=[('public', 'public'), ('unconfirmed', 'unconfirmed'), ('hidden', 'hidden')])
         
     def __unicode__(self):

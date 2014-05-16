@@ -1,208 +1,128 @@
 ﻿{% extends 'base.html' %}
 
-{% block head %}
-	<link rel="stylesheet" href="{{ STATIC_URL }}libs/jquery-filetype/jquery-filetype.css">	
-{% endblock %}
-
-{% block title %}جزئیات رویداد {{ event.subject }}{% endblock %}
+{% block title %}جزئیات شخص {{ person.first_name }} {{ person.last_name }}{% endblock %}
 
 {% block header %}
-	{{ event.subject }} 
+	{% if person.gender == 'male' %}
+		<span class="fa fa-male" title="آقا"></span>
+	{% else %}
+		<span class="fa fa-female" title="خانم"></span>
+	{% endif %}
+	{{ person.first_name }} {{ person.last_name }}
 	<small>
 		(
 		{% if request.user.is_authenticated %}
-			{% if event.status == 'public' %}
-				<span class="glyphicon glyphicon-eye-open" title="این رویداد قابل مشاهده برای همه است"></span> 
-			{% elif event.status == 'hidden' %}
-				<span class="glyphicon glyphicon-eye-close" title="این رویداد مخفی است"></span> 
-			{% elif event.unconfirmed == 'hidden' %}
-				<span class="glyphicon glyphicon-ban-circle" title="این رویداد تایید نشده است"></span> 
+			{% if person.status == 'public' %}
+				<span class="glyphicon glyphicon-eye-open" title="این شخص قابل مشاهده برای همه است"></span> 
+			{% elif person.status == 'hidden' %}
+				<span class="glyphicon glyphicon-eye-close" title="این شخص مخفی است"></span> 
+			{% elif person.status == 'unconfirmed' %}
+				<span class="glyphicon glyphicon-ban-circle" title="این شخص تایید نشده است"></span> 
 			{% endif %}
 		{% endif %}
-		جزئیات رویداد
+		جزئیات شخص
 		)
 	</small>
 {% endblock %}
 
 {% block pre_header %}
 	<h4 class="pull-right" style="margin-top: 90px">
-		<p>
-			<span class="label label-danger">
-				<span class="convert-date" data-date-format="DD، dd MM yy">{{ event.date_happened|date:"c" }}</span>
-				{% if event.date_ended %}
-					- <span class="convert-date" data-date-format="DD، dd MM yy">{{ event.date_ended|date:"c" }}</span>
-				{% endif %}
-			</span>
-		</p>
-		<p><span class="label label-info">{{ event.location }}</span></p>
+		{% if person.birth_date or person.death_date %}
+			<p>
+				<span class="label label-danger">
+					<span class="convert-date" data-date-format="DD، dd MM yy" title="تاریخ تولد">{{ person.birth_date|date:"c" }}</span>
+					{% if person.death_date %}
+						- <span class="convert-date" data-date-format="DD، dd MM yy" title="تاریخ صعود">{{ person.death_date|date:"c" }}</span>
+					{% endif %}
+				</span>
+			</p>
+		{% endif %}
+		{% if person.birth_place or person.death_place %}
+			<p>
+				<span class="label label-info">
+					<span title="مکان تولد">{{ person.birth_place }}</span>
+					{% if person.death_place %}
+						- <span title="مکان صعود">{{ person.death_place }}</span>
+					{% endif %}
+				</span>
+			</p>
+		{% endif %}
 	</h4>
 {% endblock %}
 
 {% block content %}
 	{% if request.user.is_authenticated %}
 		<div class="pull-left">
-			<a class="btn btn-warning" href="{% url 'edit_event' event.id %}"><span class="glyphicon glyphicon-edit"></span> ویرایش</a>
-			<a class="btn btn-warning" href="{% url 'delete_event' event.id %}" data-confirm="آبا وافعا مایل به حذف رویداد {{ event.subject }} هستید؟"><span class="glyphicon glyphicon-trash"></span> حذف</a>
-			{% if event.status == 'public' %}
-				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'hidden' %}?show_detail=1"><span class="glyphicon glyphicon-eye-close"></span> مخفی کردن</a>
-			{% elif event.status == 'hidden' %}
-				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-eye-open"></span> قابل مشاهده کردن</a>
-			{% elif event.unconfirmed == 'hidden' %}
-				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-ok"></span> تایید کردن</a>
+			<a class="btn btn-warning" href="{% url 'edit_person' person.id %}"><span class="glyphicon glyphicon-edit"></span> ویرایش</a>
+			<a class="btn btn-warning" href="{% url 'delete_person' person.id %}" data-confirm="آبا وافعا مایل به حذف شخص {{ person.first_name }} {{ person.last_name }} هستید؟"><span class="glyphicon glyphicon-trash"></span> حذف</a>
+			{% if person.status == 'public' %}
+				<a class="btn btn-warning" href="{% url 'change_status_person' person.id 'hidden' %}?show_detail=1"><span class="glyphicon glyphicon-eye-close"></span> مخفی سازی</a>
+			{% elif person.status == 'hidden' %}
+				<a class="btn btn-warning" href="{% url 'change_status_person' person.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-eye-open"></span> آشکار سازی</a>
+			{% elif person.status == 'unconfirmed' %}
+				<a class="btn btn-warning" href="{% url 'change_status_person' person.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-ok"></span> تایید</a>
 			{% endif %}
 		</div>
 		<div class="clearfix"></div><br/>
-	{% endif %}
-	<div class="col-lg-{% if event.photo %}9{% else %}12{% endif %}" title="شرح رویداد" style="padding-left: 0; padding-right: 0;">
-		<div class="well description">
-			{{ event.description|safe }}	
-		</div>
-		<div class="bs-callout bs-callout-info">
-			<h4>اقدامات انجام شده</h4>
-			<p>
-				{% if event.actions_taken %}
-					{{ event.actions_taken|safe }}
-				{% else %}
-					هیچ افدامی انجام نشده است.
-				{% endif %}
-			</p>
-		</div>
-	</div>
-	{% if event.photo %}
-		<div class="col-lg-3" style="padding-left: 0">
+	{% endif %}	
+	{% if person.person_photo %}
+		<div class="col-lg-12" style="padding-left: 0">
 			<span class="thumbnail">         
-				<img src="{{ STATIC_URL }}external-assets/event-images/{{ event.photo }}"/>
+				<img src="{{ STATIC_URL }}external-assets/person-images/{{ person.person_photo }}"/>
 			</span>
 		</div>
 	{% endif %}
 	<div class="clearfix"></div><br/>
-	<div class="panel-group" id="accordion">
-		<div class="panel panel-warning">
-			<div class="panel-heading">
-				<h4 class="panel-title">
-					<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">اشخاص مرتبط</a>
-				</h4>
-			</div>
-			<div id="collapseOne" class="panel-collapse collapse in">
-				<div class="panel-body">
-					{% if event.persons.all %}
-						<table class="table" cellspacing="0" width="100%">
-							<thead>
-								<tr>
-									<th style="width: 10%!important"></th>
-									<th>نام</th>
-									<th>تاریخ تولد</th>
-									<th>محل تولد</th>
-								</tr>
-							</thead>
-							<tbody>
-								{% for item in event.persons.all %}
-									<tr>
-										<td>
-											<div class="col-lg-12">
-												<a href="/person/{{ item.id }}">
-													<span class="thumbnail" style="margin-bottom: 0px"> 											
-														{% if item.person_photo %}
-															<img src="{{ STATIC_URL }}external-assets/person-images/{{ item.person_photo }}"/>
-														{% else %}
-															<img src="{{ STATIC_URL }}images/unknown.png"/>
-														{%endif %}											
-													</span>
-												</a>
-											</div>
-										</td>
-										<td>
-											<a href="/person/{{ item.id }}">{{ item.first_name }} {{ item.last_name }}</a>
-											{% if item.death_date %}
-												<span class="label label-warning">متصاعد</span>
-											{% endif %}
-										</td>
-										<td class="convert-date">
-											{{ item.birth_date }}
-										</td>
-										<td>
-											{{ item.birth_place }}
-										</td>
-									</tr>
-								{%  endfor %}
-							</tbody>
-						</table>
-					{% else %}			
-						این رویداد جنبه عمومی دارد.
-					{% endif %}
-				</div>
-			</div>
-		</div>	
-		
-		<div class="panel panel-success">
-			<div class="panel-heading">
-				<h4 class="panel-title">
-					<a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">دسته ها</a>
-				</h4>
-			</div>
-			<div id="collapseTwo" class="panel-collapse collapse">
-				<div class="panel-body">	
-					{% if event.tags.all %}
-						{% for item in event.tags.all %}
-							<a href="/tag/{{ item.id }}">{{ event.name }}</a>{% if not forloop.last %},{% endif %}
-						{% endfor %}
-					{% else %}
-						هیچ دسته ای ثبت نشده است.
-					{% endif %}
-				</div>
-			</div>
-		</div>	
-
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<h4 class="panel-title">
-					<a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">ضمائم</a>
-				</h4>
-			</div>
-			<div id="collapseThree" class="panel-collapse collapse">
-				<div class="panel-body">	
-					{% if event.attachments.all %}
-						<ul class="list-group attachments-panel">				
-							{% for item in event.attachments.all %}
-								<li class="list-group-item"><a href="{{ STATIC_URL }}external-assets/attachments/{{ item.filename }}">{{ item.name }}</a></li>
-							{% endfor %}				
-						</ul>
-					{% else %}
-						هیچ فایلی ضمیمه نشده است.
-					{% endif %}
-				</div>
-			</div>
+	<div class="panel panel-warning">
+		<div class="panel-heading">
+			رویدادهای مرتبط
 		</div>
-		
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h4 class="panel-title">
-					<a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">رویدادهای مرتبط</a>
-				</h4>
-			</div>
-			<div id="collapseFour" class="panel-collapse collapse">
-				<div class="panel-body">	
-					{% if event.related_events.all %}
-						<ul class="list-group">					
-							{% for item in event.related_events.all %}
-								<li class="list-group-item"><a href="{% url 'detail_event' item.id %}">{{ item }}</a></li>
-							{% endfor %}
-						</ul>			
-					{% else %}
-						هیچ پیوندی با رویداد دیگر ثبت نشده است.
-					{% endif %}
-				</div>
-			</div>
+		<div class="panel-body">	
+			{% if person.events.all %}
+				<table class="table" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<th style="width: 10%!important"></th>
+							<th>موضوع</th>
+							<th>تاریخ وقوع</th>
+							<th>مکان وقوع</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in person.events.all %}
+							<tr>
+								<td>
+									<div class="col-lg-12">
+										<a href="{% url 'detail_event' item.id %}">
+											<span class="thumbnail" style="margin-bottom: 0px"> 											
+												{% if item.photo %}
+													<img src="{{ STATIC_URL }}external-assets/event-images/{{ item.photo }}"/>
+												{% else %}
+													<img src="{{ STATIC_URL }}images/unknown.png"/>
+												{%endif %}											
+											</span>
+										</a>
+									</div>
+								</td>
+								<td>
+									<a href="{% url 'detail_event' item.id %}">{{ item.subject }}</a>
+									{% if item.date_ended %}
+										<span class="label label-default">پایان یافته</span>
+									{% endif %}
+								</td>
+								<td class="convert-date">
+									{{ item.date_happened }}
+								</td>
+								<td>
+									{{ item.location }}
+								</td>
+							</tr>
+						{%  endfor %}
+					</tbody>
+				</table>				
+			{% else %}
+				هیچ رویدادی ثبت نشده است.
+			{% endif %}
 		</div>
-	</div>
-	
-{% endblock %}
-
-{% block scripts %}	
-	<script src="{{ STATIC_URL }}libs/jquery-filetype/jquery-filetype.js"></script>	
-	<script>
-		$(document).ready(function() {
-			$(".attachments-panel").linktype();
-		});
-	</script>
+	</div>	
 {% endblock %}

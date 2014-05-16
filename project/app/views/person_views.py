@@ -13,7 +13,6 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.conf import settings
 from django.forms import *
 from django.forms.models import construct_instance
-from captcha.fields import CaptchaField
 
 from app.models import *
 from app.utils import *
@@ -23,6 +22,7 @@ from app.utils import *
 class PersonForm(ModelForm):
     class Meta:
         model = Person   
+        fields = ('first_name', 'last_name', 'gender', 'birth_date', 'birth_place', 'death_date', 'death_place', 'person_photo', 'events')
         labels = {
             'first_name': 'نام',
             'last_name': 'نام خانوادگی',
@@ -100,26 +100,26 @@ class PersonListJson(BaseDatatableView):
                     }
                 if row.status == 'public':
                     resp += """
-                        <a class="btn btn-warning btn-xs" title="مخفی کردن" href="%s">
+                        <a class="btn btn-warning btn-xs" title="مخفی سازی" href="%s">
                             <span class="glyphicon glyphicon-eye-close"></span>
                         </a>
                     """ % reverse('change_status_person', args=[row.id, 'hidden'])
                 elif row.status == 'hidden':
                     resp += """
-                        <a class="btn btn-warning btn-xs" title="قابل مشاهده کردن" href="%s">
+                        <a class="btn btn-warning btn-xs" title="آشکار سازی" href="%s">
                             <span class="glyphicon glyphicon-eye-open"></span>
                         </a>
                     """ % reverse('change_status_person', args=[row.id, 'public'])
                 elif row.status == 'unconfirmed':
                     resp += """
-                        <a class="btn btn-warning btn-xs" title="تایید کردن" href="%s">
+                        <a class="btn btn-warning btn-xs" title="تایید" href="%s">
                             <span class="glyphicon glyphicon-ok"></span>
                         </a>
                     """ % reverse('change_status_person', args=[row.id, 'public'])
                 resp += "</div>"
             return resp
         elif column == 'events':
-            return ", ".join(['<a href="/event/%s">%s</a>' % (event.id, unicode(event)) for event in row.events.all()])
+            return ", ".join(['<a href="%s">%s</a>' % (reverse('detail_event', args=[event.id]), unicode(event)) for event in row.events.all()])
         else:
             return super(PersonListJson, self).render_column(row, column)
 
@@ -168,5 +168,50 @@ def change_status_person_view(request, person_id, status, *args, **kwargs):
 @login_required
 def modify_person_view(request, person_id=None, *args, **kwargs):
     active_link_id = "person"    
+    
+    if person_id:
+        action = reverse('edit_person', args=[person_id])
+        person_instance = get_object_or_404(Person, pk=int(person_id))
+        title = "ویرایش شخص"
+    else:
+        action = reverse('add_person')
+        person_instance = None
+        title = "ایجاد شخص"
+        
+    if request.method == 'POST': 
+        person_form = PersonForm(request.POST, request.FILES, instance=person_instance, auto_id='%s')
+        if person_form.is_valid():
+            person = person_form.save()
+            
+            if 'person_photo' in request.FILES:
+                try: os.remove("%s/%s" % (settings.PERSON_IMAGES_DIR , request.POST['person_photo_path']))
+                except: pass
+                person.person_photo = save_request_file(settings.PERSON_IMAGES_DIR, request.FILES['person_photo'])
+            elif person_instance:
+                if 'remove_photo' not in request.POST:
+                    person.person_photo = request.POST.get('person_photo_path', None)
+                else:
+                    try: os.remove("%s/%s" % (settings.PERSON_IMAGES_DIR , person.person_photo))
+                    except: pass
+                    person.person_photo = None
+            person.save()
+            
+            # Save persons
+            if person_instance:
+                for i in person.events.all():
+                    person.events.remove(i)
+            for i in request.POST.getlist('events'):      
+                event = Event.objects.get(id=int(i))
+                person.events.add(event) 
+                
+            return redirect(reverse('detail_person', args=[person.id]))
+        else:
+            person_form.fields['birth_place'].widget.attrs.update({'data-ignore-convert':'1'})
+            person_form.fields['death_date'].widget.attrs.update({'data-ignore-convert':'1'})
+    else:
+        person_form = PersonForm(instance=person_instance, auto_id='%s')                            
+        
+    person_photo = person_instance and person_instance.person_photo or ''
+        
     return render_to_response('person/modify.html', locals(), context_instance = RequestContext(request))
     

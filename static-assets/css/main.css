@@ -20,6 +20,11 @@ body
 	line-height: 17px;
 }
 
+#app-modal
+{
+	width: 620px;
+}
+
 .icon-required 
 {
 	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAANCAYAAACUwi84AAAAV0lEQVQYV2NgoBq4dvna/6W+Xv+vb1j/H0Xi7e3b/4/19YAlQApAbBgfrAAmgY5BiuCm/Pz8+f/WpBi4JMg6FGvOL5gH1wWitxfmYXcHyCSQlRgOHewAAOFhWxHuxtuOAAAAAElFTkSuQmCC);
@@ -324,6 +329,40 @@ input[type=checkbox]
 .table 
 {
 	margin-bottom: 0;
+}
+
+/* Full Calendar */
+
+.calendars,
+.calendars-month-row
+{
+	width: 100%!important;
+}
+
+.calendars-cmd, 
+.calendars-month 
+{
+	width: 33.33333333%!important;
+	float: right!important;
+	padding: 0px!important;
+}
+
+.calendars-cmd 
+{
+	padding: 0 5px!important;
+}
+
+.calendars-nav, .calendars-ctrl 
+{
+	font-size: 16px!important;
+	line-height: 28px!important;
+}
+
+.calendars-month-header, 
+.calendars-month-header select, 
+.calendars-month-header input 
+{
+	line-height: 20px!important;
 }
 
 /* Sticky Footer */

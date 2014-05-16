@@ -31,12 +31,13 @@ handler500 = 'app.views.error_500_view'
 # patterns
 
 urlpatterns = patterns('',
-    # views:
-    url(r'^$', index_view, name='index'),
-    
     # auth
     url(r'^login$', LoginView.as_view(), name='login'),
     url(r'^logout$', logout_view, name='logout'),
+    
+    # single
+    url(r'^$', index_view, name='index'),
+    url(r'^calendar$', calendar_view, name='calendar'),
     
     # events
     url(r'^event$', list_event_view, name='list_event'),
@@ -50,11 +51,17 @@ urlpatterns = patterns('',
     # persons
     url(r'^person$', list_person_view, name='list_person'),
     url(r'^person/json/$', PersonListJson.as_view(), name='list_person_json'),
-    url(r'^person/(?P<person_id>\d+)$', detail_event_view, name='detail_person'),
+    url(r'^person/(?P<person_id>\d+)$', detail_person_view, name='detail_person'),
     url(r'^person/add$', modify_person_view, name='add_person'),
     url(r'^person/edit/(?P<person_id>\d+)$', modify_person_view, name='edit_person'),    
     url(r'^person/delete/(?P<person_id>\d+)$', delete_person_view, name='delete_person'), 
     url(r'^person/change_status/(?P<person_id>\d+)/(?P<status>\w+)$', change_status_person_view, name='change_status_person'), 
+        
+    # tags
+    url(r'^tag$', list_tag_view, name='list_tag'),
+    url(r'^tag/add$', modify_tag_view, name='add_tag'),
+    url(r'^tag/edit/(?P<tag_id>\d+)$', modify_tag_view, name='edit_tag'),    
+    url(r'^tag/delete/(?P<tag_id>\d+)$', delete_tag_view, name='delete_tag'),
 
     # static
     url(r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/'), serve, {'show_indexes': True, 'insecure': False}),

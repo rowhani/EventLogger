@@ -26,8 +26,8 @@
 	<table id="events" class="table table-striped table-bordered table-condensed pull-left" cellspacing="0" width="100%">
 		<thead>
             <tr>
-				<th style="width: 15%!important"></th>
-                <th style="width: 25%">موضوع</th>
+				<th style="width: 12%!important"></th>
+                <th style="width: 28%">موضوع</th>
                 <th style="width: 15%">تاریخ</th>
                 <th style="width: 20%">مکان</th>
 				<th style="width: 25%">اشخاص مرتبط</th>
@@ -37,8 +37,8 @@
 	
 	{% if request.user.is_authenticated %}
 		<select id="status_filter" name="status_filter[]" multiple="multiple" data-role="chosen" class="form-control input-sm hide" style="margin-right: 10px;" data-width="420px" title="وضعیت رویداد را فیلتر کنید">
-			<option value="public" selected="selected">رویداد های قابل مشاهده</option>
-			<option value="hidden" selected="selected">رویداد های پنهان شده</option>
+			<option value="public" selected="selected">رویداد های آشکار</option>
+			<option value="hidden" selected="selected">رویداد های مخفی</option>
 			<option value="unconfirmed">رویداد های تایید نشده</option>
 		</select>
 	{% endif %}
@@ -92,7 +92,7 @@
 			sSearch.attr({"name": "sSearch", "title": "جستجوی سریع", "placeholder": "جستجوی سریع"});
 			
 			$('.event-ended', dt).livequery(function() {
-				$(this).addClass("label label-warning").text('پایان یافته');
+				$(this).addClass("label label-default").text('پایان یافته');
 			});
 			
 			{% if request.user.is_authenticated %}

@@ -15,7 +15,7 @@
 				<span class="glyphicon glyphicon-eye-open" title="این رویداد قابل مشاهده برای همه است"></span> 
 			{% elif event.status == 'hidden' %}
 				<span class="glyphicon glyphicon-eye-close" title="این رویداد مخفی است"></span> 
-			{% elif event.unconfirmed == 'hidden' %}
+			{% elif event.status == 'unconfirmed' %}
 				<span class="glyphicon glyphicon-ban-circle" title="این رویداد تایید نشده است"></span> 
 			{% endif %}
 		{% endif %}
@@ -28,13 +28,13 @@
 	<h4 class="pull-right" style="margin-top: 90px">
 		<p>
 			<span class="label label-danger">
-				<span class="convert-date" data-date-format="DD، dd MM yy">{{ event.date_happened|date:"c" }}</span>
+				<span class="convert-date" data-date-format="DD، dd MM yy" title="تاریخ وقوع">{{ event.date_happened|date:"c" }}</span>
 				{% if event.date_ended %}
-					- <span class="convert-date" data-date-format="DD، dd MM yy">{{ event.date_ended|date:"c" }}</span>
+					- <span class="convert-date" data-date-format="DD، dd MM yy" title="تاریخ اتمام">{{ event.date_ended|date:"c" }}</span>
 				{% endif %}
 			</span>
 		</p>
-		<p><span class="label label-info">{{ event.location }}</span></p>
+		<p><span class="label label-info" title="مکان وفوع">{{ event.location }}</span></p>
 	</h4>
 {% endblock %}
 
@@ -44,11 +44,11 @@
 			<a class="btn btn-warning" href="{% url 'edit_event' event.id %}"><span class="glyphicon glyphicon-edit"></span> ویرایش</a>
 			<a class="btn btn-warning" href="{% url 'delete_event' event.id %}" data-confirm="آبا وافعا مایل به حذف رویداد {{ event.subject }} هستید؟"><span class="glyphicon glyphicon-trash"></span> حذف</a>
 			{% if event.status == 'public' %}
-				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'hidden' %}?show_detail=1"><span class="glyphicon glyphicon-eye-close"></span> مخفی کردن</a>
+				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'hidden' %}?show_detail=1"><span class="glyphicon glyphicon-eye-close"></span> مخفی سازی</a>
 			{% elif event.status == 'hidden' %}
-				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-eye-open"></span> قابل مشاهده کردن</a>
-			{% elif event.unconfirmed == 'hidden' %}
-				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-ok"></span> تایید کردن</a>
+				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-eye-open"></span> آشکار سازی</a>
+			{% elif event.status == 'unconfirmed' %}
+				<a class="btn btn-warning" href="{% url 'change_status_event' event.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-ok"></span> تایید</a>
 			{% endif %}
 		</div>
 		<div class="clearfix"></div><br/>
@@ -100,7 +100,7 @@
 									<tr>
 										<td>
 											<div class="col-lg-12">
-												<a href="/person/{{ item.id }}">
+												<a href="{% url 'detail_person' item.id %}">
 													<span class="thumbnail" style="margin-bottom: 0px"> 											
 														{% if item.person_photo %}
 															<img src="{{ STATIC_URL }}external-assets/person-images/{{ item.person_photo }}"/>
@@ -112,9 +112,9 @@
 											</div>
 										</td>
 										<td>
-											<a href="/person/{{ item.id }}">{{ item.first_name }} {{ item.last_name }}</a>
+											<a href="{% url 'detail_person' item.id %}">{{ item.first_name }} {{ item.last_name }}</a>
 											{% if item.death_date %}
-												<span class="label label-warning">متصاعد</span>
+												<span class="label label-default">متصاعد</span>
 											{% endif %}
 										</td>
 										<td class="convert-date">
@@ -144,7 +144,7 @@
 				<div class="panel-body">	
 					{% if event.tags.all %}
 						{% for item in event.tags.all %}
-							<a href="/tag/{{ item.id }}">{{ event.name }}</a>{% if not forloop.last %},{% endif %}
+							<a href="/tag/{{ item.id }}">{{ item.name }}</a>{% if not forloop.last %},{% endif %}
 						{% endfor %}
 					{% else %}
 						هیچ دسته ای ثبت نشده است.
@@ -194,8 +194,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
-	
+	</div>	
 {% endblock %}
 
 {% block scripts %}	

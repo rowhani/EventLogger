@@ -1,0 +1,33 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}دسته ها{% endblock %}
+
+{% block header %}<span class="fa fa-tags"></span> دسته ها{% endblock %}
+
+{% block content %}	
+	{% if request.user.is_authenticated %}
+		<a class="btn btn-primary pull-right" href="{% url 'add_tag' %}" style="margin-bottom: 5px" data-toggle="modal"><span class="glyphicon glyphicon-plus"></span>		
+			ایجاد دسته جدید		
+		</a>
+	{% endif %}
+	<div class="clearfix"></div><br/>
+	{% if tags %}
+		<ul class="list-group">					
+			{% for tag in tags %}
+				<li class="list-group-item">
+					<span class="fa fa-tag"></span> <a href="/search/tags/{{tag.name}}">{{ tag }}</a>
+					{% if request.user.is_authenticated %}
+						<a class="btn btn-success btn-xs" title="ویرایش" href="{% url 'edit_tag' tag.id %}" data-toggle="modal">
+							<span class="glyphicon glyphicon-edit"></span>
+						</a>
+						<a class="btn btn-danger btn-xs" title="حذف" href="{% url 'delete_tag' tag.id %}" data-confirm="آبا وافعا مایل به حذف دسته ی {{ tag.name }} هستید؟">
+							<span class="glyphicon glyphicon-trash"></span>
+						</a>
+					{% endif %}
+				</li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		هنوز دسته ای ایجاد نشده است.
+	{% endif %}
+{% endblock %}

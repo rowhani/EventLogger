@@ -1,6 +1,7 @@
 ﻿import os
 import uuid
 import jdatetime
+from django.http import HttpResponse
 
 def validate_jalali_date(form, cleaned_data, field, check_required=False):
     prefix_field = "%s-%s" % (form.prefix, field) if form.prefix else field
@@ -31,3 +32,6 @@ def save_request_file(destination, request_file):
     with open(path, 'wb+') as f:
         for chunk in request_file.chunks(): f.write(chunk) 
     return name
+    
+def close_modal(reload_url = "/"):
+    return HttpResponse("<script>window.location='%s'; window.location.reload()</script>" % reload_url)

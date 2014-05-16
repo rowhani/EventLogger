@@ -68,6 +68,7 @@ class EventForm(ModelForm):
 class PersonForm(ModelForm):
     class Meta:
         model = Person   
+        fields = ('first_name', 'last_name', 'gender', 'birth_date', 'birth_place', 'death_date', 'death_place', 'person_photo')
         labels = {
             'first_name': 'نام',
             'last_name': 'نام خانوادگی',
@@ -153,26 +154,26 @@ class EventListJson(BaseDatatableView):
                     }
                 if row.status == 'public':
                     resp += """
-                        <a class="btn btn-warning btn-xs" title="مخفی کردن" href="%s">
+                        <a class="btn btn-warning btn-xs" title="مخفی سازی" href="%s">
                             <span class="glyphicon glyphicon-eye-close"></span>
                         </a>
                     """ % reverse('change_status_event', args=[row.id, 'hidden'])
                 elif row.status == 'hidden':
                     resp += """
-                        <a class="btn btn-warning btn-xs" title="قابل مشاهده کردن" href="%s">
+                        <a class="btn btn-warning btn-xs" title="آشکار سازی" href="%s">
                             <span class="glyphicon glyphicon-eye-open"></span>
                         </a>
                     """ % reverse('change_status_event', args=[row.id, 'public'])
                 elif row.status == 'unconfirmed':
                     resp += """
-                        <a class="btn btn-warning btn-xs" title="تایید کردن" href="%s">
+                        <a class="btn btn-warning btn-xs" title="تایید" href="%s">
                             <span class="glyphicon glyphicon-ok"></span>
                         </a>
                     """ % reverse('change_status_event', args=[row.id, 'public'])
                 resp += "</div>"
             return resp
         elif column == 'persons':
-            return ", ".join(['<a href="/person/%s">%s</a>' % (person.id, unicode(person)) for person in row.persons.all()])
+            return ", ".join(['<a href="%s">%s</a>' % (reverse('detail_person', args=[person.id]), unicode(person)) for person in row.persons.all()])
         else:
             return super(EventListJson, self).render_column(row, column)
 
