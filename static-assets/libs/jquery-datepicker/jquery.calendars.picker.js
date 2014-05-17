@@ -7,6 +7,8 @@
 
 (function($) { // Hide scope, no $ conflict
 
+$.browser = {msie: navigator.userAgent.match("MSIE"), version: 10};
+
 /* Calendar picker manager. */
 function CalendarsPicker() {
 	this._defaults = {
@@ -1458,7 +1460,7 @@ $.extend(CalendarsPicker.prototype, {
 				var selectable = (selectOtherMonths || drawDate.month() == month) &&
 					this._isSelectable(target, drawDate, dateInfo.selectable, minDate, maxDate);
 				days += this._prepare(renderer.day, inst).replace(/\{day\}/g,
-					(selectable ? '<a href="javascript:void(0)"' : '<span') +
+					(selectable ? '<a href="javascript:void(0)"' : '<a') +
 					' class="jd' + jd + ' ' + (dateInfo.dateClass || '') +
 					(selected && (selectOtherMonths || drawDate.month() == month) ?
 					' ' + renderer.selectedClass : '') +
@@ -1473,7 +1475,7 @@ $.extend(CalendarsPicker.prototype, {
 					(dateInfo.title || drawDate.formatDate(dayStatus)) + '"' : '') + '>' +
 					(showOtherMonths || drawDate.month() == month ?
 					dateInfo.content || inst.get('translateNumberFunction')(drawDate.day()) : '&nbsp;') +
-					(selectable ? '</a>' : '</span>'));
+					(selectable ? '</a>' : '</a>'));
 				drawDate.add(1, 'd');
 				jd++;
 			}
@@ -1485,7 +1487,7 @@ $.extend(CalendarsPicker.prototype, {
 			monthHeader[0].substring(13, monthHeader[0].length - 1));
 		monthHeader = (first ? this._generateMonthSelection(
 			inst, year, month, minDate, maxDate, monthHeader, calendar, renderer) :
-			calendar.formatDate(monthHeader, calendar.newDate(year, month, calendar.minDay)));
+			calendar.formatDate('MM ', calendar.newDate(year, month, calendar.minDay)) + inst.get('translateNumberFunction')(year));
 		var weekHeader = this._prepare(renderer.weekHeader, inst).
 			replace(/\{days\}/g, this._generateDayHeaders(inst, calendar, renderer));
 		return this._prepare(renderer.month, inst).replace(/\{monthHeader(:[^\}]+)?\}/g, monthHeader).

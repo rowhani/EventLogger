@@ -39,6 +39,10 @@ urlpatterns = patterns('',
     url(r'^$', index_view, name='index'),
     url(r'^calendar$', calendar_view, name='calendar'),
     
+    # search
+    url(r'^search$', search_view, name='search'),
+    url(r'^search/json/$', SearchResultJson.as_view(), name='search_result_json'),
+    
     # events
     url(r'^event$', list_event_view, name='list_event'),
     url(r'^event/json/$', EventListJson.as_view(), name='list_event_json'),

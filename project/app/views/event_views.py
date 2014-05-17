@@ -136,7 +136,7 @@ class EventListJson(BaseDatatableView):
                     </a>
                 </div>""" % {
                     "detail_url": reverse('detail_event', args=[row.id]),
-                    "photo": ('<img src="%sexternal-assets/event-images/%s"/>' % (settings.STATIC_URL, row.photo)).encode('utf-8', 'ignore') if row.photo else '<img src="%simages/unknown.png"/>' % settings.STATIC_URL
+                    "photo": ('<img src="%sexternal-assets/event-images/%s"/>' % (settings.STATIC_URL, row.photo)).encode('utf-8', 'ignore') if row.photo else '<span class="fa fa-picture-o fa-3x"></span>'
                 }
             if self.request.user.is_authenticated():  
                 resp += """

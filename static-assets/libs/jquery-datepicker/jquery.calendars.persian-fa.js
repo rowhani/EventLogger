@@ -10,7 +10,7 @@
 		monthNamesShort: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
 		'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
 		dayNames: ['يک شنبه', 'دوشنبه', 'سه شنبه', 'چهار شنبه', 'پنج شنبه', 'جمعه', 'شنبه'],
-		dayNamesShort: ['يک', 'دو', 'سه', 'چهار', 'پنج', 'جمعه', 'شنبه'],
+		dayNamesShort: ['يک شنبه', 'دوشنبه', 'سه شنبه', 'چهار شنبه', 'پنج شنبه', 'جمعه', 'شنبه'],
 		dayNamesMin: ['ي', 'د', 'س', 'چ', 'پ', 'ج', 'ش'],
 		dateFormat: 'yyyy/mm/dd', // See format options on BaseCalendar.formatDate
 		firstDay: 6, // The first day of the week, Sun = 0, Mon = 1, ...

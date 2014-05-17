@@ -1,0 +1,207 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}جستجو{% endblock %}
+
+{% block header %}<span class="glyphicon glyphicon-search"></span> جستجو{% endblock %}
+	
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker.css" />
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/redmond.calendars.picker.css"/>
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-datatables/css/dataTables.bootstrap.css"/>
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip.min.css"/>
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip-blue.min.css"/>	
+	<style>
+		table thead {
+			display: none;
+		}
+		table td {
+			border-top: 0!important;
+			padding-bottom: 20px!important;
+		}
+		.bottom {
+			margin-top: 20px;			
+		}
+		.dropdown-menu {
+			padding: 5px 0!important;
+		}
+		.dropdown-menu li {
+			padding: 0 10px!important;
+		}
+		.dropdown-menu li input {
+			margin: 5px 0!important;
+		}
+	</style>
+{% endblock %}
+
+{% block content %}
+	<form id="search_from" action="{% url 'search' %}" method="get">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="input-group input-group-lg">
+					<div class="input-group-btn">
+						<button type="submit" class="btn btn-primary" title="جستجو"><span class="fa fa-search"></span></button>
+						<button type="button" class="btn btn-primary dropdown-toggle" title="جستجوی پیشرفته" data-toggle="dropdown" style="padding-left: 5px; padding-right: 5px;"><span class="caret"></span></button>
+						<ul class="dropdown-menu well well-sm shadowable-inverse query-parts" role="menu" style="width:420px">
+							<li><input id="subject" name="subject" class="form-control" value="{{ subject }}" placeholder="موضوع رویداد" title="موضوع رویداد"/></li>
+							<li><input id="location" name="location" class="form-control" value="{{ location }}" placeholder="مکان وقوع" title="مکان وقوع"/></li>
+							<li><input id="description" name="description" class="form-control" value="{{ description }}" placeholder="شرح رویداد" title="شرح رویداد"/></li>
+							<li><input id="actions_taken" name="actions_taken" class="form-control" value="{{ actions_taken }}" placeholder="اقدامات انجام شده" title="اقدامات انجام شده"/></li>
+						</ul>
+					</div>
+					<input id="query" name="query" type="text" class="form-control" value="{{ query }}" placeholder="کلمه ی مورد نظر (پیش فرض: همه ی رویداد ها)" title="کلمه ی مورد نظر (پیش فرض: همه ی رویداد ها)">
+				</div>
+			</div>
+		</div>
+		<br/>
+		<div class="row">	
+			<div class="col-lg-6">
+				<input id="date_range" name="date_range" type="text" value="{{ date_range }}" class="form-control" placeholder="بازه ی زمانی (پیش فرض: از ابتدا تا امروز)" title="بازه ی زمانی (پیش فرض: از ابتدا تا امروز)"/>
+			</div>		
+			<div class="col-lg-6">
+				<select id="status" name="status[]" multiple="multiple" class="form-control" data-role="chosen" placeholder="وضعیت رویداد ها" title="وضعیت رویداد ها">
+					<option value="public" selected="selected">رویداد های آشکار</option>
+					<option value="hidden" selected="selected">رویداد های مخفی</option>
+					<option value="unconfirmed">رویداد های تایید نشده</option>
+				</select>
+			</div>
+		</div>
+		<br/>
+		<div class="row">
+			<div class="col-lg-6">
+				<select id="tags" name="tags[]" multiple="multiple" class="form-control" data-role="chosen" placeholder="دسته ها (پیش فرض: همه ی دسته ها)" title="دسته ها (پیش فرض: همه ی دسته ها)">
+					{% for tag in all_tags %}
+						<option value="{{ tag.id }}">{{ tag }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="col-lg-6">
+				<select id="persons" name="persons[]" multiple="multiple" class="form-control" data-role="chosen" placeholder="اشخاص مرتبط (پیش فرض: همه ی اشخاص)" title="اشخاص مرتبط (پیش فرض: همه ی اشخاص)">
+					{% for person in all_persons %}
+						<option value="{{ person.id }}">{{ person }}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+		<br/>
+		<div class="row">
+			<div class="col-lg-6">
+				<select id="type" name="type" class="form-control" title="وضعیت رویداد">
+					<option value="">رویداد های شخصی و عمومی</option>
+					<option value="personal">فقط رویداد های شخصی</option>
+					<option value="general">فقط رویداد های عمومی</option>
+				</select>		
+			</div>
+			<div class="col-lg-6">
+				<select id="stage" name="stage" class="form-control" title="مرحله ی پیشروی رویداد">
+					<option value="">رویداد های جاری و پایان یافته</option>
+					<option value="current">فقط رویداد های جاری</option>
+					<option value="finished">فقط رویداد های پایان یافته</option>
+				</select>		
+			</div>
+		</div>		
+	</form>
+	<hr/>
+	{% if query or tags or persons or date_range or type or stage or subject or location or description or actions_taken %}
+		<div class="panel panel-primary shadowable-primary">
+			<div class="panel-heading">نتایج جستجو: <span id="results_count"></span> رویداد</div>
+			<div class="panel-body">
+				<table id="results" class="table" cellspacing="0" width="100%">
+					<thead>
+						<tr><th></th></tr>
+					<thead>
+				</table>
+			</div>
+		</div>
+	{% else %}
+		<p class="alert alert-info">فیلد های بالا را می توانید برای جستجوی پیشرفته پر کنید.</p>
+	{% endif %}
+  
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.plus.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker-fa.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian-fa.js"></script>
+	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/jquery.dataTables.min.js"></script>	
+	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/dataTables.bootstrap.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-powertip/jquery.powertip.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$("#date_range").calendarsPicker({
+				changeMonth: true,
+				changeYear: true,
+				dateFormat: 'yyyy/mm/dd',
+				yearRange: '1350:1450',
+				rangeSelect: true,
+				//monthsToShow: 2,
+				calendar: $.calendars.instance('persian', 'fa'),
+				alignment: 'bottomRight',
+				showAnim: 'fadeIn',
+				translateNumberFunction: function(num) { return num; }
+			});
+			
+			var dt = $('#results').dataTable({
+				"sDom": '<"top">rt<"clearfix"><"bottom"<"text-center"p>><"clear">',
+				"iDisplayLength": 20,
+				"oLanguage": {
+					"sInfo": "نمایش صفحه _PAGE_ از _PAGES_",
+					"sLoadingRecords": "در حال بارگذاری...",
+					"sProcessing": "در حال پردازش...",
+					"sEmptyTable": '<p class="alert alert-warning">هیچ رویدادی پیدا نشد.</p>',
+					"oPaginate": {
+						"sNext": "بعدی",
+						"sFirst": "اول",
+						"sPrevious": "قبلی",
+						"sLast": "آخر"						
+					}
+				},
+				"bSort": false,
+				"bProcessing": true,
+				"bServerSide": true,
+				"sAjaxSource": "{% url 'search_result_json' %}",
+				"fnServerParams": function (aoData) {					
+					var filters = $("#search_from :input").serializeArray();
+					$.each(filters, function() {
+					  aoData.push(this);
+					});
+				},
+				"fnServerData": function (sSource, aoData, fnCallback) {
+					$.getJSON(sSource, aoData, function (json) { 
+					   fnCallback(json)
+					})
+					.success(function(data) {
+						$("#results_count").text(data["iTotalRecords"]);
+					})
+				}
+			});
+
+			$("#type").val("{{ type }}");
+			$("#stage").val("{{ stage }}");
+			$("#status").val({{ status_json|safe }}).trigger("chosen:updated");
+			$("#tags").val({{ tags_json|safe }}).trigger("chosen:updated");
+			$("#persons").val({{ persons_json|safe }}).trigger("chosen:updated");
+			
+			$('.dropdown-menu').find('*').click(function (e) {
+				e.stopPropagation();
+			});
+			
+			$(":input, .chosen-container").powerTip({smartPlacement: true});
+			
+			$("#query").keyup(function () {
+				$(".query-parts input").val("");
+			});
+			
+			$(".query-parts input").keyup(function () {
+				$("#query").val("");
+			});
+			
+						$('.dropdown-toggles').click(function() {
+$(this).next('.dropdown-menu').slideToggle(200);
+return true
+});
+		});
+	</script>
+{% endblock %}

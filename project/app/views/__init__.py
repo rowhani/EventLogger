@@ -4,3 +4,4 @@ from error_views import *
 from event_views import *
 from person_views import *
 from tag_views import *
+from search_views import *

@@ -35,6 +35,19 @@ class Event(models.Model):
     @property
     def persons_string(self):
         return ", ".join([unicode(p) for p in self.persons.all()])
+        
+    @property
+    def truncated_description(self):
+        import re
+        s = re.sub(r'(<!--.*?-->|<[^>]*>)', '', self.description)
+        width = 300
+        if len(s) <= 300:
+            return s
+        else:
+            if s[width].isspace():
+                return s[0:width] + "...";
+            else:
+                return s[0:width].rsplit(None, 1)[0] + "..."
 
 class Person(models.Model):
     class Meta: db_table = "Person"

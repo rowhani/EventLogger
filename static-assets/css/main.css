@@ -261,10 +261,21 @@ input[type=checkbox]
 	box-shadow: 0 0 7px 3px rgba(138,109,59,1);
 }
 
+.shadowable-primary
+{
+	-webkit-box-shadow: 0 0 7px 3px rgba(66,139,202,1);
+	box-shadow: 0 0 7px 3px rgba(66,139,202,1);
+}
+
 .main-body
 {
 	padding: 15px 20px 0 20px;
 	
+}
+
+.thumbnail
+{
+	text-align: center;
 }
 
 .typeahead.dropdown-menu
@@ -285,7 +296,7 @@ input[type=checkbox]
 .dataTables_paginate,
 .dataTables_paginate *
 {
-	direction: ltr!important;
+	direction: rtl!important;
 	display: inline-flex;
 	margin: auto!important;
 	float: none!important;
@@ -334,22 +345,41 @@ input[type=checkbox]
 /* Full Calendar */
 
 .calendars,
-.calendars-month-row
+.calendars-month-row,
+.calendars-month
 {
 	width: 100%!important;
 }
 
 .calendars-cmd, 
-.calendars-month 
+.year-calendars-picker .calendars-month 
 {
 	width: 33.33333333%!important;
 	float: right!important;
-	padding: 0px!important;
+	padding: 0!important;
+}
+
+.month-calendars-picker .calendars-month 
+{
+	width: 100%!important;
+	padding: 0!important;
+}
+
+.month-calendars-picker .calendars-month a,
+.month-calendars-picker .calendars-month td 
+{
+	line-height: 100px!important;
 }
 
 .calendars-cmd 
 {
 	padding: 0 5px!important;
+}
+
+.calendars-cmd-clear,
+.calendars-cmd-close
+{
+	width: 50%!important;
 }
 
 .calendars-nav, .calendars-ctrl 
@@ -362,7 +392,103 @@ input[type=checkbox]
 .calendars-month-header select, 
 .calendars-month-header input 
 {
-	line-height: 20px!important;
+	line-height: 25px!important;
+	font-size: 14px!important;
+	height: 25px!important;
+}
+
+select.calendars-month-year 
+{
+	width: 70px!important;
+}
+
+.calendars-popup
+{
+	width: 250px!important;
+}
+
+/* Search Results */
+
+.event-subject 
+{
+	margin: 0px;
+}
+
+.event-subject  a
+{
+	font-size: 18px;
+	color: rgb(26, 13, 171);
+	font-weight: bold;	
+	font-family: arial, sans-serif;
+}
+
+.event-date 
+{
+	color: #808080;
+	line-height: 1.4;
+	font-size: 13px;
+	font-family: arial,sans-serif;
+}
+
+.event-description 
+{
+	line-height: 1.4;
+	word-wrap: break-word;
+	color: #333;
+	font-size: 13px;
+	font-family: arial,sans-serif;
+}
+
+/* Dropdown Sliding */
+
+.open > .dropdown-menu 
+{
+  -webkit-transform: scale(1, 1);
+  transform: scale(1, 1);  
+  
+}
+.open > .dropdown-menu li a 
+{
+  color: #000;  
+}
+.dropdown-menu li a
+{
+  color: #fff;
+}
+.dropdown-menu 
+{
+  -webkit-transform-origin: top;
+  transform-origin: top;
+  -webkit-animation-fill-mode: forwards;  
+  animation-fill-mode: forwards; 
+  -webkit-transform: scale(1, 0);
+  display: block;
+  
+  transition: all 0.2s ease-out;
+  -webkit-transition: all 0.2s ease-out;
+}
+.dropup .dropdown-menu 
+{
+  -webkit-transform-origin: bottom;
+  transform-origin: bottom;  
+}
+ 
+.navbar .nav > li > .dropdown-menu:after
+ {
+ 
+}
+.dropup > .dropdown-menu:after 
+{
+  border-bottom: 0;
+  border-top: 6px solid rgba(39, 45, 51, 0.9);
+  top: auto;
+  display: inline-block;
+  bottom: -6px;
+  content: '';
+  position: absolute;
+  left: 50%;
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
 }
 
 /* Sticky Footer */

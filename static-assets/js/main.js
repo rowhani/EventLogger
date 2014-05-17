@@ -58,7 +58,7 @@ $(document).ready(function() {
 	
 	$("[data-role=chosen]:visible").livequery(function() {
 		$(this).addClass("chosen-rtl").chosen({
-			placeholder_text: "انتخاب کنید...",
+			placeholder_text: $(this).attr("placeholder") || "انتخاب کنید...",
 			no_results_text: "هیچ گزینه ای یافت نشد مطابق",
 			width: $(this).attr("data-width")? $(this).attr("data-width") + "!important": "100%"
 		});
