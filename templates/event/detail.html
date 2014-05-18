@@ -144,7 +144,8 @@
 				<div class="panel-body">	
 					{% if event.tags.all %}
 						{% for item in event.tags.all %}
-							<a href="/tag/{{ item.id }}">{{ item.name }}</a>{% if not forloop.last %},{% endif %}
+							<a href="{% url 'search' %}?tags[]={{ item.id }}">{{ item.name }}</a>
+							{% if not forloop.last %},{% endif %}
 						{% endfor %}
 					{% else %}
 						هیچ دسته ای ثبت نشده است.

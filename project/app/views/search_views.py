@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import jdatetime
 from django.views.generic import TemplateView
 from django.template import RequestContext
 from django.shortcuts import redirect, render_to_response, get_object_or_404
@@ -9,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.conf import settings
+from django.db.models import Q
 
 from app.models import *
     
@@ -33,7 +35,7 @@ def search_view(request, *args, **kwargs):
     
     all_persons = Person.objects.all()
     persons_json = json.dumps(persons)
-    
+        
     status_json = json.dumps(status)
         
     return render_to_response('search.html', locals(), context_instance = RequestContext(request))    
@@ -59,7 +61,7 @@ class SearchResultJson(BaseDatatableView):
             resp += """
                 <div class="col-lg-11">
                     <h4 class="event-subject"><a href="%(detail_url)s">%(subject)s</a></h4>
-                    <span class="event-date convert-date">%(date)s</span> در <span class="event-date">%(location)s</span> - 
+                    <span class="event-date convert-date">%(date)s</span> در <strong class="event-date">%(location)s</strong> - 
                     <span class="event-description">%(description)s</span>
                 </div>""" % {
                     "detail_url": reverse('detail_event', args=[row.id]),
@@ -74,7 +76,7 @@ class SearchResultJson(BaseDatatableView):
         query = self.request.GET.get('query', '')
         tags = self.request.GET.getlist('tags[]')
         persons = self.request.GET.getlist('persons[]')
-        status = self.request.GET.getlist('status[]')
+        status = self.request.GET.getlist('status[]') 
         date_range = self.request.GET.get('date_range', '')
         type = self.request.GET.get('type', '')
         stage = self.request.GET.get('stage', '')
@@ -83,6 +85,35 @@ class SearchResultJson(BaseDatatableView):
         description = self.request.GET.get('description', '')
         actions_taken = self.request.GET.get('actions_taken', '')
         if subject or location or description or actions_taken: query = ''
+                
+        if status: qs = qs.filter(status__in=status)
+        
+        if tags: qs = qs.filter(tags__in=tags)  
+        
+        if persons: qs = qs.filter(persons__in=persons)
+        
+        if type == 'personal': qs = qs.exclude(persons=None)
+        elif type == 'general': qs = qs.filter(persons=None)
+        
+        if stage == 'finished': qs = qs.exclude(date_ended=None)
+        elif stage == 'current': qs = qs.filter(date_ended=None)
+        
+        try:
+            dates = [jdatetime.datetime.strptime(date.strip(), '%Y/%m/%d').togregorian() for date in date_range.split("-")]
+            dates.sort()
+            qs = qs.filter(date_happened__gte=dates[0], date_happened__lte=dates[1])
+        except:
+            pass
+        
+        if query:
+            qs = qs.filter(Q(subject__icontains=query)|Q(location__icontains=query)|Q(description__icontains=query)|Q(actions_taken__icontains=query))
+            #qs = qs.extra(where=["subject like '%%%(query)s%%' or location like '%%%(query)s%%' or description like '%%%(query)s%%' or actions_taken like '%%%(query)s%%'" % {"query": query}])
+        else:
+            if subject: qs = qs.filter(subject__icontains=subject)
+            if location: qs = qs.filter(location__icontains=location)
+            if description: qs = qs.filter(description__icontains=description)
+            if actions_taken: qs = qs.filter(actions_taken__icontains=actions_taken)
+        
         return qs
         
     def get_initial_queryset(self):

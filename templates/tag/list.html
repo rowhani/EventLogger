@@ -15,7 +15,7 @@
 		<ul class="list-group">					
 			{% for tag in tags %}
 				<li class="list-group-item">
-					<span class="fa fa-tag"></span> <a href="/search/tags/{{tag.name}}">{{ tag }}</a>
+					<span class="fa fa-tag"></span> <a href="{% url 'search' %}?tags[]={{ tag.id }}">{{ tag }}</a>
 					{% if request.user.is_authenticated %}
 						<a class="btn btn-success btn-xs" title="ویرایش" href="{% url 'edit_tag' tag.id %}" data-toggle="modal">
 							<span class="glyphicon glyphicon-edit"></span>

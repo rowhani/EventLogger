@@ -8,6 +8,16 @@ function convert_to_jalali(date, format) {
 	return $.datepicker.formatDate(format, new JalaliDate(new Date(date)))
 }
 
+function select_items_for_dropdown(dropdown_selector, items) {
+	dropdown = $(dropdown_selector);
+	$.each(items, function(i, v) {	
+		dropdown.find("option[value=" + v + "]").attr("selected", "selected");		
+	});
+	if (dropdown.hasClass("chosen") || dropdown.hasClass("chosen-rtl")) {
+		dropdown.trigger("chosen:updated");
+	}
+}
+
 $(document).ready(function() {
 	var link_id = ($("#top-nav-links").data("active-link-id") || "home") + "-link";
 	$("li#" + link_id).addClass("active");

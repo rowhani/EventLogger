@@ -12,7 +12,7 @@
 
 {% block title %}رویداد ها{% endblock %}
 
-{% block header %}<span class="glyphicon glyphicon-list"></span> رویداد ها{% endblock %}
+{% block header %}<span class="glyphicon glyphicon-list"></span> رویداد ها <small>(مجموع: <span id="events_count">0</span>)</small>{% endblock %}
 
 {% block content %}	
 	<a class="btn btn-primary pull-right" href="{% url 'add_event' %}" style="margin-bottom: 5px"><span class="glyphicon glyphicon-plus"></span>
@@ -85,6 +85,9 @@
 					$.each(filters, function() {
 					  aoData.push(this);
 					});
+				},
+				"drawCallback": function( settings ) {
+					$("#events_count").text(settings._iRecordsTotal);
 				}
 			});	
 			

@@ -12,7 +12,7 @@
 
 {% block title %}اشخاص{% endblock %}
 
-{% block header %}<span class="fa fa-users"></span> اشخاص{% endblock %}
+{% block header %}<span class="fa fa-users"></span> اشخاص <small>(مجموع: <span id="persons_count">0</span>)</small>{% endblock %}
 
 {% block content %}	
 	{% if request.user.is_authenticated %}
@@ -83,6 +83,9 @@
 					$.each(filters, function() {
 					  aoData.push(this);
 					});
+				},
+				"drawCallback": function( settings ) {
+					$("#persons_count").text(settings._iRecordsTotal);
 				}
 			});	
 			

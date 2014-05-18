@@ -11,10 +11,10 @@
 	<link rel="stylesheet" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip.min.css"/>
 	<link rel="stylesheet" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip-blue.min.css"/>	
 	<style>
-		table thead {
+		table#results thead {
 			display: none;
 		}
-		table td {
+		table#results td {
 			border-top: 0!important;
 			padding-bottom: 20px!important;
 		}
@@ -59,8 +59,8 @@
 			</div>		
 			<div class="col-lg-6">
 				<select id="status" name="status[]" multiple="multiple" class="form-control" data-role="chosen" placeholder="وضعیت رویداد ها" title="وضعیت رویداد ها">
-					<option value="public" selected="selected">رویداد های آشکار</option>
-					<option value="hidden" selected="selected">رویداد های مخفی</option>
+					<option value="public">رویداد های آشکار</option>
+					<option value="hidden">رویداد های مخفی</option>
 					<option value="unconfirmed">رویداد های تایید نشده</option>
 				</select>
 			</div>
@@ -85,7 +85,7 @@
 		<br/>
 		<div class="row">
 			<div class="col-lg-6">
-				<select id="type" name="type" class="form-control" title="وضعیت رویداد">
+				<select id="type" name="type" class="form-control" title="نوع رویداد">
 					<option value="">رویداد های شخصی و عمومی</option>
 					<option value="personal">فقط رویداد های شخصی</option>
 					<option value="general">فقط رویداد های عمومی</option>
@@ -130,6 +130,17 @@
 	<script src="{{ STATIC_URL }}libs/jquery-powertip/jquery.powertip.min.js"></script>
 	<script>
 		$(document).ready(function() {
+			$("#type").val("{{ type }}");
+			$("#stage").val("{{ stage }}");
+			select_items_for_dropdown("#tags", {{ tags_json|safe }});
+			select_items_for_dropdown("#persons", {{ persons_json|safe }});
+			if ({{ status_json|safe }}.length) {
+				select_items_for_dropdown("#status", {{ status_json|safe }});
+			}
+			else {
+				select_items_for_dropdown("#status", ['public', 'hidden']);
+			}
+			
 			$("#date_range").calendarsPicker({
 				changeMonth: true,
 				changeYear: true,
@@ -150,7 +161,8 @@
 					"sInfo": "نمایش صفحه _PAGE_ از _PAGES_",
 					"sLoadingRecords": "در حال بارگذاری...",
 					"sProcessing": "در حال پردازش...",
-					"sEmptyTable": '<p class="alert alert-warning">هیچ رویدادی پیدا نشد.</p>',
+					"sEmptyTable": '<p class="alert alert-warning">هیچ رویدادی ثیت نشده است.</p>',
+					"sZeroRecords": '<p class="alert alert-warning">هیچ رویدادی یافت نشد.</p>',
 					"oPaginate": {
 						"sNext": "بعدی",
 						"sFirst": "اول",
@@ -162,33 +174,28 @@
 				"bProcessing": true,
 				"bServerSide": true,
 				"sAjaxSource": "{% url 'search_result_json' %}",
-				"fnServerParams": function (aoData) {					
+				"fnServerParams": function (aoData) {	
 					var filters = $("#search_from :input").serializeArray();
 					$.each(filters, function() {
-					  aoData.push(this);
+						aoData.push(this);
 					});
 				},
-				"fnServerData": function (sSource, aoData, fnCallback) {
-					$.getJSON(sSource, aoData, function (json) { 
-					   fnCallback(json)
-					})
-					.success(function(data) {
-						$("#results_count").text(data["iTotalRecords"]);
-					})
+				"drawCallback": function( settings ) {
+					$("#results_count").text(settings._iRecordsDisplay);
+					if (!settings._iRecordsDisplay) {
+						$(".bottom").hide();
+					}
+					else {
+						$(".bottom").show();
+					}
 				}
 			});
-
-			$("#type").val("{{ type }}");
-			$("#stage").val("{{ stage }}");
-			$("#status").val({{ status_json|safe }}).trigger("chosen:updated");
-			$("#tags").val({{ tags_json|safe }}).trigger("chosen:updated");
-			$("#persons").val({{ persons_json|safe }}).trigger("chosen:updated");
 			
 			$('.dropdown-menu').find('*').click(function (e) {
 				e.stopPropagation();
 			});
 			
-			$(":input, .chosen-container").powerTip({smartPlacement: true});
+			$(":input, .chosen-container").powerTip({placement: 'ne', smartPlacement: true});
 			
 			$("#query").keyup(function () {
 				$(".query-parts input").val("");
@@ -196,12 +203,7 @@
 			
 			$(".query-parts input").keyup(function () {
 				$("#query").val("");
-			});
-			
-						$('.dropdown-toggles').click(function() {
-$(this).next('.dropdown-menu').slideToggle(200);
-return true
-});
+			});			
 		});
 	</script>
 {% endblock %}
