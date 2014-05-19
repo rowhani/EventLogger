@@ -1,11 +1,13 @@
 ﻿from django.db import models
 import jdatetime
+import re
 
 class Event(models.Model):
     class Meta: db_table = "Event"
-    subject = models.CharField(max_length=200)
+    subject = models.CharField(max_length=200, db_index=True)
     description = models.TextField()
-    location = models.CharField(max_length=1000)
+    description_raw = models.TextField(db_index=True, null=True, blank=True)
+    location = models.CharField(max_length=1000, db_index=True)
     date_happened = models.DateTimeField()
     date_ended = models.DateTimeField(null=True, blank=True)
     photo = models.CharField(max_length=1000, null=True, blank=True)
@@ -18,6 +20,10 @@ class Event(models.Model):
     def __unicode__(self):
         return "%s (%s)" % (self.subject, self.location)
         
+    def save(self, *args, **kwargs):
+        self.description_raw = re.sub(r'(<!--.*?-->|<[^>]*>)', '', self.description)
+        super(Event, self).save(*args, **kwargs)
+        
     @property
     def jalali_date_happened(self):
         try: return jdatetime.date.fromgregorian(date=self.date_happened.date())
@@ -27,28 +33,7 @@ class Event(models.Model):
     def jalali_date_ended(self):
         try: return jdatetime.date.fromgregorian(date=self.date_ended.date())
         except: return self.date_ended
-        
-    @property
-    def tags_string(self):
-        return ", ".join([unicode(t) for t in self.tags.all()])
-        
-    @property
-    def persons_string(self):
-        return ", ".join([unicode(p) for p in self.persons.all()])
-        
-    @property
-    def truncated_description(self):
-        import re
-        s = re.sub(r'(<!--.*?-->|<[^>]*>)', '', self.description)
-        width = 300
-        if len(s) <= 300:
-            return s
-        else:
-            if s[width].isspace():
-                return s[0:width] + "...";
-            else:
-                return s[0:width].rsplit(None, 1)[0] + "..."
-
+ 
 class Person(models.Model):
     class Meta: db_table = "Person"
     first_name = models.CharField(max_length=200)

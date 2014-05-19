@@ -1,5 +1,6 @@
 ﻿import os
 import uuid
+import re
 import jdatetime
 from django.http import HttpResponse
 
@@ -35,3 +36,56 @@ def save_request_file(destination, request_file):
     
 def close_modal(reload_url = "/"):
     return HttpResponse("<script>window.location='%s'; window.location.reload()</script>" % reload_url)
+    
+def get_keywords(query):
+    split_pattern = re.compile('("[^"]+"|\'[^\']+\'|\S+)')
+    remove_inter_spaces_pattern = re.compile('[\s]{2,}')
+    return [remove_inter_spaces_pattern.sub(' ', t.strip(' "\'')) for t in split_pattern.findall(query.strip()) if len(t.strip(' "\'')) > 0]
+    
+def get_truncated_text(sentence, keeped_words, suffix="...", boundry_letters_count=60):
+    sentence = sentence.strip()
+    try:
+        if not keeped_words:
+            width = boundry_letters_count * 2
+            if len(sentence) <= width:
+                return sentence
+            else:
+                if sentence[width].isspace():
+                    return sentence[0:width] + suffix;
+                else:
+                    return sentence[0:width].rsplit(None, 1)[0] + suffix
+        else:   
+            ranges = []
+            for kw in keeped_words:
+                index = sentence.find(kw)
+                if index != -1: ranges.append([max(index - boundry_letters_count, 0), min(index + boundry_letters_count, len(sentence))])
+            ranges.sort(key=lambda r: r[0])
+
+            if len(ranges) > 1:
+                merged_ranges = []
+                min_index, max_index = ranges[0]
+                ranges = ranges[1:]
+                for i, (min_r, max_r) in enumerate(ranges):
+                    if min_r <= max_index:
+                        max_index = max_r
+                        if i == len(ranges) - 1: merged_ranges.append([min_index, max_index])
+                    else:
+                        merged_ranges.append([min_index, max_index])
+                        min_index = min_r
+                        max_index = max_r
+            else:
+                merged_ranges = ranges
+                                        
+            result = suffix if merged_ranges[0][0] != 0 else ''
+            for min_r, max_r in merged_ranges:
+                if not sentence[min_r].isspace():
+                    mm = sentence[min_r:max_r].find(' ')
+                    if mm != -1: min_r = min_r + mm + 1
+                if not sentence[max_r].isspace():
+                    mm = sentence[min_r:max_r].rfind(' ')
+                    if mm != -1: max_r = min_r + mm
+                result += sentence[min_r:max_r]
+                if max_r != len(sentence): result += suffix
+            return result
+    except:
+        return sentence

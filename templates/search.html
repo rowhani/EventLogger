@@ -45,7 +45,6 @@
 							<li><input id="subject" name="subject" class="form-control" value="{{ subject }}" placeholder="موضوع رویداد" title="موضوع رویداد"/></li>
 							<li><input id="location" name="location" class="form-control" value="{{ location }}" placeholder="مکان وقوع" title="مکان وقوع"/></li>
 							<li><input id="description" name="description" class="form-control" value="{{ description }}" placeholder="شرح رویداد" title="شرح رویداد"/></li>
-							<li><input id="actions_taken" name="actions_taken" class="form-control" value="{{ actions_taken }}" placeholder="اقدامات انجام شده" title="اقدامات انجام شده"/></li>
 						</ul>
 					</div>
 					<input id="query" name="query" type="text" class="form-control" value="{{ query }}" placeholder="کلمه ی مورد نظر (پیش فرض: همه ی رویداد ها)" title="کلمه ی مورد نظر (پیش فرض: همه ی رویداد ها)">
@@ -128,6 +127,7 @@
 	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/jquery.dataTables.min.js"></script>	
 	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/dataTables.bootstrap.js"></script>
 	<script src="{{ STATIC_URL }}libs/jquery-powertip/jquery.powertip.min.js"></script>
+	<script src="{{ STATIC_URL }}js/jquery.highlight.js"></script>
 	<script>
 		$(document).ready(function() {
 			$("#type").val("{{ type }}");
@@ -188,6 +188,9 @@
 					else {
 						$(".bottom").show();
 					}
+					$(".event-subject").highlight({{ subject_keywords|safe }}, {className: 'highlighted' });
+					$(".event-location").highlight({{ location_keywords|safe }}, {className: 'highlighted' });
+					$(".event-description").highlight({{ description_keywords|safe }}, {className: 'highlighted' });
 				}
 			});
 			
@@ -203,7 +206,7 @@
 			
 			$(".query-parts input").keyup(function () {
 				$("#query").val("");
-			});			
+			});	
 		});
 	</script>
 {% endblock %}

@@ -407,6 +407,12 @@ select.calendars-month-year
 	width: 250px!important;
 }
 
+.highlighted
+{
+	font-weight: bold;
+	background-color: #FFFF00;
+}
+
 /* Search Results */
 
 .event-subject 
@@ -422,6 +428,7 @@ select.calendars-month-year
 	font-family: arial, sans-serif;
 }
 
+.event-location,
 .event-date 
 {
 	color: #808080;

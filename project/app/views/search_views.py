@@ -3,6 +3,7 @@
 
 import json
 import jdatetime
+import re
 from django.views.generic import TemplateView
 from django.template import RequestContext
 from django.shortcuts import redirect, render_to_response, get_object_or_404
@@ -13,6 +14,7 @@ from django.conf import settings
 from django.db.models import Q
 
 from app.models import *
+from app.utils import *
     
 def search_view(request, *args, **kwargs):
     active_link_id = "search"
@@ -27,8 +29,7 @@ def search_view(request, *args, **kwargs):
     subject = request.GET.get('subject', '')
     location = request.GET.get('location', '')
     description = request.GET.get('description', '')
-    actions_taken = request.GET.get('actions_taken', '')
-    if subject or location or description or actions_taken: query = ''
+    if subject or location or description: query = ''
     
     all_tags = Tag.objects.all()
     tags_json = json.dumps(tags)
@@ -37,6 +38,10 @@ def search_view(request, *args, **kwargs):
     persons_json = json.dumps(persons)
         
     status_json = json.dumps(status)
+    
+    subject_keywords = json.dumps(get_keywords(subject or query))
+    description_keywords = json.dumps(get_keywords(description or query))
+    location_keywords = json.dumps(get_keywords(location or query))
         
     return render_to_response('search.html', locals(), context_instance = RequestContext(request))    
     
@@ -47,6 +52,7 @@ class SearchResultJson(BaseDatatableView):
     
     def render_column(self, row, column):  
         if column == 'all':
+            query = self.request.GET.get('description', '') or self.request.GET.get('query', '')
             resp = """
                 <div class="col-lg-1">
                     <a href="%(detail_url)s">
@@ -61,17 +67,17 @@ class SearchResultJson(BaseDatatableView):
             resp += """
                 <div class="col-lg-11">
                     <h4 class="event-subject"><a href="%(detail_url)s">%(subject)s</a></h4>
-                    <span class="event-date convert-date">%(date)s</span> در <strong class="event-date">%(location)s</strong> - 
+                    <span class="event-date convert-date">%(date)s</span> در <strong class="event-location">%(location)s</strong> - 
                     <span class="event-description">%(description)s</span>
                 </div>""" % {
                     "detail_url": reverse('detail_event', args=[row.id]),
                     "subject": row.subject.encode('utf-8', 'ignore'),
                     "date": row.date_happened,
                     "location": row.location.encode('utf-8', 'ignore'),
-                    "description": row.truncated_description.encode('utf-8', 'ignore')
+                    "description": get_truncated_text(row.description_raw, get_keywords(query)).encode('utf-8', 'ignore')
                 }
             return resp
-    
+                
     def filter_queryset(self, qs):
         query = self.request.GET.get('query', '')
         tags = self.request.GET.getlist('tags[]')
@@ -83,8 +89,7 @@ class SearchResultJson(BaseDatatableView):
         subject = self.request.GET.get('subject', '')
         location = self.request.GET.get('location', '')
         description = self.request.GET.get('description', '')
-        actions_taken = self.request.GET.get('actions_taken', '')
-        if subject or location or description or actions_taken: query = ''
+        if subject or location or description: query = ''
                 
         if status: qs = qs.filter(status__in=status)
         
@@ -106,14 +111,26 @@ class SearchResultJson(BaseDatatableView):
             pass
         
         if query:
-            qs = qs.filter(Q(subject__icontains=query)|Q(location__icontains=query)|Q(description__icontains=query)|Q(actions_taken__icontains=query))
-            #qs = qs.extra(where=["subject like '%%%(query)s%%' or location like '%%%(query)s%%' or description like '%%%(query)s%%' or actions_taken like '%%%(query)s%%'" % {"query": query}])
+            keywords = get_keywords(query)
+            expr = Q()
+            for kw in keywords: expr = expr|Q(subject__icontains=kw)|Q(location__icontains=kw)|Q(description_raw__icontains=kw)
+            qs = qs.filter(expr)
         else:
-            if subject: qs = qs.filter(subject__icontains=subject)
-            if location: qs = qs.filter(location__icontains=location)
-            if description: qs = qs.filter(description__icontains=description)
-            if actions_taken: qs = qs.filter(actions_taken__icontains=actions_taken)
-        
+            if subject: 
+                keywords = get_keywords(subject)
+                expr = Q()
+                for kw in keywords: expr = expr|Q(subject__icontains=kw)
+                qs = qs.filter(expr)
+            if location: 
+                keywords = get_keywords(location)
+                expr = Q()
+                for kw in keywords: expr = expr|Q(location__icontains=kw)
+                qs = qs.filter(expr)
+            if description: 
+                keywords = get_keywords(description)
+                expr = Q()
+                for kw in keywords: expr = expr|Q(description_raw__icontains=kw)
+                qs = qs.filter(expr)
         return qs
         
     def get_initial_queryset(self):
