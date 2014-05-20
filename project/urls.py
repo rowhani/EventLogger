@@ -37,7 +37,10 @@ urlpatterns = patterns('',
     
     # single
     url(r'^$', index_view, name='index'),
+    
+    # single
     url(r'^calendar$', calendar_view, name='calendar'),
+    url(r'^calendar/json/$', calendar_monthly_events, name='calendar_events'),
     
     # search
     url(r'^search$', search_view, name='search'),

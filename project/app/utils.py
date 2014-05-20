@@ -42,7 +42,7 @@ def get_keywords(query):
     remove_inter_spaces_pattern = re.compile('[\s]{2,}')
     return [remove_inter_spaces_pattern.sub(' ', t.strip(' "\'')) for t in split_pattern.findall(query.strip()) if len(t.strip(' "\'')) > 0]
     
-def get_truncated_text(sentence, keeped_words, suffix="...", boundry_letters_count=60):
+def get_truncated_text(sentence, keeped_words=[], suffix="...", boundry_letters_count=60):
     sentence = sentence.strip()
     try:
         if not keeped_words:

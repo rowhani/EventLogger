@@ -7,6 +7,8 @@
 {% block head %}
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker.css" />
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/humanity.calendars.picker.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip.min.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip-orange.min.css"/>
 {% endblock %}
 
 {% block content %}
@@ -30,47 +32,87 @@
 	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian.min.js"></script>
 	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker-fa.js"></script>
 	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian-fa.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-powertip/jquery.powertip.min.js"></script>
 	<script>
-		$(document).ready(function() {  			
-			$('.year-calendars-picker').calendarsPicker({
-				monthsToShow: [4, 3], 
-				changeMonth: true,
-				changeYear: true,
-				selectOtherMonths: true,
-				yearRange: '1350:1450',				
-				monthsToStep: 12,
-				calendar: $.calendars.instance('persian', 'fa'),
-				defaultDate: convert_to_jalali(new Date(), 'yy/01/01'),
-				//monthsOffset: 6,
-			});
-
-			$('.month-calendars-picker').calendarsPicker({
-				changeMonth: true,
-				changeYear: true,
-				selectDefaultDate: true,
-				showOtherMonths: true,				
-				calendar: $.calendars.instance('persian', 'fa'),
-				onDate: function(date) {
-					//console.log(date.toJD(), $("a[class*='jd" + date.toJD() + "']").length);
-					return true;
-				},
-				onSelect: function(date) {
-					date = date[0];
-					//console.log(date.toJD(),$("a[class*='jd" + date.toJD() + "']").length);
-					console.log($.calendars.instance().fromJD(date.toJD()).toString());
-					window.location = '/search/date/' + $.calendars.instance().fromJD(date.toJD()).toString();
-				}
-			});				
+		$(document).ready(function() {
+			var monthlyCalendar = null;
+			var yearlyCalendar = null;
+			var searchUrl = "{% url 'search' %}";
 			
+			function loadEvents(calSelector, year, month, mode) {
+				ajaxIndicatorStart("{{ STATIC_URL }}images/ajax-loader.gif", "بارگذاری...");
+				$.getJSON("{% url 'calendar_events' %}?mode=" + mode + "&year=" + year + "&month=" + month, function(data) {
+					var cal = $.calendars.instance();
+					for(var date in data) {							
+						var jd = cal.parseDate("yyyy/mm/dd", date).toJD();
+						var el = $(calSelector).find("a[class*='jd" + jd + "']");
+						var events = data[date];
+						el.html(el.html() + '<span class="badge" style="margin-top: -15px; background: orange">' + events.length + '</span>');
+						var tooltipEl = $("<div>").addClass("tooltip");
+						$(events).each(function(i, v) {
+							var anchor = $('<h3>').append($("<a>").attr("href", v.url).text(v.subject));
+							tooltipEl.append(anchor);
+						});
+						el.livequery(function() {
+							$(this).attr("title", tooltipEl.html()).powerTip({
+								smartPlacement: true,
+								mouseOnToPopup: true
+							});
+						});
+					}
+					ajaxIndicatorStop();
+				});
+			}
+			
+			function goToDate(date) {
+				date = date._calendar.formatDate(date, "yyyy/mm/dd");
+				window.location = searchUrl + "?date_range=" + date + " - " + date;
+			}
+
 			$('#switch-calendar-month').click(function() {
+				if (!monthlyCalendar) {
+					$('.month-calendars-picker').calendarsPicker({
+						changeMonth: true,
+						changeYear: true,
+						selectDefaultDate: true,
+						showOtherMonths: true,				
+						calendar: $.calendars.instance('persian', 'fa'),
+						onChangeMonthYear: function(year, month) {
+							loadEvents(".month-calendars-picker", year, month, "montly");
+						},
+						onSelect: function(date) {
+							goToDate(date[0]);
+						}
+					});		
+				}
 				$('.year-calendars-picker').hide();
 				$('.month-calendars-picker').show()
-			}).trigger('click');		
+			});		
 			
 			$('#switch-calendar-year').click(function() {
+				if (!yearlyCalendar) {
+					$('.year-calendars-picker').calendarsPicker({
+						monthsToShow: [4, 3], 
+						changeMonth: true,
+						changeYear: true,
+						selectOtherMonths: true,
+						yearRange: '1350:1450',				
+						monthsToStep: 12,
+						calendar: $.calendars.instance('persian', 'fa'),
+						defaultDate: convert_to_jalali(new Date(), 'yy/01/01'),
+						onChangeMonthYear: function(year, month) {
+							loadEvents(".year-calendars-picker", year, month, "yearly");
+						},
+						onSelect: function(date) {
+							goToDate(date[0]);
+						}
+					});
+				}
 				$('.year-calendars-picker').show();
 				$('.month-calendars-picker').hide();
 			});
+			
+			$('#switch-calendar-month').trigger('click');
 		});
 	</script>
 {% endblock %}

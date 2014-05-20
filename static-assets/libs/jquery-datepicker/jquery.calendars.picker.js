@@ -696,6 +696,9 @@ $.extend(CalendarsPicker.prototype, {
 		if (inst) {
 			if (inst.inline || $.calendars.picker.curInst == inst) {
 				var onChange = inst.get('onChangeMonthYear');
+				if (!inst.drawDate) {
+					inst.drawDate = this._checkMinMax((inst.selectedDates[0] || inst.get('defaultDate') || inst.get('calendar').today()).newDate(), inst);
+				}
 				if (onChange && (!inst.prevDate || inst.prevDate.year() != inst.drawDate.year() ||
 						inst.prevDate.month() != inst.drawDate.month())) {
 					onChange.apply(target[0], [inst.drawDate.year(), inst.drawDate.month()]);

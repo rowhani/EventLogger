@@ -2,6 +2,8 @@
 import jdatetime
 import re
 
+from utils import *
+
 class Event(models.Model):
     class Meta: db_table = "Event"
     subject = models.CharField(max_length=200, db_index=True)
@@ -33,6 +35,10 @@ class Event(models.Model):
     def jalali_date_ended(self):
         try: return jdatetime.date.fromgregorian(date=self.date_ended.date())
         except: return self.date_ended
+        
+    @property
+    def truncated_description(self):
+        return get_truncated_text(self.description_raw, boundry_letters_count=150)
  
 class Person(models.Model):
     class Meta: db_table = "Person"
