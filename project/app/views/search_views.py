@@ -62,7 +62,7 @@ class SearchResultJson(BaseDatatableView):
                     </a>
                 </div>""" % {
                     "detail_url": reverse('detail_event', args=[row.id]),
-                    "photo": ('<img src="%sexternal-assets/event-images/%s"/>' % (settings.STATIC_URL, row.photo)).encode('utf-8', 'ignore') if row.photo else '<span class="fa fa-picture-o fa-lg"></span>' 
+                    "photo": ('<img src="%s%s"/>' % (settings.EVENT_IMAGES_URL, row.photo)).encode('utf-8', 'ignore') if row.photo else '<span class="fa fa-picture-o fa-lg"></span>' 
                 }
             resp += """
                 <div class="col-lg-11">

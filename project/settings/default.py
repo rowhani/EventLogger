@@ -9,7 +9,7 @@ TEMPLATE_DEBUG = DEBUG
 
 # Absolute paths for where the project and templates are stored.
 ABSOLUTE_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
-ABSOLUTE_TEMPLATES_PATH = '%s/templates' % ABSOLUTE_PROJECT_ROOT
+ABSOLUTE_TEMPLATES_PATH = '%s/templates' % os.path.join(ABSOLUTE_PROJECT_ROOT, "project")
 
 # add root directory to PYTHONPATH
 if not ABSOLUTE_PROJECT_ROOT in sys.path:
@@ -25,15 +25,23 @@ MEDIA_ROOT = '%s/media' % ABSOLUTE_PROJECT_ROOT
 
 # The URL that handles the media, static, etc.
 STATIC_URL = '/static/'
-MEDIA_URL = STATIC_URL + 'media/'
+MEDIA_URL = '/media/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
     '%s/static-assets' % ABSOLUTE_PROJECT_ROOT,
 )
 
+EVENT_IMAGES_DIR = '%s/event-images' % MEDIA_ROOT
+PERSON_IMAGES_DIR = '%s/person-images' % MEDIA_ROOT
+EVENT_ATTACHMENTS_DIR = '%s/event-attachments' % MEDIA_ROOT
+
+EVENT_IMAGES_URL = MEDIA_URL + 'event-images/'
+PERSON_IMAGES_URL = MEDIA_URL + 'person-images/'
+EVENT_ATTACHMENTS_URL = MEDIA_URL + 'event-attachments/'
+
 ADMINS = (
-    ('Your Name', 'artmansoft@yahoo.com'),
+    ('Payman Rowhani', 'artmansoft@yahoo.com'),
 )
 
 MANAGERS = ADMINS
@@ -134,6 +142,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # required by django-admin-tools
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
+    # custom
+    'project.app.processors.settings_context',
+    'project.app.processors.calendar_context',
+    'project.app.processors.recent_events_processor'
 )
 
 # APPS
@@ -172,11 +184,6 @@ LOCAL_APPS = (
 # the order is important!
 INSTALLED_APPS = ADMIN_TOOL_APPS + CORE_APPS + LOCAL_APPS + EXTERNAL_APPS
 
-EVENT_IMAGES_DIR = '%s/static-assets/external-assets/event-images' % ABSOLUTE_PROJECT_ROOT
-PERSON_IMAGES_DIR = '%s/static-assets/external-assets/person-images' % ABSOLUTE_PROJECT_ROOT
-EVENT_ATTACHMENTS_DIR = '%s/static-assets/external-assets/attachments' % ABSOLUTE_PROJECT_ROOT
-
-
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -213,4 +220,3 @@ LOGGING = {
         },
     }
 }
-

@@ -45,6 +45,11 @@ body
 	text-align: right;
 }
 
+.jumbotron
+{
+	background-color: beige;
+}
+
 .logo 
 {
 	height: 32px;
@@ -399,7 +404,7 @@ input[type=checkbox]
 
 select.calendars-month-year 
 {
-	width: 70px!important;
+	width: 72px!important;
 }
 
 .calendars-popup

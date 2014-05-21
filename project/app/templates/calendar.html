@@ -50,7 +50,7 @@
 						el.html(el.html() + '<span class="badge" style="margin-top: -15px; background: orange">' + events.length + '</span>');
 						var tooltipEl = $("<div>").addClass("tooltip");
 						$(events).each(function(i, v) {
-							var anchor = $('<h3>').append($("<a>").attr("href", v.url).text(v.subject));
+							var anchor = $('<h3>').css("margin-top", "10px").append($("<a>").attr("href", v.url).text(v.subject));
 							tooltipEl.append(anchor);
 						});
 						el.livequery(function() {
@@ -68,6 +68,10 @@
 				date = date._calendar.formatDate(date, "yyyy/mm/dd");
 				window.location = searchUrl + "?date_range=" + date + " - " + date;
 			}
+			
+			var year = {% if year %} "{{ year }}" {% else %} convert_to_jalali(new Date(), 'yy') {% endif %};
+			var month = {% if month %} "{{ month }}" {% else %} convert_to_jalali(new Date(), 'mm') {% endif %};
+			var day = {% if day %} "{{ day }}" {% else %} "01" {% endif %};
 
 			$('#switch-calendar-month').click(function() {
 				if (!monthlyCalendar) {
@@ -80,6 +84,7 @@
 						onChangeMonthYear: function(year, month) {
 							loadEvents(".month-calendars-picker", year, month, "montly");
 						},
+						defaultDate: year + "/" + month + "/" + day,
 						onSelect: function(date) {
 							goToDate(date[0]);
 						}
@@ -99,7 +104,7 @@
 						yearRange: '1350:1450',				
 						monthsToStep: 12,
 						calendar: $.calendars.instance('persian', 'fa'),
-						defaultDate: convert_to_jalali(new Date(), 'yy/01/01'),
+						defaultDate: year + '/01/01',
 						onChangeMonthYear: function(year, month) {
 							loadEvents(".year-calendars-picker", year, month, "yearly");
 						},
@@ -112,7 +117,11 @@
 				$('.month-calendars-picker').hide();
 			});
 			
-			$('#switch-calendar-month').trigger('click');
+			{% if mode == "monthly" %}
+				$('#switch-calendar-month').trigger('click');
+			{% else %}
+				$('#switch-calendar-year').trigger('click');
+			{% endif %}
 		});
 	</script>
 {% endblock %}

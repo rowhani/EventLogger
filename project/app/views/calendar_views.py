@@ -15,6 +15,12 @@ from app.models import *
     
 def calendar_view(request, *args, **kwargs):
     active_link_id = "calendar"
+    
+    mode = request.GET.get("mode", "monthly")
+    year = request.GET.get('year', 0)
+    month = request.GET.get('month', 0)
+    day = request.GET.get('day', 0)
+
     return render_to_response('calendar.html', locals(), context_instance = RequestContext(request))
     
 def calendar_monthly_events(request, *args, **kwargs):

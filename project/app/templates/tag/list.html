@@ -2,7 +2,7 @@
 
 {% block title %}دسته ها{% endblock %}
 
-{% block header %}<span class="fa fa-tags"></span> دسته ها{% endblock %}
+{% block header %}<span class="fa fa-tags"></span> دسته ها <small>(مجموع: <span id="persons_count">{{ tags|length }}</span>)</small>{% endblock %}
 
 {% block content %}	
 	{% if request.user.is_authenticated %}

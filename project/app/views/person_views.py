@@ -82,7 +82,7 @@ class PersonListJson(BaseDatatableView):
                     </a>
                 </div>""" % {
                     "detail_url": reverse('detail_person', args=[row.id]),
-                    "person_photo": ('<img src="%sexternal-assets/person-images/%s"/>' % (settings.STATIC_URL, row.person_photo)).encode('utf-8', 'ignore') if row.person_photo else '<span class="fa fa-picture-o fa-3x"></span>'
+                    "person_photo": ('<img src="%s%s"/>' % (settings.PERSON_IMAGES_URL, row.person_photo)).encode('utf-8', 'ignore') if row.person_photo else '<span class="fa fa-picture-o fa-3x"></span>'
                 }
             if self.request.user.is_authenticated():  
                 resp += """
@@ -119,7 +119,7 @@ class PersonListJson(BaseDatatableView):
                 resp += "</div>"
             return resp
         elif column == 'events':
-            return ", ".join(['<a href="%s">%s</a>' % (reverse('detail_event', args=[event.id]), unicode(event)) for event in row.events.all()])
+            return "<br/> ".join(['<a href="%s">%s</a>' % (reverse('detail_event', args=[event.id]), unicode(event)) for event in row.events.all()])
         else:
             return super(PersonListJson, self).render_column(row, column)
 

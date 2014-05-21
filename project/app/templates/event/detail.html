@@ -71,7 +71,7 @@
 	{% if event.photo %}
 		<div class="col-lg-3" style="padding-left: 0">
 			<span class="thumbnail">         
-				<img src="{{ STATIC_URL }}external-assets/event-images/{{ event.photo }}"/>
+				<img src="{{ EVENT_IMAGES_URL }}{{ event.photo }}"/>
 			</span>
 		</div>
 	{% endif %}
@@ -103,7 +103,7 @@
 												<a href="{% url 'detail_person' item.id %}">
 													<span class="thumbnail" style="margin-bottom: 0px"> 											
 														{% if item.person_photo %}
-															<img src="{{ STATIC_URL }}external-assets/person-images/{{ item.person_photo }}"/>
+															<img src="{{ PERSON_IMAGES_URL }}{{ item.person_photo }}"/>
 														{% else %}
 															<span class="fa fa-picture-o fa-2x"></span>
 														{%endif %}											
@@ -165,7 +165,7 @@
 					{% if event.attachments.all %}
 						<ul class="list-group attachments-panel">				
 							{% for item in event.attachments.all %}
-								<li class="list-group-item"><a href="{{ STATIC_URL }}external-assets/attachments/{{ item.filename }}">{{ item.name }}</a></li>
+								<li class="list-group-item"><a href="{{ EVENT_ATTACHMENTS_URL }}{{ item.filename }}">{{ item.name }}</a></li>
 							{% endfor %}				
 						</ul>
 					{% else %}

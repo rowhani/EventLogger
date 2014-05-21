@@ -3,6 +3,7 @@ from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.views import serve
 from django.contrib.auth.decorators import login_required
+from django.conf.urls.static import static
 from django.contrib import admin
 from project.app.models import *
 from project.app.views import *
@@ -38,7 +39,7 @@ urlpatterns = patterns('',
     # single
     url(r'^$', index_view, name='index'),
     
-    # single
+    # calendar
     url(r'^calendar$', calendar_view, name='calendar'),
     url(r'^calendar/json/$', calendar_monthly_events, name='calendar_events'),
     
@@ -69,13 +70,18 @@ urlpatterns = patterns('',
     url(r'^tag/add$', modify_tag_view, name='add_tag'),
     url(r'^tag/edit/(?P<tag_id>\d+)$', modify_tag_view, name='edit_tag'),    
     url(r'^tag/delete/(?P<tag_id>\d+)$', delete_tag_view, name='delete_tag'),
-
-    # static
-    url(r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/'), serve, {'show_indexes': True, 'insecure': False}),
+   
+    ##url(r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/'), serve, {'show_indexes': True, 'insecure': False}),
+    
+    # captcha     
     url(r'^captcha/', include('captcha.urls')),
     
     # admin
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^admin_tools/', include('admin_tools.urls')),
-)
+) 
+
+# static
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

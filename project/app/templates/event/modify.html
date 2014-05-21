@@ -43,7 +43,7 @@
 							<input class="form-control" id="remove_photo" name="remove_photo" type="checkbox" value="1">
 							<div class="col-lg-2">
 								<span class="thumbnail">
-								  <img src="{{ STATIC_URL }}external-assets/event-images/{{ event_photo }}">
+								  <img src="{{ EVENT_IMAGES_URL }}{{ event_photo }}">
 								</span>
 							</div>
 						</div>        
@@ -58,7 +58,7 @@
 							{% for attachment in attachments %}
 								<p>
 									<input class="form-control" name="remove_attachments" type="checkbox" value="{{ attachment.id }}" style="margin-top: -5px">
-									<a href="{{ STATIC_URL }}external-assets/attachments/{{ attachment.filename }}">{{ attachment.name }}</a>
+									<a href="{{ EVENT_ATTACHMENTS_URL }}{{ attachment.filename }}">{{ attachment.name }}</a>
 								</p>
 							{% endfor %}
 						</div>        
