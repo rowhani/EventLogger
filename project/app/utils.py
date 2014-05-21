@@ -35,7 +35,7 @@ def save_request_file(destination, request_file):
     return name
     
 def close_modal(reload_url = "/"):
-    return HttpResponse("<script>window.location='%s'; window.location.reload()</script>" % reload_url)
+    return HttpResponse("<script>window.location='%s';</script>" % reload_url)
     
 def get_keywords(query):
     split_pattern = re.compile('("[^"]+"|\'[^\']+\'|\S+)')

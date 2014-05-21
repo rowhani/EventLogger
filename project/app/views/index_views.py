@@ -14,8 +14,6 @@ from django.core.urlresolvers import reverse
 from app.models import *
 
 def index_view(request, *args, **kwargs):
-    active_link_id = "home"
-    
     try: event = Event.objects.filter(status='public').order_by("-date_happened")[0]
     except: event = None
     return render_to_response('index.html', locals(), context_instance = RequestContext(request))

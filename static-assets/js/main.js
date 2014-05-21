@@ -95,6 +95,12 @@ $(document).ready(function() {
 		html: true
 	});
 	$(".wysihtml5-toolbar a.dropdown-toggle").attr('tabindex', '-1');
+	
+	$("[title]").livequery(function() {
+		if (!$(this).closest("[data-disable-powertip=true]").length) {
+			$(this).powerTip({smartPlacement: true, placement: $(this).data("placement") || $(this).closest("[data-powertip-parent=true]").data("placement") || "n"});
+		}
+	});
 });
 
 /********* Modal *********/

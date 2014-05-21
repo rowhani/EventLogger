@@ -20,17 +20,17 @@
 						{% csrf_token %}
 						{% if error %}<div class="alert alert-danger login-error">{{ error }}</div>{% endif %}
 						<input type="hidden" name="next" value="{{ next }}">
-						<input name="username" value="{{ username }}" type="text" class="form-control" placeholder="نام کاربری" required autofocus>
+						<input name="username" value="{{ username }}" type="text" class="form-control" placeholder="نام کاربری" title="نام کاربری" data-placement="ne" required autofocus>
 						{% if username_error %}<span class="error-msg">{{ username_error  }}</span>{% endif %}
-						<input name="password" type="password" class="form-control" placeholder="گذرواژه" required>
+						<input name="password" type="password" class="form-control" placeholder="گذرواژه" title="گذرواژه" data-placement="ne" required>
 						{% if password_error %}<span class="error-msg">{{ password_error  }}</span>{% endif %}
 						<button class="btn btn-lg btn-primary btn-block" type="submit">
-							ورود یه سیستم</button>
+							ورود به سیستم</button>
 						<label class="checkbox pull-left">
 							<input name="remember" type="checkbox" value="1" {% if remember %}checked="checked"{% endif %}>
 							ماندن در سیستم
 						</label>
-						<a href="#" class="pull-right need-help" onclick="alert('Not Implemented!')">به راهنمایی نیاز دارید؟ </a><span class="clearfix"></span>
+						<a href="#" class="pull-right need-help hide" onclick="alert('Not Implemented!')">به راهنمایی نیاز دارید؟ </a><span class="clearfix"></span>
 					</form>
 				</div>
 				<!--<a href="#" class="text-center new-account">یک اعتبار ایجاد کنید </a>-->

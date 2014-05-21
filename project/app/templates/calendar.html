@@ -7,7 +7,6 @@
 {% block head %}
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker.css" />
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/humanity.calendars.picker.css"/>
-	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip.min.css"/>
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip-orange.min.css"/>
 {% endblock %}
 
@@ -21,8 +20,8 @@
 		</label>
 	</div>
 	<div class="clearfix"></div><br/>
-    <div class="month-calendars-picker"></div>
-	<div class="year-calendars-picker"></div>
+    <div class="month-calendars-picker" data-disable-powertip="true"></div>
+	<div class="year-calendars-picker" data-disable-powertip="true"></div>
 {% endblock %}
 
 {% block scripts %}
@@ -32,7 +31,6 @@
 	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian.min.js"></script>
 	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker-fa.js"></script>
 	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian-fa.js"></script>
-	<script src="{{ STATIC_URL }}libs/jquery-powertip/jquery.powertip.min.js"></script>
 	<script>
 		$(document).ready(function() {
 			var monthlyCalendar = null;

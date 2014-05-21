@@ -16,7 +16,6 @@
 			</div>
 			<div class="navbar-collapse collapse">
 				<ul id="top-nav-links" class="nav navbar-nav" data-active-link-id="{{ active_link_id }}">
-					<li id="home-link"><a href="{% url 'index' %}"><span class="glyphicon glyphicon-home"></span> خانه</a></li>
 					<li id="event-link"><a href="{% url 'list_event' %}"><span class="glyphicon glyphicon-list"></span> رویداد ها</a></li>
 					<li id="person-link"><a href="{% url 'list_person' %}"><span class="fa fa-users"></span> اشخاص</a></li>
 					<li id="tags-link"><a href="{% url 'list_tag' %}"><span class="fa fa-tags"></span> دسته ها</a></li>
@@ -28,7 +27,7 @@
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					{% if request.user.is_authenticated %}									
-						<li><a><span class="glyphicon glyphicon-user"></span> خوش آمدید {{ request.user }}</a></li>
+						<li><a style="cursor: default;"><span class="glyphicon glyphicon-user"></span> خوش آمدید {{ request.user }}</a></li>
 						<li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> خروج</a></li>					
 					{% else %}
 						<li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> ورود</a></li>
