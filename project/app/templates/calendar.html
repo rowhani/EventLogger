@@ -45,11 +45,10 @@
 						var jd = cal.parseDate("yyyy/mm/dd", date).toJD();
 						var el = $(calSelector).find("a[class*='jd" + jd + "']");
 						var events = data[date];
-						el.html(el.html() + '<span class="badge" style="margin-top: -15px; background: orange">' + events.length + '</span>');
+						el.html(el.html() + '<span class="badge" style="margin-top: -15px; background: red; color: white">' + events.length + '</span>');
 						var tooltipEl = $("<div>").addClass("tooltip");
 						$(events).each(function(i, v) {
-							var anchor = $('<h3>').css("margin-top", "10px").append($("<a>").attr("href", v.url).text(v.subject));
-							tooltipEl.append(anchor);
+							tooltipEl.append($('<h3>').css("margin-top", "10px").append($("<a>").attr("href", v.url).text(v.subject)));
 						});
 						el.livequery(function() {
 							$(this).attr("title", tooltipEl.html()).powerTip({

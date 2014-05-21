@@ -7,7 +7,7 @@ Instead, make a copy as "local.py" and set the development variables in it.
 """
 
 # local settings
-DEBUG = True
+DEBUG = os.getenv("EVENTLOGGER_DEBUG", "True") == "True"
 TEMPLATE_DEBUG = DEBUG
 
 

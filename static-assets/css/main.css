@@ -111,6 +111,11 @@ table
 	float: none!important;
 }
 
+table td
+{
+	word-break: break-word;
+}
+
 .modal 
 {
 	width: 560px;
@@ -501,6 +506,72 @@ select.calendars-month-year
   left: 50%;
   border-right: 6px solid transparent;
   border-left: 6px solid transparent;
+}
+
+/*** responsive table ***/
+
+@media (max-width: 767px) {
+	.fd-table-responsive,
+	.fd-table-responsive > tr,
+	.fd-table-responsive > tr > th,
+	.fd-table-responsive > tr > td,
+	.fd-table-responsive > thead,
+	.fd-table-responsive > tbody,
+	.fd-table-responsive > thead > tr,
+	.fd-table-responsive > thead > tr > th,
+	.fd-table-responsive > tbody > tr,
+	.fd-table-responsive > tbody > tr > td {
+		display: block;
+	}
+	
+	.fd-table-responsive > thead > tr {
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+	
+	.fd-table-responsive > tr > td:first-child,
+	.fd-table-responsive > tbody > tr > td:first-child {
+		border-top: 1px solid #eee;
+	}
+	
+	.fd-table-responsive > tr > td:not(:first-child),
+	.fd-table-responsive > tbody > tr > td:not(:first-child) {
+		border: none;
+	}
+	
+	.fd-table-responsive > tbody > tr > td {
+		width: 100% !important;
+		text-align: left;
+		min-height: 16px;
+		line-height: 16px;
+		empty-cells: hide;
+	}
+	
+	.fd-table-responsive > tr > td:empty,
+	.fd-table-responsive > tbody > tr > td:empty{
+		display: none;
+	}
+	
+	.fd-table-responsive > tr > td[data-title],
+	.fd-table-responsive > tbody > tr > td[data-title] {
+		position: relative;
+		padding-left: 50%;
+		text-align: right;
+	}
+	
+	.fd-table-responsive > tr > td[data-title]:before,
+	.fd-table-responsive > tbody > tr > td[data-title]:before {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 50%;
+		padding: 5px;
+		overflow: hidden;
+		white-space: nowrap;
+		content: attr(data-title);
+		text-align: left;
+	}
 }
 
 /* Sticky Footer */

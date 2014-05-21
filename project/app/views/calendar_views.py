@@ -31,7 +31,8 @@ def calendar_monthly_events(request, *args, **kwargs):
     event_map = {}
     for event in events:
         date = event.date_happened.strftime("%Y/%m/%d")
-        if date in event_map: event_map[date].append(event.subject.encode('utf-8', 'ignore'))
-        else: event_map[date] = [{"subject": event.subject.encode('utf-8', 'ignore'), "url": reverse("detail_event", args=[event.id])}]
+        data = {"subject": event.subject.encode('utf-8', 'ignore'), "url": reverse("detail_event", args=[event.id])}
+        if date in event_map: event_map[date].append(data)
+        else: event_map[date] = [data]
     return HttpResponse(json.dumps(event_map))
     
