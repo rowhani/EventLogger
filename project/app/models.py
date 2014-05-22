@@ -23,7 +23,7 @@ class Event(models.Model):
         return "%s (%s)" % (self.subject, self.location)
         
     def save(self, *args, **kwargs):
-        self.description_raw = re.sub(r'(<!--.*?-->|<[^>]*>)', '', self.description)
+        self.description_raw = re.sub(r'(<!--.*?-->|<[^>]*>)', '', self.description).replace("&nbsp;", " ")
         super(Event, self).save(*args, **kwargs)
         
     @property
@@ -42,8 +42,8 @@ class Event(models.Model):
  
 class Person(models.Model):
     class Meta: db_table = "Person"
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200)
+    first_name = models.CharField(max_length=200, db_index=True)
+    last_name = models.CharField(max_length=200, db_index=True)
     gender = models.CharField(max_length=10, blank=False, choices=[('male', 'مرد'), ('female', 'زن')])
     birth_date = models.DateTimeField(null=True, blank=True)
     birth_place = models.CharField(max_length=1000, null=True, blank=True)

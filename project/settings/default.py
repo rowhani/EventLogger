@@ -174,7 +174,8 @@ EXTERNAL_APPS = (
     'django_extensions',
     'south',
     'django_forms_bootstrap',
-    'captcha'
+    'captcha',
+    'import_export'
 )
 
 LOCAL_APPS = (

@@ -75,17 +75,18 @@ def get_truncated_text(sentence, keeped_words=[], suffix="...", boundry_letters_
                         max_index = max_r
             else:
                 merged_ranges = ranges
-                                        
-            result = suffix if merged_ranges[0][0] != 0 else ''
+                                         
+            result = suffix if merged_ranges[0][0] != 0 else ''            
             for min_r, max_r in merged_ranges:
-                if not sentence[min_r].isspace():
+                if not sentence[min_r].isspace() and min_r > 0 and sentence[min_r - 1] != ' ':
                     mm = sentence[min_r:max_r].find(' ')
                     if mm != -1: min_r = min_r + mm + 1
-                if not sentence[max_r].isspace():
+                if not sentence[max_r].isspace() and max_r < len(sentence) - 1 and sentence[max_r + 1] != ' ':
                     mm = sentence[min_r:max_r].rfind(' ')
                     if mm != -1: max_r = min_r + mm
                 result += sentence[min_r:max_r]
                 if max_r != len(sentence): result += suffix
             return result
-    except:
+    except Exception, e:
+        print "###", e
         return sentence

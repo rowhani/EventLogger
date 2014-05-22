@@ -36,7 +36,7 @@
 	</table>
 	
 	{% if request.user.is_authenticated %}
-		<select id="status_filter" name="status_filter[]" multiple="multiple" data-role="chosen" class="form-control input-sm hide" style="margin-right: 10px;" data-width="420px" title="وضعیت رویداد را فیلتر کنید">
+		<select id="status_filter" name="status_filter[]" multiple="multiple" data-role="chosen" class="form-control input-sm hide" style="margin-right: 10px;" data-width="420px">
 			<option value="public" selected="selected">رویداد های آشکار</option>
 			<option value="hidden" selected="selected">رویداد های مخفی</option>
 			<option value="unconfirmed">رویداد های تایید نشده</option>
@@ -100,7 +100,7 @@
 			
 			{% if request.user.is_authenticated %}
 				sSearch.parent().after($("#status_filter").removeClass("hide"));	
-				$('#status_filter').on('change', function() {
+				$('#status_filter').attr("title", "وضعیت رویداد را فیلتر کنید").on('change', function() {
 					dt.fnDraw();
 				});
 			{% endif %}

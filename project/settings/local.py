@@ -14,11 +14,7 @@ TEMPLATE_DEBUG = DEBUG
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': os.path.join(ABSOLUTE_PROJECT_ROOT, 'db.sqlite3'),
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+		'NAME': os.path.join(ABSOLUTE_PROJECT_ROOT, 'db.sqlite3')
     }
 }
 

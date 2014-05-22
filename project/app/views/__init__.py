@@ -6,3 +6,4 @@ from person_views import *
 from tag_views import *
 from search_views import *
 from calendar_views import *
+from setting_views import *

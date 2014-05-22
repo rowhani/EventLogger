@@ -12,7 +12,7 @@
     <div class="jumbotron">
 		{% if event %}
 			<h1 title="تازه ترین رویداد" data-placement="ne">{{ event.subject }} <small>(<span class="convert-date">{{ event.date_happened }}</span>)</small></h1>
-			<p>{{ event.truncated_description }}</p>
+			<p>{{ event.truncated_description|safe }}</p>
 			<p><a class="btn btn-primary btn-lg" href="{% url 'detail_event' event.id %}">بیشتر بدانید &raquo;</a></p>
 		{% else %}
 			<h1>هیچ رویدادی ثبت نشده است</h1>

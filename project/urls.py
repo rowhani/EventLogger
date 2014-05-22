@@ -1,36 +1,23 @@
 #! /usr/bin/env python2.7
+
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.views import serve
 from django.contrib.auth.decorators import login_required
 from django.conf.urls.static import static
 from django.contrib import admin
+
 from project.app.models import *
 from project.app.views import *
 
 # admin
-
-class PersonAdmin(admin.ModelAdmin): pass
-admin.site.register(Person, PersonAdmin)
-
-class EventAdmin(admin.ModelAdmin): pass
-admin.site.register(Event, EventAdmin)
-
-class TagAdmin(admin.ModelAdmin): pass
-admin.site.register(Tag, TagAdmin)
-
-class AttachmentAdmin(admin.ModelAdmin): pass
-admin.site.register(Attachment, AttachmentAdmin)  
-
 admin.autodiscover()
 
 # error handling
-
 handler404 = 'app.views.error_404_view'
 handler500 = 'app.views.error_500_view'
 
-# patterns
-
+# url patterns
 urlpatterns = patterns('',
     # auth
     url(r'^login$', LoginView.as_view(), name='login'),
@@ -42,6 +29,11 @@ urlpatterns = patterns('',
     # calendar
     url(r'^calendar$', calendar_view, name='calendar'),
     url(r'^calendar/json/$', calendar_monthly_events, name='calendar_events'),
+    
+    # setting
+    url(r'^setting$', setting_view, name='setting'),
+    url(r'^setting/backup$', setting_backup, name='setting_backup'),
+    url(r'^setting/restore$', setting_restore, name='setting_restore'),
     
     # search
     url(r'^search$', search_view, name='search'),
@@ -78,10 +70,10 @@ urlpatterns = patterns('',
     
     # admin
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls), name="admin"),
     url(r'^admin_tools/', include('admin_tools.urls')),
 ) 
 
-# static
+# static urls
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
