@@ -37,6 +37,10 @@ EVENT_IMAGES_DIR = '%s/event-images' % MEDIA_ROOT
 PERSON_IMAGES_DIR = '%s/person-images' % MEDIA_ROOT
 EVENT_ATTACHMENTS_DIR = '%s/event-attachments' % MEDIA_ROOT
 
+if not os.path.exists(EVENT_IMAGES_DIR): os.makedirs(EVENT_IMAGES_DIR)
+if not os.path.exists(PERSON_IMAGES_DIR): os.makedirs(PERSON_IMAGES_DIR)
+if not os.path.exists(EVENT_ATTACHMENTS_DIR): os.makedirs(EVENT_ATTACHMENTS_DIR)
+
 EVENT_IMAGES_URL = MEDIA_URL + 'event-images/'
 PERSON_IMAGES_URL = MEDIA_URL + 'person-images/'
 EVENT_ATTACHMENTS_URL = MEDIA_URL + 'event-attachments/'

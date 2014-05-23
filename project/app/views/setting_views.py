@@ -97,7 +97,8 @@ def setting_restore(request, *args, **kwargs):
             return redirect(reverse('setting') + "?restore_error=1")
         else:
             import_files(zf)
-            import_data(zf, model_dataset_map, False)        
+            import_data(zf, model_dataset_map, False)
+            import_data(zf, model_dataset_map, False) # Save twice to take care of foreign (m2m, etc.) relations.
     except:
         return redirect(reverse('setting') + "?restore_error=1")
         
