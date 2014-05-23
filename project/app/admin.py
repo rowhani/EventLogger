@@ -1,4 +1,6 @@
-﻿from django.contrib import admin
+﻿#! /usr/bin/env python2.7
+
+from django.contrib import admin
 from import_export.admin import ImportExportMixin
 
 from app.models import *

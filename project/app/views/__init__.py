@@ -1,3 +1,5 @@
+#! /usr/bin/env python2.7
+
 from auth_views import *
 from index_views import *
 from error_views import *

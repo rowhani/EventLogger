@@ -2,9 +2,9 @@
 
 from django.conf import settings
 from django.conf.urls import patterns, include, url
+from django.conf.urls.static import static
 from django.contrib.staticfiles.views import serve
 from django.contrib.auth.decorators import login_required
-from django.conf.urls.static import static
 from django.contrib import admin
 
 from project.app.models import *
@@ -23,7 +23,7 @@ urlpatterns = patterns('',
     url(r'^login$', LoginView.as_view(), name='login'),
     url(r'^logout$', logout_view, name='logout'),
     
-    # single
+    # index
     url(r'^$', index_view, name='index'),
     
     # calendar
@@ -62,9 +62,7 @@ urlpatterns = patterns('',
     url(r'^tag/add$', modify_tag_view, name='add_tag'),
     url(r'^tag/edit/(?P<tag_id>\d+)$', modify_tag_view, name='edit_tag'),    
     url(r'^tag/delete/(?P<tag_id>\d+)$', delete_tag_view, name='delete_tag'),
-   
-    ##url(r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/'), serve, {'show_indexes': True, 'insecure': False}),
-    
+       
     # captcha     
     url(r'^captcha/', include('captcha.urls')),
     

@@ -1,7 +1,7 @@
 ﻿{% extends 'base.html' %}
 
 {% block head %}
-	<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-datatables/css/dataTables.bootstrap.css">	
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-datatables/css/dataTables.bootstrap.min.css">	
 	<style>
 		.chosen-rtl {
 			margin-left: 180px;
@@ -26,11 +26,11 @@
 	<table id="events" class="table table-striped table-bordered table-condensed fd-table-responsive pull-left" cellspacing="0" width="100%">
 		<thead>
             <tr>
-				<th style="width: 12%!important"></th>
-                <th style="width: 28%">موضوع</th>
-                <th style="width: 15%">تاریخ</th>
-                <th style="width: 20%">مکان</th>
-				<th style="width: 25%">اشخاص مرتبط</th>
+				<th></th>
+                <th>موضوع</th>
+                <th>تاریخ</th>
+                <th>مکان</th>
+				<th>اشخاص مرتبط</th>
             </tr>
         </thead>
 	</table>
@@ -47,7 +47,7 @@
 
 {% block scripts %}
 	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/jquery.dataTables.min.js"></script>	
-	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/dataTables.bootstrap.js"></script>	
+	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/dataTables.bootstrap.min.js"></script>	
 	<script>
 		$(document).ready(function() {
 			var dt = $('#events').dataTable({

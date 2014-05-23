@@ -1,4 +1,6 @@
-﻿import os
+﻿#! /usr/bin/env python2.7
+
+import os
 import uuid
 import re
 import jdatetime
@@ -87,6 +89,5 @@ def get_truncated_text(sentence, keeped_words=[], suffix="...", boundry_letters_
                 result += sentence[min_r:max_r]
                 if max_r != len(sentence): result += suffix
             return result
-    except Exception, e:
-        print "###", e
+    except:
         return sentence

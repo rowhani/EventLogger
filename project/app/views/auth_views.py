@@ -6,9 +6,9 @@ from django.template import RequestContext
 from django.shortcuts import redirect, render_to_response
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.core.urlresolvers import reverse
         
 class LoginView(TemplateView):
-
     def get(self, request, *args, **kwargs):  
         if request.user.is_authenticated():
             return redirect('/')
@@ -41,4 +41,4 @@ class LoginView(TemplateView):
 @login_required    
 def logout_view(request):
     logout(request)
-    return redirect("/")
+    return redirect(reverse('index'))

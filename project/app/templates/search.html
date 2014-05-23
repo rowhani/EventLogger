@@ -7,7 +7,7 @@
 {% block head %}
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker.css" />
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/redmond.calendars.picker.css"/>
-	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/bootstrap-datatables/css/dataTables.bootstrap.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/bootstrap-datatables/css/dataTables.bootstrap.min.css"/>
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip-blue.min.css"/>	
 	<style>
 		table#results thead {
@@ -37,7 +37,7 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="input-group input-group-lg">
-					<div class="input-group-btn">
+					<div class="input-group-btn dropdown">
 						<button type="submit" class="btn btn-primary" title="جستجو"><span class="fa fa-search"></span></button>
 						<button type="button" class="btn btn-primary dropdown-toggle" title="جستجوی پیشرفته" data-toggle="dropdown" style="padding-left: 5px; padding-right: 5px;"><span class="caret"></span></button>
 						<ul class="dropdown-menu well well-sm shadowable-inverse query-parts" role="menu" style="width:420px">
@@ -46,7 +46,7 @@
 							<li><input id="description" name="description" class="form-control" value="{{ description }}" placeholder="شرح رویداد" title="شرح رویداد"/></li>
 						</ul>
 					</div>
-					<input id="query" name="query" type="text" class="form-control" value="{{ query }}" placeholder="کلمه ی مورد نظر (پیش فرض: همه ی رویداد ها)" title="کلمه ی مورد نظر (پیش فرض: همه ی رویداد ها)" autofocus>
+					<input id="query" name="query" type="search" class="form-control" value="{{ query }}" placeholder="کلمه ی مورد نظر (پیش فرض: همه ی رویداد ها)" title="کلمه ی مورد نظر (پیش فرض: همه ی رویداد ها)" autofocus>
 				</div>
 			</div>
 		</div>
@@ -119,12 +119,12 @@
 {% block scripts %}
 	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.min.js"></script>
 	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.plus.min.js"></script>
-	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker.min.js"></script>
 	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian.min.js"></script>
 	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker-fa.js"></script>
 	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian-fa.js"></script>
 	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/jquery.dataTables.min.js"></script>	
-	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/dataTables.bootstrap.js"></script>
+	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/dataTables.bootstrap.min.js"></script>
 	<script src="{{ STATIC_URL }}js/jquery.highlight.js"></script>
 	<script>
 		$(document).ready(function() {
@@ -192,17 +192,17 @@
 				}
 			});
 			
-			$('.dropdown-menu').find('*').click(function (e) {
+			$('#search_from .dropdown-menu').find('*').click(function (e) {
 				e.stopPropagation();
 			});
 			
-			$("#query").keyup(function () {
+			$("#search_from #query").keyup(function () {
 				$(".query-parts input").val("");
 			});
 			
-			$(".query-parts input").keyup(function () {
-				$("#query").val("");
-			});	
+			$("#search_from .query-parts input").keyup(function () {
+				$("#search_from #query").val("");
+			});				
 		});
 	</script>
 {% endblock %}

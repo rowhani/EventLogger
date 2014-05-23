@@ -86,10 +86,10 @@
 			<div id="collapseOne" class="panel-collapse collapse in">
 				<div class="panel-body">
 					{% if event.persons.all %}
-						<table class="table" cellspacing="0" width="100%">
+						<table id="persons" class="table" cellspacing="0" width="100%">
 							<thead>
 								<tr>
-									<th style="width: 10%!important"></th>
+									<th></th>
 									<th>نام</th>
 									<th>تاریخ تولد</th>
 									<th>محل تولد</th>
@@ -99,17 +99,15 @@
 								{% for item in event.persons.all %}
 									<tr>
 										<td>
-											<div class="col-lg-12">
-												<a href="{% url 'detail_person' item.id %}">
-													<span class="thumbnail" style="margin-bottom: 0px"> 											
-														{% if item.person_photo %}
-															<img src="{{ PERSON_IMAGES_URL }}{{ item.person_photo }}"/>
-														{% else %}
-															<span class="fa fa-picture-o fa-2x"></span>
-														{%endif %}											
-													</span>
-												</a>
-											</div>
+											<a href="{% url 'detail_person' item.id %}">
+												<span class="thumbnail"> 											
+													{% if item.person_photo %}
+														<img src="{{ PERSON_IMAGES_URL }}{{ item.person_photo }}"/>
+													{% else %}
+														<span class="fa fa-picture-o fa-2x"></span>
+													{%endif %}											
+												</span>
+											</a>
 										</td>
 										<td>
 											<a href="{% url 'detail_person' item.id %}">{{ item.first_name }} {{ item.last_name }}</a>

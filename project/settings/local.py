@@ -1,4 +1,5 @@
 #! /usr/bin/env python2.7
+
 from default import *
 
 """
@@ -10,14 +11,12 @@ Instead, make a copy as "local.py" and set the development variables in it.
 DEBUG = os.getenv("EVENTLOGGER_DEBUG", "True") == "True"
 TEMPLATE_DEBUG = DEBUG
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
 		'NAME': os.path.join(ABSOLUTE_PROJECT_ROOT, 'db.sqlite3')
     }
 }
-
 
 if DEBUG:
     # set INTERNAL_IPS to entire local network

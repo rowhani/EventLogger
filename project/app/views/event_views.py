@@ -3,6 +3,7 @@
 
 import json
 import os
+from captcha.fields import CaptchaField
 from django.views.generic import TemplateView
 from django.template import RequestContext
 from django.shortcuts import redirect, render_to_response, get_object_or_404
@@ -12,7 +13,6 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.conf import settings
 from django.forms import *
 from django.forms.models import construct_instance
-from captcha.fields import CaptchaField
 
 from app.models import *
 from app.utils import *
@@ -128,13 +128,12 @@ class EventListJson(BaseDatatableView):
             return '<span class="convert-date">%s</span>' % row.date_happened
         elif column == 'photo':
             resp = """
-                <div class="col-lg-12">
-                    <a href="%(detail_url)s">
-                        <span class="thumbnail" style="margin-bottom: 5px;">                           
-                            %(photo)s
-                        </span>
-                    </a>
-                </div>""" % {
+                <a href="%(detail_url)s">
+                    <span class="thumbnail">                           
+                        %(photo)s
+                    </span>
+                </a>
+                """ % {
                     "detail_url": reverse('detail_event', args=[row.id]),
                     "photo": ('<img src="%s%s"/>' % (settings.EVENT_IMAGES_URL, row.photo)).encode('utf-8', 'ignore') if row.photo else '<span class="fa fa-picture-o fa-3x"></span>'
                 }

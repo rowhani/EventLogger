@@ -21,6 +21,8 @@ from django.forms.models import construct_instance
 
 from app.resources import *
 
+media_root_base = os.path.basename(settings.MEDIA_ROOT)
+
 @login_required
 def setting_view(request, *args, **kwargs):
     active_link_id = "setting"
@@ -50,7 +52,7 @@ def setting_backup(request, *args, **kwargs):
             for dirname, subdirs, files in os.walk(settings.MEDIA_ROOT):
                 for filename in files:
                     source = os.path.join(dirname, filename)
-                    destination = os.path.join(os.path.basename(settings.MEDIA_ROOT), os.path.basename(dirname), filename)
+                    destination = os.path.join(media_root_base, os.path.basename(dirname), filename)
                     zf.write(source, destination)
                        
     response = HttpResponse(content_type=' application/x-zip-compressed')
@@ -68,31 +70,34 @@ def setting_restore(request, *args, **kwargs):
     if not backup_file:
         return redirect(reverse('setting'))
         
+    def import_data(zf, model_dataset_map, dry_run=False):
+        error = False
+        for model, dataset in model_dataset_map.items(): 
+            dataset = tablib.import_set(zf.read(dataset))
+            data = model().import_data(dataset, dry_run=dry_run)
+            error = error or data.has_errors()
+        return error
+        
+    def import_files(zf):
+        for f in zf.infolist():
+            if f.filename.startswith(media_root_base):
+                zf.extract(f, os.path.dirname(settings.MEDIA_ROOT))
+        
     try:
         zf = zipfile.ZipFile(backup_file)
+                
+        model_dataset_map = {
+            EventResource: 'events.csv',
+            PersonResource: 'persons.csv',
+            TagResource: 'tags.csv',
+            AttachmentResource: 'attachments.csv'
+        }
         
-        events_dataset = tablib.import_set(zf.read('events.csv'))
-        persons_dataset = tablib.import_set(zf.read('persons.csv'))
-        tagst_dataset = tablib.import_set(zf.read('tags.csv'))
-        attachments_dataset = tablib.import_set(zf.read('attachments.csv'))
-        
-        events = EventResource().import_data(events_dataset, dry_run=True)
-        persons = PersonResource().import_data(persons_dataset, dry_run=True)
-        tags = TagResource().import_data(tagst_dataset, dry_run=True)
-        attachments = AttachmentResource().import_data(attachments_dataset, dry_run=True)
-        
-        if events.has_errors() or persons.has_errors() or tags.has_errors() or attachments.has_errors():
+        if import_data(zf, model_dataset_map, True):
             return redirect(reverse('setting') + "?restore_error=1")
         else:
-            pass
-            events = EventResource().import_data(events_dataset)
-            persons = PersonResource().import_data(persons_dataset)
-            tags = TagResource().import_data(tagst_dataset)
-            attachments = AttachmentResource().import_data(attachments_dataset)
-            
-        for f in zf.infolist():
-            if f.filename.startswith('media'):
-                zf.extract(f, os.path.dirname(settings.MEDIA_ROOT))
+            import_files(zf)
+            import_data(zf, model_dataset_map, False)        
     except:
         return redirect(reverse('setting') + "?restore_error=1")
         

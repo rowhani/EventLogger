@@ -5,7 +5,7 @@ function convert_to_jalali(date, format) {
 		return '';
 	}	
 	format = format || 'yy/mm/dd';
-	return $.datepicker.formatDate(format, new JalaliDate(new Date(date)))
+	return $.datepicker.formatDate(format, new JalaliDate(new Date(date)));
 }
 
 function select_items_for_dropdown(dropdown_selector, items) {
@@ -101,6 +101,14 @@ $(document).ready(function() {
 			$(this).powerTip({smartPlacement: true, placement: $(this).data("placement") || $(this).closest("[data-powertip-parent=true]").data("placement") || "n"});
 		}
 	});
+	
+	$('.dropdown').on('show.bs.dropdown', function(e) {
+		$(this).find('.dropdown-menu').first().stop(true, true).slideDown('fast');
+	});
+
+	$('.dropdown').on('hide.bs.dropdown', function(e) {
+		$(this).find('.dropdown-menu').first().stop(true, true).slideUp('fast');
+	});
 });
 
 /********* Modal *********/
@@ -150,15 +158,23 @@ $(document).ready(function() {
 /********* Confirm Dialog *********/
 
 $(document).ready(function() {
-    $('a[data-confirm]').livequery(function() {
+    $('[data-confirm]').livequery(function() {
         $(this).click(function(ev) {
             var href = $(this).attr('href');
+			var _this = $(this);
 
             if (!$('#dataConfirmModal').length) {
                 $('body').append('<div id="dataConfirmModal" class="modal fade" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><h3 id="dataConfirmLabel" class="confirm-delete">لطفا تایید کنید</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn btn-default" data-dismiss="modal" aria-hidden="true">خیر</button><a class="btn btn-danger" id="dataConfirmOK">بله</a></div></div>');
             } 
             $('#dataConfirmModal').find('.modal-body').text($(this).attr('data-confirm'));
-            $('#dataConfirmOK').attr('href', href);
+			if ($(this).is("a")) {
+				$('#dataConfirmOK').attr('href', href);
+			}
+			else {
+				$('#dataConfirmOK').click(function () {
+					$(_this).closest("form").submit();
+				});
+			}
             $('#dataConfirmModal').modal({show:true});
             return false;
         });
@@ -167,10 +183,9 @@ $(document).ready(function() {
 
 /********* Ajax Loader *********/
 
-function ajaxIndicatorStart(img, text)
-{
-	if(jQuery('body').find('#resultLoading').attr('id') != 'resultLoading'){
-	jQuery('body').append('<div id="resultLoading" style="display:none"><div><img src="' + img + '"><div>'+text+'</div></div><div class="bg"></div></div>');
+function ajaxIndicatorStart(img, text) {
+	if(jQuery('body').find('#resultLoading').attr('id') != 'resultLoading') {
+		jQuery('body').append('<div id="resultLoading" style="display:none"><div><img src="' + img + '"><div>'+text+'</div></div><div class="bg"></div></div>');
 	}
 	
 	jQuery('#resultLoading').css({
@@ -215,8 +230,7 @@ function ajaxIndicatorStart(img, text)
 	jQuery('body').css('cursor', 'wait');
 }
 
-function ajaxIndicatorStop()
-{
+function ajaxIndicatorStop() {
 	jQuery('#resultLoading .bg').height('100%');
 	jQuery('#resultLoading').fadeOut(300);
 	jQuery('body').css('cursor', 'default');

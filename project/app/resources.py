@@ -1,4 +1,6 @@
-﻿from import_export import resources
+﻿#! /usr/bin/env python2.7
+
+from import_export import resources
 
 from app.models import *
 

@@ -16,7 +16,7 @@
       </form>
     </div>
 	
-	<div class="panel panel-warning">
+	<div class="panel panel-info">
       <div class="panel-heading">
         <h3 class="panel-title"><span class="fa fa-repeat"></span> بازنشانی</h3>
       </div>
@@ -25,17 +25,17 @@
 		{% if restore_error %}<div class="alert alert-danger"><span class="fa fa-times-circle"></span> مشکلی در فایل ورودی وجود دارد.</div>{% endif %}
 		{% csrf_token %}
 		<p><input name="backup_file" id="backup_file" type="file" accept=".zip" placeholder="انتخاب فایل پشتیبان" title="انتخاب فایل پشتیبان" required/></p>
-        <p><button type="submit" class="btn btn-warning">بازنشانی فایل پشتیبان</button></p>		
+        <p><button type="submit" class="btn btn-info" data-confirm="همه ی داده های قبل ممکن است از بین بروند. آیا واقعه مایل به بازنشانی هستید؟">بازنشانی فایل پشتیبان</button></p>		
       </form>
     </div>
 	
-	<div class="panel panel-info">
+	<div class="panel panel-warning">
       <div class="panel-heading">
         <h3 class="panel-title"><span class="fa fa-gears"></span> مدیریت</h3>
       </div>
       <div class="panel-body">
 		<p>این پانل برای متخصصین در نظر گرفته شده است.</p>
-        <p><a href="/admin" class="btn btn-info">ورود به پانل مدیریت</a></p>		
+        <p><a href="/admin" class="btn btn-warning">ورود به پانل مدیریت</a></p>		
       </div>
     </div>
 {% endblock %}

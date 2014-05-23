@@ -79,10 +79,10 @@
 		</div>
 		<div class="panel-body">	
 			{% if person.events.all %}
-				<table class="table" cellspacing="0" width="100%">
+				<table id="events" class="table" cellspacing="0" width="100%">
 					<thead>
 						<tr>
-							<th style="width: 10%!important"></th>
+							<th></th>
 							<th>موضوع</th>
 							<th>تاریخ وقوع</th>
 							<th>مکان وقوع</th>
@@ -92,17 +92,15 @@
 						{% for item in person.events.all %}
 							<tr>
 								<td>
-									<div class="col-lg-12">
-										<a href="{% url 'detail_event' item.id %}">
-											<span class="thumbnail" style="margin-bottom: 0px"> 											
-												{% if item.photo %}
-													<img src="{{ EVENT_IMAGES_URL }}{{ item.photo }}"/>
-												{% else %}
-													<span class="fa fa-picture-o fa-2x"></span>
-												{%endif %}											
-											</span>
-										</a>
-									</div>
+									<a href="{% url 'detail_event' item.id %}">
+										<span class="thumbnail" style="margin-bottom: 0px"> 											
+											{% if item.photo %}
+												<img src="{{ EVENT_IMAGES_URL }}{{ item.photo }}"/>
+											{% else %}
+												<span class="fa fa-picture-o fa-2x"></span>
+											{%endif %}											
+										</span>
+									</a>
 								</td>
 								<td>
 									<a href="{% url 'detail_event' item.id %}">{{ item.subject }}</a>

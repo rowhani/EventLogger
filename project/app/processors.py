@@ -1,4 +1,6 @@
-﻿import jdatetime
+﻿#! /usr/bin/env python2.7
+
+import jdatetime
 import json
 import re
 from django.conf import settings

@@ -1,4 +1,6 @@
-﻿from django.db import models
+﻿#! /usr/bin/env python2.7
+
+from django.db import models
 import jdatetime
 import re
 

@@ -74,13 +74,12 @@ class PersonListJson(BaseDatatableView):
             return '<span class="convert-date">%s</span>' % row.death_date
         elif column == 'person_photo':
             resp = """
-                <div class="col-lg-12">
-                    <a href="%(detail_url)s">
-                        <span class="thumbnail" style="margin-bottom: 5px;">                           
-                            %(person_photo)s
-                        </span>
-                    </a>
-                </div>""" % {
+                <a href="%(detail_url)s">
+                    <span class="thumbnail">                           
+                        %(person_photo)s
+                    </span>
+                </a>
+                """ % {
                     "detail_url": reverse('detail_person', args=[row.id]),
                     "person_photo": ('<img src="%s%s"/>' % (settings.PERSON_IMAGES_URL, row.person_photo)).encode('utf-8', 'ignore') if row.person_photo else '<span class="fa fa-picture-o fa-3x"></span>'
                 }
