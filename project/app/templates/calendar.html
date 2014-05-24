@@ -44,6 +44,9 @@
 					for(var date in data) {							
 						var jd = cal.parseDate("yyyy/mm/dd", date).toJD();
 						var el = $(calSelector).find("a[class*='jd" + jd + "']");
+						if (mode == 'yearly') {
+							el = el.not('.calendars-other-month');
+						}
 						var events = data[date];
 						el.html(el.html() + '<span class="badge" style="margin-top: -15px; background: red; color: white">' + events.length + '</span>');
 						var tooltipEl = $("<div>").addClass("tooltip");
