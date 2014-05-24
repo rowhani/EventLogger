@@ -203,11 +203,6 @@ def detail_event_view(request, event_id, *args, **kwargs):
 @login_required
 def delete_event_view(request, event_id, *args, **kwargs):
     event = get_object_or_404(Event, pk=int(event_id))
-    try: os.remove("%s/%s" % (settings.EVENT_IMAGES_DIR , event.photo))
-    except: pass
-    for attachment in event.attachments.all():
-        try: os.remove("%s/%s" % (settings.EVENT_ATTACHMENTS_DIR , attachment.filename))
-        except: pass
     event.delete()
     return redirect(reverse('list_event'))
     

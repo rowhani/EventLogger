@@ -1,8 +1,10 @@
 ﻿#! /usr/bin/env python2.7
 
-from django.db import models
 import jdatetime
 import re
+import os
+from django.db import models
+from django.conf import settings
 
 from utils import *
 
@@ -27,6 +29,13 @@ class Event(models.Model):
     def save(self, *args, **kwargs):
         self.description_raw = re.sub(r'(<!--.*?-->|<[^>]*>)', '', self.description).replace("&nbsp;", " ")
         super(Event, self).save(*args, **kwargs)
+        
+    def delete(self):
+        try: os.remove("%s/%s" % (settings.EVENT_IMAGES_DIR , self.photo))
+        except: pass
+        for attachment in self.attachments.all():
+            attachment.delete()
+        super(Event, self).delete()
         
     @property
     def jalali_date_happened(self):
@@ -61,6 +70,11 @@ class Person(models.Model):
         else: 
             return "%s %s" % (self.first_name, self.last_name)
             
+    def delete(self):
+        try: os.remove("%s/%s" % (settings.PERSON_IMAGES_DIR , self.person_photo))
+        except: pass
+        super(Person, self).delete()
+            
     @property
     def jalali_birth_date(self):
         try: return jdatetime.date.fromgregorian(date=self.birth_date.date())
@@ -86,3 +100,8 @@ class Attachment(models.Model):
     
     def __unicode__(self):
         return self.name
+        
+    def delete(self):
+        try: os.remove("%s/%s" % (settings.EVENT_ATTACHMENTS_DIR , self.filename))
+        except: pass
+        super(Attachment, self).delete()

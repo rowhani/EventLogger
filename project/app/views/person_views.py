@@ -149,8 +149,6 @@ def detail_person_view(request, person_id, *args, **kwargs):
 @login_required
 def delete_person_view(request, person_id, *args, **kwargs):
     person = get_object_or_404(Person, pk=int(person_id))
-    try: os.remove("%s/%s" % (settings.PERSON_IMAGES_DIR , person.person_photo))
-    except: pass
     person.delete()
     return redirect(reverse('list_person'))
     

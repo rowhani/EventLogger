@@ -24,6 +24,7 @@
 		{% if restore_success %}<div class="alert alert-success"><span class="fa fa-check-circle"></span> عملیات بازنشانی با موفقیت انجام شد.</div>{% endif %}
 		{% if restore_error %}<div class="alert alert-danger"><span class="fa fa-times-circle"></span> مشکلی در فایل ورودی وجود دارد.</div>{% endif %}
 		{% csrf_token %}
+		<p><label><input name="ignore_errors" id="ignore_errors" type="checkbox" style="margin-left: 5px; margin-top: 2px;" /> نادیده گرفتن خطاها </label></p>
 		<p><input name="backup_file" id="backup_file" type="file" accept=".zip" placeholder="انتخاب فایل پشتیبان" title="انتخاب فایل پشتیبان" required/></p>
         <p><button type="submit" class="btn btn-info" data-confirm="همه ی داده های قبل ممکن است از بین بروند. آیا واقعه مایل به بازنشانی هستید؟">بازنشانی فایل پشتیبان</button></p>		
       </form>

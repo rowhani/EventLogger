@@ -69,6 +69,7 @@ def setting_backup(request, *args, **kwargs):
 @login_required
 def setting_restore(request, *args, **kwargs):       
     backup_file = request.FILES.get('backup_file', None)
+    ignore_errors = request.POST.get('ignore_errors', False)
     
     if not backup_file:
         return redirect(reverse('setting'))
@@ -76,7 +77,7 @@ def setting_restore(request, *args, **kwargs):
     def import_data(zf, model_dataset_map, dry_run=False):
         error = False
         for model, dataset in model_dataset_map.items(): 
-            dataset = tablib.import_set(zf.read(dataset))
+            dataset = tablib.import_set(zf.read(dataset).replace(": ", ":"))
             data = model().import_data(dataset, dry_run=dry_run)
             error = error or data.has_errors()
         return error
@@ -96,7 +97,7 @@ def setting_restore(request, *args, **kwargs):
             AttachmentResource: 'attachments.csv'
         }
         
-        if import_data(zf, model_dataset_map, True):
+        if not ignore_errors and import_data(zf, model_dataset_map, True):
             return redirect(reverse('setting') + "?restore_error=1")
         else:
             import_files(zf)
