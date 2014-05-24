@@ -57,7 +57,7 @@
 					"sInfoEmpty": "نمایش 0 از 0 شخص",
 					"sInfoFiltered": "(فیلتر شده از مجموع _MAX_ شخص)",
 					"sLoadingRecords": "در حال بارگذاری...",
-					"sProcessing": "در حال پردازش...",
+					"sProcessing": "", //"در حال پردازش...",
 					"sSearch": "",
 					"sZeroRecords": "هیچ شخصی یافت نشد.",
 					"oPaginate": {
@@ -84,7 +84,11 @@
 					  aoData.push(this);
 					});
 				},
-				"drawCallback": function( settings ) {
+				"fnPreDrawCallback": function() {					
+					ajaxIndicatorStart("{{ STATIC_URL }}images/ajax-loader.gif", "در حال پردازش...");
+				},
+				"fnDrawCallback": function(settings) {
+					ajaxIndicatorStop();
 					$("#persons_count").text(settings._iRecordsTotal);
 				}
 			});	
