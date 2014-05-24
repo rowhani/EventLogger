@@ -7,7 +7,7 @@ EventLogger is an application that allows you to log different events during you
 ### 1. virtualenv / virtualenvwrapper
 You should already know what is [virtualenv](http://www.virtualenv.org/), preferably [virtualenvwrapper](http://www.doughellmann.com/projects/virtualenvwrapper/) at this stage:
 
-`$ mkvirtualenv --clear eventlogger`
+`$ mkvirtualenv --clear myenv`
 
 ### 2. Download
 Now, you need the *EventLogger* project files in your workspace:
@@ -16,7 +16,7 @@ Now, you need the *EventLogger* project files in your workspace:
     $ git clone git@github.com:artmansoft/EventLogger.git eventlogger && cd eventlogger
 
 ### 3. Requirements
-Right there, you will find the *requirements.txt* file that has all the great debugging tools, django helpers and some other cool stuff. To install them, simply type:
+Right there, you will find the *requirements.txt* file that has all the great debugging tools, django helpers and some other cool stuff. To install them, active your `virtualenv` and simply type:
 
 `$ pip install -r requirements.txt`
 
