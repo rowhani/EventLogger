@@ -11,13 +11,15 @@ class Migration(SchemaMigration):
         # Adding model 'Event'
         db.create_table('Event', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('subject', self.gf('django.db.models.fields.CharField')(max_length=200)),
+            ('subject', self.gf('django.db.models.fields.CharField')(max_length=200, db_index=True)),
             ('description', self.gf('django.db.models.fields.TextField')()),
-            ('location', self.gf('django.db.models.fields.CharField')(max_length=1000)),
+            ('description_raw', self.gf('django.db.models.fields.TextField')(db_index=True, null=True, blank=True)),
+            ('location', self.gf('django.db.models.fields.CharField')(max_length=1000, db_index=True)),
             ('date_happened', self.gf('django.db.models.fields.DateTimeField')()),
             ('date_ended', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('photo', self.gf('django.db.models.fields.CharField')(max_length=1000, null=True, blank=True)),
             ('actions_taken', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('status', self.gf('django.db.models.fields.CharField')(default='public', max_length=15, blank=True)),
         ))
         db.send_create_signal(u'app', ['Event'])
 
@@ -51,14 +53,15 @@ class Migration(SchemaMigration):
         # Adding model 'Person'
         db.create_table('Person', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('first_name', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('last_name', self.gf('django.db.models.fields.CharField')(max_length=200)),
+            ('first_name', self.gf('django.db.models.fields.CharField')(max_length=200, db_index=True)),
+            ('last_name', self.gf('django.db.models.fields.CharField')(max_length=200, db_index=True)),
             ('gender', self.gf('django.db.models.fields.CharField')(max_length=10)),
             ('birth_date', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('birth_place', self.gf('django.db.models.fields.CharField')(max_length=1000, null=True, blank=True)),
             ('death_date', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('death_place', self.gf('django.db.models.fields.CharField')(max_length=1000, null=True, blank=True)),
             ('person_photo', self.gf('django.db.models.fields.CharField')(max_length=1000, null=True, blank=True)),
+            ('status', self.gf('django.db.models.fields.CharField')(default='public', max_length=15, blank=True)),
         ))
         db.send_create_signal(u'app', ['Person'])
 
@@ -95,6 +98,9 @@ class Migration(SchemaMigration):
         # Deleting model 'Person'
         db.delete_table('Person')
 
+        # Removing M2M table for field events on 'Person'
+        db.delete_table('Event_Person')
+
         # Deleting model 'Tag'
         db.delete_table('Tag')
 
@@ -116,12 +122,14 @@ class Migration(SchemaMigration):
             'date_ended': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'date_happened': ('django.db.models.fields.DateTimeField', [], {}),
             'description': ('django.db.models.fields.TextField', [], {}),
+            'description_raw': ('django.db.models.fields.TextField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'location': ('django.db.models.fields.CharField', [], {'max_length': '1000'}),
-            'persons': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'events'", 'to': u"orm['app.Person']", 'db_table': "'Event_Person'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
+            'location': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'db_index': 'True'}),
+            'persons': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['app.Person']", 'null': 'True', 'db_table': "'Event_Person'", 'blank': 'True'}),
             'photo': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'}),
             'related_events': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'related_events_rel_+'", 'null': 'True', 'db_table': "'Event_Event'", 'to': u"orm['app.Event']"}),
-            'subject': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'status': ('django.db.models.fields.CharField', [], {'default': "'public'", 'max_length': '15', 'blank': 'True'}),
+            'subject': ('django.db.models.fields.CharField', [], {'max_length': '200', 'db_index': 'True'}),
             'tags': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'events'", 'to': u"orm['app.Tag']", 'db_table': "'Event_Tag'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'})
         },
         u'app.person': {
@@ -130,11 +138,13 @@ class Migration(SchemaMigration):
             'birth_place': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'}),
             'death_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'death_place': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'events': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['app.Event']", 'null': 'True', 'db_table': "'Event_Person'", 'blank': 'True'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'db_index': 'True'}),
             'gender': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
-            'person_photo': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'})
+            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'db_index': 'True'}),
+            'person_photo': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'}),
+            'status': ('django.db.models.fields.CharField', [], {'default': "'public'", 'max_length': '15', 'blank': 'True'})
         },
         u'app.tag': {
             'Meta': {'object_name': 'Tag', 'db_table': "'Tag'"},

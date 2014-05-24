@@ -20,6 +20,8 @@ Right there, you will find the *requirements.txt* file that has all the great de
 
 `$ pip install -r requirements.txt`
 
+`$ pip install --allow-external django-admin-tools --allow-unverified django-admin-tools django-admin-tools==0.5.1`
+
 ### 4. Tweaks
 
 #### wsgihandler.py
@@ -28,12 +30,12 @@ Right there, you will find the *requirements.txt* file that has all the great de
 #### Initialize the database
 Run the following to install the database
 
-`./manage.py syncdb` and `./manage.py migrate`
+`python manage.py syncdb` and `python manage.py migrate`
 
 ### Ready? Go!
 
-`./manage.py runserver`
+`python manage.py runserver 0.0.0.0:8000 --insecure`
 
 or
 
-`./manage.py runserver_plus`
+`python manage.py runserver_plus`

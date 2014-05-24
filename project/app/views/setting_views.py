@@ -42,19 +42,22 @@ def setting_backup(request, *args, **kwargs):
     attachments = AttachmentResource().export().csv
     
     buffer = StringIO()
-    with zipfile.ZipFile(buffer, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
-        zf.writestr('events.csv', events)
-        zf.writestr('persons.csv', persons)
-        zf.writestr('tags.csv', tags)
-        zf.writestr('attachments.csv', attachments)
-        
-        if include_files:
-            for dirname, subdirs, files in os.walk(settings.MEDIA_ROOT):
-                for filename in files:
-                    source = os.path.join(dirname, filename)
-                    destination = os.path.join(media_root_base, os.path.basename(dirname), filename)
-                    zf.write(source, destination)
-                       
+    zf = zipfile.ZipFile(buffer, mode='w', compression=zipfile.ZIP_DEFLATED)
+    
+    zf.writestr('events.csv', events)
+    zf.writestr('persons.csv', persons)
+    zf.writestr('tags.csv', tags)
+    zf.writestr('attachments.csv', attachments)
+    
+    if include_files:
+        for dirname, subdirs, files in os.walk(settings.MEDIA_ROOT):
+            for filename in files:
+                source = os.path.join(dirname, filename)
+                destination = os.path.join(media_root_base, os.path.basename(dirname), filename)
+                zf.write(source, destination)
+                
+    zf.close()
+    
     response = HttpResponse(content_type=' application/x-zip-compressed')
     response['Content-Disposition'] = 'attachment; filename="Backup_%s.zip"' % datetime.now().strftime("%Y_%m_%d")
     
