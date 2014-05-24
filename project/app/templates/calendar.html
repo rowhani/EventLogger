@@ -41,11 +41,16 @@
 				ajaxIndicatorStart("{{ STATIC_URL }}images/ajax-loader.gif", "بارگذاری...");
 				$.getJSON("{% url 'calendar_events' %}?mode=" + mode + "&year=" + year + "&month=" + month, function(data) {
 					var cal = $.calendars.instance();
-					for(var date in data) {							
+					for (var date in data) {							
 						var jd = cal.parseDate("yyyy/mm/dd", date).toJD();
-						var el = $(calSelector).find("a[class*='jd" + jd + "']");
-						if (mode == 'yearly') {
-							el = el.not('.calendars-other-month');
+						if (mode != 'yearly') {
+							el = $(calSelector).find("a[class*='jd" + jd + "']");
+						}
+						else {
+							el = $(calSelector).find("a[class*='jd" + jd + "']:not('.calendars-other-month')");
+						}
+						if (!el.length) {
+							continue;
 						}
 						var events = data[date];
 						el.html(el.html() + '<span class="badge" style="margin-top: -15px; background: red; color: white">' + events.length + '</span>');
