@@ -91,10 +91,10 @@ def setting_restore(request, *args, **kwargs):
         zf = zipfile.ZipFile(backup_file)
                 
         model_dataset_map = {
-            EventResource: 'events.csv',
-            PersonResource: 'persons.csv',
             TagResource: 'tags.csv',
-            AttachmentResource: 'attachments.csv'
+            PersonResource: 'persons.csv',
+            EventResource: 'events.csv',
+            AttachmentResource: 'attachments.csv' 
         }
         
         if not ignore_errors and import_data(zf, model_dataset_map, True):
