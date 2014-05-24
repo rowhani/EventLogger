@@ -50,14 +50,14 @@ $(document).ready(function() {
 	});
 	$("[data-role=calendar]:visible").livequery(function() {
 		if (!$(this).hasClass("converted") && !$(this).attr("data-ignore-convert")) {
-			$(this).addClass("converted").val(convert_to_jalali($(this).val()));		
-			$(this).datepicker({
-				changeMonth: true,
-				changeYear: true,
-				dateFormat: 'yy/mm/dd',
-				yearRange: '1350:1450'
-			}); 
+			$(this).addClass("converted").val(convert_to_jalali($(this).val()));	
 		}
+		$(this).datepicker({
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy/mm/dd',
+			yearRange: '1350:1450'
+		}); 
 	});
 	
 	$(".convert-date").livequery(function() {

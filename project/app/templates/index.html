@@ -16,6 +16,7 @@
 			<p><a class="btn btn-primary btn-lg" href="{% url 'detail_event' event.id %}">بیشتر بدانید &raquo;</a></p>
 		{% else %}
 			<h1>هیچ رویدادی ثبت نشده است.</h1>
+			<p><a class="btn btn-primary btn-lg" href="{% url 'add_event' %}">ایجاد اولین رویداد &raquo;</a></p>
 		{% endif %}
     </div>
 {% endblock %}

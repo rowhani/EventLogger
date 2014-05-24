@@ -29,7 +29,7 @@
 		</ul>
 		<div class="tab-content">
 			<div class="tab-pane active" id="event-tab">
-				<p class="alert alert-warning alert-sm">اطلاعات این بخش برای رویدادهای جمعی یا شخصی مورد نیاز است.</p>
+				<p class="alert alert-warning alert-sm">اطلاعات این بخش برای رویدادهای عمومی یا شخصی مورد نیاز است.</p>
 				{{ event_form|as_bootstrap }}
 				{%if event_photo or attachments %}
 				<hr/>
@@ -66,7 +66,7 @@
 				{% endif %}
 			</div>
 			<div class="tab-pane" id="person-tab">
-				<p class="alert alert-warning alert-sm">اگر این رویداد متوجه شخص خاصی نیست قسمت اطلاعات شخصی را خالی بگذارید.</p>
+				<p class="alert alert-warning alert-sm">اگر این رویداد جنبه عمومی دارد این قسمت را خالی بگذارید.</p>
 				<div class="panel panel-primary">
 					<div class="panel-body" >
 						{{ existing_persons_form|as_bootstrap }}

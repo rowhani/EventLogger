@@ -12,10 +12,10 @@ def validate_jalali_date(form, cleaned_data, field, check_required=False):
     if field in form._errors: del form._errors[field]
     if not dt:
         if check_required:
-            form._errors[field] = "این فیلد لازم است."
+            form._errors[field] = ["این فیلد لازم است."]
     else:
         try: cleaned_data[field] = jdatetime.datetime.strptime(dt, '%Y/%m/%d').togregorian()
-        except: form._errors[field] = "یک تاریخ/زمان معتبر وارد کنید."
+        except: form._errors[field] = ["یک تاریخ/زمان معتبر وارد کنید."]
         
 def validate_image(form, cleaned_data, field):
     prefix_field = "%s-%s" % (form.prefix, field) if form.prefix else field

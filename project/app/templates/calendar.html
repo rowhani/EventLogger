@@ -38,7 +38,7 @@
 			var searchUrl = "{% url 'search' %}";
 			
 			function loadEvents(calSelector, year, month, mode) {
-				ajaxIndicatorStart("{{ STATIC_URL }}images/ajax-loader.gif", "بارگذاری...");
+				ajaxIndicatorStart("{{ STATIC_URL }}images/ajax-loader.gif", "در حال بارگذاری...");
 				$.getJSON("{% url 'calendar_events' %}?mode=" + mode + "&year=" + year + "&month=" + month, function(data) {
 					var cal = $.calendars.instance();
 					for (var date in data) {							
