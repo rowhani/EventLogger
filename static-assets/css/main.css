@@ -9,7 +9,7 @@ body
 
 .not-implemented
 {
-	display: none;
+	display: none!important;
 }
 
 .panel.content 
