@@ -5,7 +5,7 @@ function convert_to_jalali(date, format) {
 		return '';
 	}	
 	format = format || 'yy/mm/dd';
-	return $.datepicker.formatDate(format, new JalaliDate(new Date(date)));
+	return $.datepicker.formatDate(format, new JalaliDate(new Date($.trim(date))));
 }
 
 function select_items_for_dropdown(dropdown_selector, items) {

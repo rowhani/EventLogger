@@ -119,7 +119,7 @@
 											{% endif %}
 										</td>
 										<td class="convert-date">
-											{{ item.birth_date }}
+											{{ item.birth_date|date:"c" }}
 										</td>
 										<td>
 											{{ item.birth_place }}

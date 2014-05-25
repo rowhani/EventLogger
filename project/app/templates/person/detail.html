@@ -109,7 +109,7 @@
 									{% endif %}
 								</td>
 								<td class="convert-date">
-									{{ item.date_happened }}
+									{{ item.date_happened|date:"c" }}
 								</td>
 								<td>
 									{{ item.location }}
