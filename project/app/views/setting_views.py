@@ -5,6 +5,7 @@ import json
 import os
 import zipfile
 import tablib
+import shutil
 from StringIO import StringIO
 from datetime import datetime
 from django.views.generic import TemplateView
@@ -19,6 +20,7 @@ from django.conf import settings
 from django.forms import *
 from django.forms.models import construct_instance
 
+from app.models import *
 from app.resources import *
 
 media_root_base = os.path.basename(settings.MEDIA_ROOT)
@@ -70,6 +72,7 @@ def setting_backup(request, *args, **kwargs):
 def setting_restore(request, *args, **kwargs):       
     backup_file = request.FILES.get('backup_file', None)
     ignore_errors = request.POST.get('ignore_errors', False)
+    clear_all = request.POST.get('clear_all', False)
     
     if not backup_file:
         return redirect(reverse('setting'))
@@ -86,6 +89,20 @@ def setting_restore(request, *args, **kwargs):
         for f in zf.infolist():
             if f.filename.startswith(media_root_base):
                 zf.extract(f, os.path.dirname(settings.MEDIA_ROOT))
+                
+    def delete_data():
+        Event.objects.all().delete()
+        Person.objects.all().delete()
+        Tag.objects.all().delete()
+        Attachment.objects.all().delete()
+        
+    def delete_files():
+        shutil.rmtree(settings.EVENT_IMAGES_DIR, ignore_errors=True)
+        shutil.rmtree(settings.PERSON_IMAGES_DIR, ignore_errors=True)
+        shutil.rmtree(settings.EVENT_ATTACHMENTS_DIR, ignore_errors=True)
+        if not os.path.exists(settings.EVENT_IMAGES_DIR): os.makedirs(settings.EVENT_IMAGES_DIR)
+        if not os.path.exists(settings.PERSON_IMAGES_DIR): os.makedirs(settings.PERSON_IMAGES_DIR)
+        if not os.path.exists(settings.EVENT_ATTACHMENTS_DIR): os.makedirs(settings.EVENT_ATTACHMENTS_DIR)
         
     try:
         zf = zipfile.ZipFile(backup_file)
@@ -100,10 +117,14 @@ def setting_restore(request, *args, **kwargs):
         if not ignore_errors and import_data(zf, model_dataset_map, True):
             return redirect(reverse('setting') + "?restore_error=1")
         else:
+            if clear_all:
+                delete_files()
+                delete_data()
             import_files(zf)
             import_data(zf, model_dataset_map, False)
             import_data(zf, model_dataset_map, False) # Save twice to take care of foreign (m2m, etc.) relations.
-    except:
+    except Exception, e:
+        print "*******", e
         return redirect(reverse('setting') + "?restore_error=1")
         
     return redirect(reverse('setting') + "?restore_success=1")
