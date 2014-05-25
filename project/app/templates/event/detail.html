@@ -71,7 +71,7 @@
 	</div>
 	{% if event.photo %}
 		<div class="col-lg-3" style="padding-left: 0">
-			<span class="thumbnail">         
+			<span class="thumbnail" title="بزرگنمایی تصویر" data-placement="n">         
 				<a href="{{ EVENT_IMAGES_URL }}{{ event.photo }}" data-toggle="lightbox" data-title="{{ event.subject }}" data-footer="{{ event.location }}"><img src="{{ EVENT_IMAGES_URL }}{{ event.photo }}"/></a>
 			</span>
 		</div>
