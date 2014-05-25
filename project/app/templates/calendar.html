@@ -56,7 +56,7 @@
 						el.html(el.html() + '<span class="badge" style="margin-top: -15px; background: red; color: white">' + events.length + '</span>');
 						var tooltipEl = $("<div>").addClass("tooltip");
 						$(events).each(function(i, v) {
-							tooltipEl.append($('<h3>').css("margin-top", "10px").append($("<a>").attr("href", v.url).text(v.subject)));
+							tooltipEl.append($('<h4>').css("margin-top", "10px").append($("<a>").attr("href", v.url).text(v.subject)));
 						});
 						el.livequery(function() {
 							$(this).attr("title", tooltipEl.html()).powerTip({
