@@ -26,6 +26,6 @@ def calendar_context(context):
     
 def recent_events_processor(context):
     events = Event.objects.filter(status='public').order_by("-date_happened")[:5]
-    events = [(event.subject, event.date_happened.strftime("%Y/%m/%d"), reverse('detail_event', args=[event.id])) for event in events]
+    events = [(event.subject, event.date_happened.strftime("%Y/%m/%d"), event.location, reverse('detail_event', args=[event.id])) for event in events]
     return {"recent_events": json.dumps(events)}
     

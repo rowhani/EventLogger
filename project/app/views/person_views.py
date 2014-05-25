@@ -81,7 +81,7 @@ class PersonListJson(BaseDatatableView):
                 </a>
                 """ % {
                     "detail_url": reverse('detail_person', args=[row.id]),
-                    "person_photo": ('<img src="%s%s"/>' % (settings.PERSON_IMAGES_URL, row.person_photo)).encode('utf-8', 'ignore') if row.person_photo else '<span class="fa fa-picture-o fa-3x"></span>'
+                    "person_photo": ('<img src="%s%s"/>' % (settings.PERSON_IMAGES_URL, row.person_photo)).encode('utf-8', 'ignore') if row.person_photo else ('<span class="fa fa-male fa-3x"></span>' if row.gender == 'male' else '<span class="fa fa-female fa-3x"></span>' )
                 }
             if self.request.user.is_authenticated():  
                 resp += """

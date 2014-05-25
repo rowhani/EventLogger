@@ -103,9 +103,11 @@
 												<span class="thumbnail"> 											
 													{% if item.person_photo %}
 														<img src="{{ PERSON_IMAGES_URL }}{{ item.person_photo }}"/>
+													{% elif item.gender == 'male' %}
+														<span class="fa fa-male fa-2x"></span>
 													{% else %}
-														<span class="fa fa-picture-o fa-2x"></span>
-													{%endif %}											
+														<span class="fa fa-female fa-2x"></span>
+													{% endif %}											
 												</span>
 											</a>
 										</td>

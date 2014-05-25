@@ -114,7 +114,7 @@
 			
 			var recentEvents = {{ recent_events|safe }};
 			$.each(recentEvents, function(i, v) {
-				$("<a>").attr("href", v[2]).html('<i class="fa fa-list-alt" style="margin-right: -40px; margin-left: 5px"></i> ' + v[0] + " (<span class='convert-date'>" + v[1] + "</span>)").appendTo($("<li>").appendTo($("#recent-events-sidebar")));
+				$("<a>").attr("href", v[3]).html('<i class="fa fa-list-alt" style="margin-right: -40px; margin-left: 5px"></i> ' + v[2] + ": " + v[0] + " (<span class='convert-date'>" + v[1] + "</span>)").appendTo($("<li>").appendTo($("#recent-events-sidebar")));
 			});
 			if (!recentEvents.length) {
 				$("#recent-events-sidebar").parent().text("هیچ رویدادی ثبت نشده است.");
