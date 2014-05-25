@@ -2,6 +2,7 @@
 
 {% block head %}
 	<link rel="stylesheet" href="{{ STATIC_URL }}libs/jquery-filetype/jquery-filetype.css">	
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-lightbox/ekko-lightbox.min.css">	
 {% endblock %}
 
 {% block title %}جزئیات رویداد {{ event.subject }}{% endblock %}
@@ -71,7 +72,7 @@
 	{% if event.photo %}
 		<div class="col-lg-3" style="padding-left: 0">
 			<span class="thumbnail">         
-				<img src="{{ EVENT_IMAGES_URL }}{{ event.photo }}"/>
+				<a href="{{ EVENT_IMAGES_URL }}{{ event.photo }}" data-toggle="lightbox" data-title="{{ event.subject }}" data-footer="{{ event.location }}"><img src="{{ EVENT_IMAGES_URL }}{{ event.photo }}"/></a>
 			</span>
 		</div>
 	{% endif %}
@@ -200,6 +201,7 @@
 
 {% block scripts %}	
 	<script src="{{ STATIC_URL }}libs/jquery-filetype/jquery-filetype.js"></script>	
+	<script src="{{ STATIC_URL }}libs/bootstrap-lightbox/ekko-lightbox.min.js"></script>
 	<script>
 		$(document).ready(function() {
 			$(".attachments-panel").linktype();

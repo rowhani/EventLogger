@@ -109,6 +109,11 @@ $(document).ready(function() {
 	$('.dropdown').on('hide.bs.dropdown', function(e) {
 		$(this).find('.dropdown-menu').first().stop(true, true).slideUp('fast');
 	});
+	
+	$(document).delegate('*[data-toggle="lightbox"]', 'click', function(event) {
+		event.preventDefault();
+		$(this).ekkoLightbox();
+	}); 
 });
 
 /********* Modal *********/
