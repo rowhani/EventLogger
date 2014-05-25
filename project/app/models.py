@@ -10,10 +10,12 @@ from utils import *
 
 class TrimCharField(models.CharField):
    def get_prep_value(self, value):
-       return super(TrimCharField, self).get_prep_value(value).strip()
+       try: return super(TrimCharField, self).get_prep_value(value).strip()
+       except: return super(TrimCharField, self).get_prep_value(value)
 
    def pre_save(self, model_instance, add):
-       return super(TrimCharField, self).pre_save(model_instance, add).strip()
+       try: return super(TrimCharField, self).pre_save(model_instance, add).strip()
+       except: return super(TrimCharField, self).pre_save(model_instance, add)
        
 class Event(models.Model):
     class Meta: 
