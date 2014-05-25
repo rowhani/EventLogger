@@ -449,9 +449,11 @@ table#persons .thumbnail
 }
 
 table#events>tbody>tr>td:first-child,
-table#persons>tbody>tr>td:first-child
+table#events>thead>tr>th:first-child,
+table#persons>tbody>tr>td:first-child,
+table#persons>thead>tr>th:first-child
 {
-	max-width: 11%!important;
+	width: 11%!important;
 	text-align: center;
 }
 

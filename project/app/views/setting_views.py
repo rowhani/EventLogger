@@ -123,8 +123,7 @@ def setting_restore(request, *args, **kwargs):
             import_files(zf)
             import_data(zf, model_dataset_map, False)
             import_data(zf, model_dataset_map, False) # Save twice to take care of foreign (m2m, etc.) relations.
-    except Exception, e:
-        print "*******", e
+    except:
         return redirect(reverse('setting') + "?restore_error=1")
         
     return redirect(reverse('setting') + "?restore_success=1")

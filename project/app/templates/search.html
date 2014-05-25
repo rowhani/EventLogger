@@ -184,7 +184,7 @@
 				"fnDrawCallback": function(settings) {
 					ajaxIndicatorStop();
 					$("#results_count").text(settings._iRecordsDisplay);
-					if (!settings._iRecordsDisplay) {
+					if (settings._iRecordsDisplay <= settings._iDisplayLength) {
 						$(".bottom").hide();
 					}
 					else {

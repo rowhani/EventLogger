@@ -90,6 +90,12 @@
 				"fnDrawCallback": function(settings) {
 					ajaxIndicatorStop();
 					$("#persons_count").text(settings._iRecordsTotal);
+					if (settings._iRecordsDisplay <= settings._iDisplayLength) {
+						$(".bottom").hide();
+					}
+					else {
+						$(".bottom").show();
+					}
 				}
 			});	
 			

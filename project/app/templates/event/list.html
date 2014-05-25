@@ -91,7 +91,13 @@
 				},
 				"fnDrawCallback": function(settings) {
 					ajaxIndicatorStop();
-					$("#events_count").text(settings._iRecordsTotal);
+					$("#events_count").text(settings._iRecordsTotal);					
+					if (settings._iRecordsDisplay <= settings._iDisplayLength) {
+						$(".bottom").hide();
+					}
+					else {
+						$(".bottom").show();
+					}
 				}
 			});	
 			

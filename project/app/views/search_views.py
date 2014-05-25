@@ -131,7 +131,7 @@ class SearchResultJson(BaseDatatableView):
                 expr = Q()
                 for kw in keywords: expr = expr|Q(description_raw__icontains=kw)
                 qs = qs.filter(expr)
-        return qs
+        return qs.distinct()
         
     def get_initial_queryset(self):
         return super(SearchResultJson, self ).get_initial_queryset().order_by("-date_happened")
