@@ -172,7 +172,7 @@ class EventListJson(BaseDatatableView):
                 resp += "</div>"
             return resp
         elif column == 'persons':
-            return "<br/> ".join(['<a href="%s">%s</a>' % (reverse('detail_person', args=[person.id]), unicode(person)) for person in row.persons.all()])
+            return "<br/> ".join(['<a href="%s">%s</a>' % (reverse('detail_person', args=[person.id]), unicode(person)) for person in row.persons.filter(status='public')])
         else:
             return super(EventListJson, self).render_column(row, column)
 

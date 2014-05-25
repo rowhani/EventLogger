@@ -31,7 +31,7 @@ class TagForm(ModelForm):
 def list_tag_view(request, *args, **kwargs):
     active_link_id = "tag"
     
-    tags = Tag.objects.all().order_by('name')
+    tags = Tag.objects.all()
     
     return render_to_response('tag/list.html', locals(), context_instance = RequestContext(request))
        

@@ -34,7 +34,7 @@ def search_view(request, *args, **kwargs):
     all_tags = Tag.objects.all()
     tags_json = json.dumps(tags)
     
-    all_persons = Person.objects.all()
+    all_persons = Person.objects.filter(status='public')
     persons_json = json.dumps(persons)
         
     status_json = json.dumps(status)
@@ -134,7 +134,7 @@ class SearchResultJson(BaseDatatableView):
         return qs.distinct()
         
     def get_initial_queryset(self):
-        return super(SearchResultJson, self ).get_initial_queryset().order_by("-date_happened")
+        return super(SearchResultJson, self ).get_initial_queryset()
         
     def prepare_results(self, qs):
         return super(SearchResultJson, self ).prepare_results(qs)

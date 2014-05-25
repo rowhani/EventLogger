@@ -50,6 +50,8 @@
 	</h4>
 {% endblock %}
 
+{% load app_extras %}
+
 {% block content %}
 	{% if request.user.is_authenticated %}
 		<div class="pull-left">
@@ -78,7 +80,7 @@
 			رویدادهای مرتبط
 		</div>
 		<div class="panel-body">	
-			{% if person.events.all %}
+			{% if person.events.all|public %}
 				<table id="events" class="table" cellspacing="0" width="100%">
 					<thead>
 						<tr>
@@ -89,7 +91,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{% for item in person.events.all %}
+						{% for item in person.events.all|public %}
 							<tr>
 								<td>
 									<a href="{% url 'detail_event' item.id %}">

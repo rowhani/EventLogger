@@ -14,9 +14,12 @@ class TrimCharField(models.CharField):
 
    def pre_save(self, model_instance, add):
        return super(TrimCharField, self).pre_save(model_instance, add).strip()
-
+       
 class Event(models.Model):
-    class Meta: db_table = "Event"
+    class Meta: 
+        db_table = "Event"
+        ordering = ['-date_happened', 'subject']
+        
     subject = TrimCharField(max_length=200, db_index=True)
     description = models.TextField()
     description_raw = models.TextField(db_index=True, null=True, blank=True)
@@ -59,7 +62,10 @@ class Event(models.Model):
         return get_truncated_text(self.description_raw, boundry_letters_count=150)
  
 class Person(models.Model):
-    class Meta: db_table = "Person"
+    class Meta: 
+        db_table = "Person"
+        ordering = ['first_name', 'last_name']
+        
     first_name = TrimCharField(max_length=200, db_index=True)
     last_name = TrimCharField(max_length=200, db_index=True)
     gender = models.CharField(max_length=10, blank=False, choices=[('male', 'مرد'), ('female', 'زن')])
@@ -93,14 +99,20 @@ class Person(models.Model):
         except: return self.death_date
                 
 class Tag(models.Model):
-    class Meta: db_table = "Tag"
+    class Meta: 
+        db_table = "Tag"
+        ordering = ['name']
+        
     name = TrimCharField(max_length=100, unique=True)
     
     def __unicode__(self):
         return self.name
     
 class Attachment(models.Model):
-    class Meta: db_table = "Attachment"
+    class Meta: 
+        db_table = "Attachment"     
+        ordering = ['name']
+        
     name = TrimCharField(max_length=255)
     filename = TrimCharField(max_length=1000, unique=True)
     event = models.ForeignKey("Event", related_name="attachments")

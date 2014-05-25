@@ -39,6 +39,8 @@
 	</h4>
 {% endblock %}
 
+{% load app_extras %}
+
 {% block content %}
 	{% if request.user.is_authenticated %}
 		<div class="pull-left">
@@ -86,7 +88,7 @@
 			</div>
 			<div id="collapseOne" class="panel-collapse collapse in">
 				<div class="panel-body">
-					{% if event.persons.all %}
+					{% if event.persons.all|public %}
 						<table id="persons" class="table" cellspacing="0" width="100%">
 							<thead>
 								<tr>
@@ -97,7 +99,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{% for item in event.persons.all %}
+								{% for item in event.persons.all|public %}
 									<tr>
 										<td>
 											<a href="{% url 'detail_person' item.id %}">
@@ -184,9 +186,9 @@
 			</div>
 			<div id="collapseFour" class="panel-collapse collapse">
 				<div class="panel-body">	
-					{% if event.related_events.all %}
+					{% if event.related_events.all|public %}
 						<ul class="list-group">					
-							{% for item in event.related_events.all %}
+							{% for item in event.related_events.all|public %}
 								<li class="list-group-item"><a href="{% url 'detail_event' item.id %}">{{ item }}</a></li>
 							{% endfor %}
 						</ul>			
