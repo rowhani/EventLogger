@@ -8,15 +8,22 @@ from django.conf import settings
 
 from utils import *
 
+class TrimCharField(models.CharField):
+   def get_prep_value(self, value):
+       return super(TrimCharField, self).get_prep_value(value).strip()
+
+   def pre_save(self, model_instance, add):
+       return super(TrimCharField, self).pre_save(model_instance, add).strip()
+
 class Event(models.Model):
     class Meta: db_table = "Event"
-    subject = models.CharField(max_length=200, db_index=True)
+    subject = TrimCharField(max_length=200, db_index=True)
     description = models.TextField()
     description_raw = models.TextField(db_index=True, null=True, blank=True)
-    location = models.CharField(max_length=1000, db_index=True)
+    location = TrimCharField(max_length=1000, db_index=True)
     date_happened = models.DateTimeField()
     date_ended = models.DateTimeField(null=True, blank=True)
-    photo = models.CharField(max_length=1000, null=True, blank=True)
+    photo = TrimCharField(max_length=1000, null=True, blank=True)
     actions_taken = models.TextField(null=True, blank=True)
     persons = models.ManyToManyField("Person", null=True, blank=True, db_table="Event_Person")
     tags = models.ManyToManyField('Tag', null=True, blank=True, related_name="events", db_table="Event_Tag")
@@ -53,14 +60,14 @@ class Event(models.Model):
  
 class Person(models.Model):
     class Meta: db_table = "Person"
-    first_name = models.CharField(max_length=200, db_index=True)
-    last_name = models.CharField(max_length=200, db_index=True)
+    first_name = TrimCharField(max_length=200, db_index=True)
+    last_name = TrimCharField(max_length=200, db_index=True)
     gender = models.CharField(max_length=10, blank=False, choices=[('male', 'مرد'), ('female', 'زن')])
     birth_date = models.DateTimeField(null=True, blank=True)
-    birth_place = models.CharField(max_length=1000, null=True, blank=True)
+    birth_place = TrimCharField(max_length=1000, null=True, blank=True)
     death_date = models.DateTimeField(null=True, blank=True)
-    death_place = models.CharField(max_length=1000, null=True, blank=True)
-    person_photo = models.CharField(max_length=1000, null=True, blank=True)
+    death_place = TrimCharField(max_length=1000, null=True, blank=True)
+    person_photo = TrimCharField(max_length=1000, null=True, blank=True)
     events = models.ManyToManyField("Event", null=True, blank=True, db_table="Event_Person")
     status = models.CharField(max_length=15, blank=True, default='public', choices=[('public', 'public'), ('unconfirmed', 'unconfirmed'), ('hidden', 'hidden')])
         
@@ -87,15 +94,15 @@ class Person(models.Model):
                 
 class Tag(models.Model):
     class Meta: db_table = "Tag"
-    name = models.CharField(max_length=100, unique=True)
+    name = TrimCharField(max_length=100, unique=True)
     
     def __unicode__(self):
         return self.name
     
 class Attachment(models.Model):
     class Meta: db_table = "Attachment"
-    name = models.CharField(max_length=255)
-    filename = models.CharField(max_length=1000, unique=True)
+    name = TrimCharField(max_length=255)
+    filename = TrimCharField(max_length=1000, unique=True)
     event = models.ForeignKey("Event", related_name="attachments")
     
     def __unicode__(self):
