@@ -1,0 +1,43 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}تنظیمات{% endblock %}
+
+{% block header %}<span class="glyphicon glyphicon-cog"></span> تنظیمات{% endblock %}
+
+{% block content %}
+    <div class="panel panel-success">
+      <div class="panel-heading">
+        <h3 class="panel-title"><span class="fa fa-floppy-o"></span> پشتیبانی</h3>
+      </div>
+      <form class="panel-body" action="{% url 'setting_backup' %}" method="post">
+		{% csrf_token %}
+		<p><label><input name="include_files" id="include_files" type="checkbox" style="margin-left: 5px; margin-top: 2px;" /> استخراج فایل ها </label></p>
+        <p><button type="submit" class="btn btn-success">ایجاد فایل پشتیبان</button></p>		
+      </form>
+    </div>
+	
+	<div class="panel panel-info">
+      <div class="panel-heading">
+        <h3 class="panel-title"><span class="fa fa-repeat"></span> بازنشانی</h3>
+      </div>
+      <form class="panel-body" action="{% url 'setting_restore' %}" method="post" enctype="multipart/form-data">
+		{% if restore_success %}<div class="alert alert-success"><span class="fa fa-check-circle"></span> عملیات بازنشانی با موفقیت انجام شد.</div>{% endif %}
+		{% if restore_error %}<div class="alert alert-danger"><span class="fa fa-times-circle"></span> مشکلی در فایل ورودی وجود دارد.</div>{% endif %}
+		{% csrf_token %}
+		<p><label><input name="ignore_errors" id="ignore_errors" type="checkbox" style="margin-left: 5px; margin-top: 2px;" checked="checked"/> نادیده گرفتن خطاها </label></p>
+		<p><label><input name="clear_all" id="clear_all" type="checkbox" style="margin-left: 5px; margin-top: 2px;"/> از بین بردن تمام داده های فعلی </label></p>
+		<p><input name="backup_file" id="backup_file" type="file" accept=".zip" placeholder="انتخاب فایل پشتیبان" title="انتخاب فایل پشتیبان" required/></p>
+        <p><button type="submit" class="btn btn-info" data-confirm="همه ی داده های قبل ممکن است از بین بروند. آیا واقعه مایل به بازنشانی هستید؟">بازنشانی فایل پشتیبان</button></p>		
+      </form>
+    </div>
+	
+	<div class="panel panel-warning">
+      <div class="panel-heading">
+        <h3 class="panel-title"><span class="fa fa-gears"></span> مدیریت</h3>
+      </div>
+      <div class="panel-body">
+		<p>این پانل برای متخصصین در نظر گرفته شده است.</p>
+        <p><a href="/admin" class="btn btn-warning">ورود به پانل مدیریت</a></p>		
+      </div>
+    </div>
+{% endblock %}

@@ -1,4 +1,5 @@
 #! /usr/bin/env python2.7
+
 import os
 import sys
 
@@ -9,7 +10,7 @@ TEMPLATE_DEBUG = DEBUG
 
 # Absolute paths for where the project and templates are stored.
 ABSOLUTE_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
-ABSOLUTE_TEMPLATES_PATH = '%s/templates' % ABSOLUTE_PROJECT_ROOT
+ABSOLUTE_TEMPLATES_PATH = '%s/templates' % os.path.join(ABSOLUTE_PROJECT_ROOT, "project")
 
 # add root directory to PYTHONPATH
 if not ABSOLUTE_PROJECT_ROOT in sys.path:
@@ -25,15 +26,27 @@ MEDIA_ROOT = '%s/media' % ABSOLUTE_PROJECT_ROOT
 
 # The URL that handles the media, static, etc.
 STATIC_URL = '/static/'
-MEDIA_URL = STATIC_URL + 'media/'
+MEDIA_URL = '/media/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
     '%s/static-assets' % ABSOLUTE_PROJECT_ROOT,
 )
 
+EVENT_IMAGES_DIR = '%s/event-images' % MEDIA_ROOT
+PERSON_IMAGES_DIR = '%s/person-images' % MEDIA_ROOT
+EVENT_ATTACHMENTS_DIR = '%s/event-attachments' % MEDIA_ROOT
+
+if not os.path.exists(EVENT_IMAGES_DIR): os.makedirs(EVENT_IMAGES_DIR)
+if not os.path.exists(PERSON_IMAGES_DIR): os.makedirs(PERSON_IMAGES_DIR)
+if not os.path.exists(EVENT_ATTACHMENTS_DIR): os.makedirs(EVENT_ATTACHMENTS_DIR)
+
+EVENT_IMAGES_URL = MEDIA_URL + 'event-images/'
+PERSON_IMAGES_URL = MEDIA_URL + 'person-images/'
+EVENT_ATTACHMENTS_URL = MEDIA_URL + 'event-attachments/'
+
 ADMINS = (
-    ('Your Name', 'artmansoft@yahoo.com'),
+    ('Payman Rowhani', 'artmansoft@yahoo.com'),
 )
 
 MANAGERS = ADMINS
@@ -59,11 +72,11 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = None
+TIME_ZONE = "Asia/Tehran"
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fa'
 
 SITE_ID = 1
 
@@ -76,7 +89,7 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -113,6 +126,10 @@ ROOT_URLCONF = 'project.urls'
 # disabled - outsite the app
 WSGI_APPLICATION = 'wsgihandler.application'
 
+LOGIN_URL = "/login"
+
+CAPTCHA_FONT_SIZE = 28
+
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
@@ -130,6 +147,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # required by django-admin-tools
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
+    # custom
+    'project.app.processors.settings_context',
+    'project.app.processors.calendar_context',
+    'project.app.processors.recent_events_processor'
 )
 
 # APPS
@@ -157,10 +178,9 @@ CORE_APPS = (
 EXTERNAL_APPS = (
     'django_extensions',
     'south',
-    # If you're using Django 1.7.x or later
-    #'debug_toolbar.apps.DebugToolbarConfig',
-    # If you're using Django 1.6.x or earlier
-    'debug_toolbar',
+    'django_forms_bootstrap',
+    'captcha',
+    'import_export'
 )
 
 LOCAL_APPS = (
@@ -169,7 +189,6 @@ LOCAL_APPS = (
 
 # the order is important!
 INSTALLED_APPS = ADMIN_TOOL_APPS + CORE_APPS + LOCAL_APPS + EXTERNAL_APPS
-
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -207,4 +226,3 @@ LOGGING = {
         },
     }
 }
-

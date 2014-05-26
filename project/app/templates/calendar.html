@@ -1,0 +1,132 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}تقویم{% endblock %}
+
+{% block header %}<span class="glyphicon glyphicon-calendar"></span> تقویم{% endblock %}
+	
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker.css" />
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-datepicker/humanity.calendars.picker.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip-red.min.css"/>
+{% endblock %}
+
+{% block content %}
+	<div class="btn-group" data-toggle="buttons">
+		<label class="btn btn-default btn-lg" id="switch-calendar-month">
+			<input type="radio" name="calendar_view_type" value="month"> نمایش ماهانه
+		</label>
+		<label class="btn btn-default btn-lg" id="switch-calendar-year">
+			<input type="radio" name="calendar_view_type" value="year"> نمایش سالانه
+		</label>
+	</div>
+	<div class="clearfix"></div><br/>
+    <div class="month-calendars-picker" data-disable-powertip="true"></div>
+	<div class="year-calendars-picker" data-disable-powertip="true"></div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.plus.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian.min.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.picker-fa.js"></script>
+	<script src="{{ STATIC_URL }}libs/jquery-datepicker/jquery.calendars.persian-fa.js"></script>
+	<script>
+		$(document).ready(function() {
+			var monthlyCalendar = null;
+			var yearlyCalendar = null;
+			var searchUrl = "{% url 'search' %}";
+			
+			function loadEvents(calSelector, year, month, mode) {
+				ajaxIndicatorStart("{{ STATIC_URL }}images/ajax-loader.gif", "در حال بارگذاری...");
+				$.getJSON("{% url 'calendar_events' %}?mode=" + mode + "&year=" + year + "&month=" + month, function(data) {
+					var cal = $.calendars.instance();
+					for (var date in data) {							
+						var jd = cal.parseDate("yyyy/mm/dd", date).toJD();
+						if (mode != 'yearly') {
+							el = $(calSelector).find("a[class*='jd" + jd + "']");
+						}
+						else {
+							el = $(calSelector).find("a[class*='jd" + jd + "']:not('.calendars-other-month')");
+						}
+						if (!el.length) {
+							continue;
+						}
+						var events = data[date];
+						el.html(el.html() + '<span class="badge" style="margin-top: -15px; background: red; color: white">' + events.length + '</span>');
+						var tooltipEl = $("<div>").addClass("tooltip");
+						$(events).each(function(i, v) {
+							tooltipEl.append($('<h4>').css("margin-top", "10px").append($("<a>").attr("href", v.url).text(v.subject)));
+						});
+						el.livequery(function() {
+							$(this).attr("title", tooltipEl.html()).powerTip({
+								smartPlacement: true,
+								mouseOnToPopup: true
+							});
+						});
+					}
+					ajaxIndicatorStop();
+				});
+			}
+			
+			function goToDate(date) {
+				date = date._calendar.formatDate(date, "yyyy/mm/dd");
+				window.location = searchUrl + "?date_range=" + date + " - " + date;
+			}
+			
+			var year = {% if year %} "{{ year }}" {% else %} convert_to_jalali(new Date(), 'yy') {% endif %};
+			var month = {% if month %} "{{ month }}" {% else %} convert_to_jalali(new Date(), 'mm') {% endif %};
+			var day = {% if day %} "{{ day }}" {% else %} "01" {% endif %};
+
+			$('#switch-calendar-month').click(function() {
+				if (!monthlyCalendar) {
+					$('.month-calendars-picker').calendarsPicker({
+						changeMonth: true,
+						changeYear: true,
+						selectDefaultDate: true,
+						showOtherMonths: true,				
+						calendar: $.calendars.instance('persian', 'fa'),
+						onChangeMonthYear: function(year, month) {
+							loadEvents(".month-calendars-picker", year, month, "montly");
+						},
+						defaultDate: year + "/" + month + "/" + day,
+						onSelect: function(date) {
+							goToDate(date[0]);
+						}
+					});		
+				}
+				$('.year-calendars-picker').hide();
+				$('.month-calendars-picker').show()
+			});		
+			
+			$('#switch-calendar-year').click(function() {
+				if (!yearlyCalendar) {
+					$('.year-calendars-picker').calendarsPicker({
+						monthsToShow: [4, 3], 
+						changeMonth: true,
+						changeYear: true,
+						selectOtherMonths: true,
+						yearRange: '1350:1450',				
+						monthsToStep: 12,
+						calendar: $.calendars.instance('persian', 'fa'),
+						defaultDate: year + '/01/01',
+						onChangeMonthYear: function(year, month) {
+							loadEvents(".year-calendars-picker", year, month, "yearly");
+						},
+						onSelect: function(date) {
+							goToDate(date[0]);
+						}
+					});
+				}
+				$('.year-calendars-picker').show();
+				$('.month-calendars-picker').hide();
+			});
+			
+			{% if mode == "monthly" %}
+				$('#switch-calendar-month').trigger('click');
+			{% else %}
+				$('#switch-calendar-year').trigger('click');
+			{% endif %}
+		});
+	</script>
+{% endblock %}

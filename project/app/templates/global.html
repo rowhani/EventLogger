@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html class="no-js" dir="rtl" lang="fa">
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="رویداد نگار">
+        <meta name="viewport" content="width=device-width">
+		
+		<title>رویداد نگار - {% block title %}{% endblock %}</title>
+
+        <link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap/3.1.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap/3.1.1/css/bootstrap-rtl.min.css">
+		<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-modal/css/bootstrap-modal-bs3patch.css">
+		<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-modal/css/bootstrap-modal.css">		
+        <link rel="stylesheet" href="{{ STATIC_URL }}libs/font-awesome/4.0.3/css/font-awesome.min.css">
+		<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-jalali-datepicker/bootstrap-datepicker.min.css" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-wysihtml5/bootstrap-wysihtml5.min.css">
+		<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-wysihtml5/lib/css/wysiwyg5-color.css">
+		<link rel="stylesheet" href="{{ STATIC_URL }}libs/chosen-bootstrap/chosen.bootstrap.min.css">
+		<link rel="stylesheet" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip.min.css"/>
+
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/main.css">
+	
+		{% block head %}{% endblock %}
+    </head>
+    <body>   
+		<div class="wrapper"> <!-- wrapper -->		
+			{% block body %}{% endblock %}	
+			<div class="push"></div>
+		</div> <!-- /wrapper -->
+
+		<footer dir="ltr">
+			<span class="pull-right"><span class="glyphicon glyphicon-copyright-mark"></span> 2014 Artman, All Rights Reserved</span>
+		</footer>
+		
+		<div id="app-modal" class="modal fade" style="display: none" data-focus-on="input:first"></div>
+
+		<script src="{{ STATIC_URL }}libs/jquery/2.1.0/jquery-2.1.0.min.js"></script>
+		<script src="{{ STATIC_URL }}libs/modernizr/2.6.2/modernizr-2.6.2.min.js"></script>
+		<script src="{{ STATIC_URL }}libs/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<script src="{{ STATIC_URL }}libs/bootstrap-modal/js/bootstrap-modalmanager.min.js"></script>
+		<script src="{{ STATIC_URL }}libs/bootstrap-modal/js/bootstrap-modal.min.js"></script>
+		<script src="{{ STATIC_URL }}js/jquery.livequery.min.js"></script>		
+		<script src="{{ STATIC_URL }}libs/bootstrap-jalali-datepicker/bootstrap-datepicker.min.js"></script>
+		<script src="{{ STATIC_URL }}libs/bootstrap-jalali-datepicker/bootstrap-datepicker.fa.min.js"></script>		
+		<script src="{{ STATIC_URL }}libs/bootstrap-wysihtml5/lib/js/wysihtml5.min.js"></script>
+		<script src="{{ STATIC_URL }}libs/bootstrap-wysihtml5/bootstrap-wysihtml5.min.js"></script>
+		<script src="{{ STATIC_URL }}libs/chosen-bootstrap/chosen.jquery.min.js"></script>
+		<script src="{{ STATIC_URL }}js/bootstrap-filestyle.min.js"></script>
+		<script src="{{ STATIC_URL }}libs/jquery-powertip/jquery.powertip.min.js"></script>
+		
+		<script src="{{ STATIC_URL }}js/main.js"></script>
+		
+		{% block base_scripts %}{% endblock %}
+		
+		{% block scripts %}{% endblock %}
+
+		<!--<script>
+			var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+			g.src='//www.google-analytics.com/ga.js';
+			s.parentNode.insertBefore(g,s)}(document,'script'));
+		</script>-->
+    </body>
+</html>

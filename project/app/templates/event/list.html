@@ -1,0 +1,119 @@
+﻿{% extends 'base.html' %}
+
+{% block head %}
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/bootstrap-datatables/css/dataTables.bootstrap.min.css">	
+	<style>
+		.chosen-rtl {
+			margin-left: 180px;
+			margin-top: -2px;
+		}
+	</style>
+{% endblock %}
+
+{% block title %}رویداد ها{% endblock %}
+
+{% block header %}<span class="glyphicon glyphicon-list"></span> رویداد ها <small>(مجموع: <span id="events_count">0</span>)</small>{% endblock %}
+
+{% block content %}	
+	<a class="btn btn-primary pull-right" href="{% url 'add_event' %}" style="margin-bottom: 5px"><span class="glyphicon glyphicon-plus"></span>
+		{% if request.user.is_authenticated %}
+			ایجاد رویداد جدید
+		{% else %}
+			ارسال رویداد جدید
+		{% endif %}
+	</a>
+	
+	<table id="events" class="table table-striped table-bordered table-condensed fd-table-responsive pull-left" cellspacing="0" width="100%">
+		<thead>
+            <tr>
+				<th></th>
+                <th>موضوع</th>
+                <th>تاریخ</th>
+                <th>مکان</th>
+				<th>اشخاص مرتبط</th>
+            </tr>
+        </thead>
+	</table>
+	
+	{% if request.user.is_authenticated %}
+		<select id="status_filter" name="status_filter[]" multiple="multiple" data-role="chosen" class="form-control input-sm hide" style="margin-right: 10px;" data-width="420px">
+			<option value="public" selected="selected">رویداد های آشکار</option>
+			<option value="hidden" selected="selected">رویداد های مخفی</option>
+			<option value="unconfirmed">رویداد های تایید نشده</option>
+		</select>
+	{% endif %}
+	
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/jquery.dataTables.min.js"></script>	
+	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/dataTables.bootstrap.min.js"></script>	
+	<script>
+		$(document).ready(function() {
+			var dt = $('#events').dataTable({
+				"sDom": '<"top"f<"status-filter">>rt<"clearfix"><"bottom"<"pull-left"p><"pull-right"i>><"clear">',
+				"iDisplayLength": 20,
+				"oLanguage": {
+					"sInfo": "نمایش صفحه _PAGE_ از _PAGES_",
+					"sEmptyTable": "هیچ رویدادی ثبت نشده است.",
+					"sInfoEmpty": "نمایش 0 از 0 رویداد",
+					"sInfoFiltered": "(فیلتر شده از مجموع _MAX_ رویداد)",
+					"sLoadingRecords": "در حال بارگذاری...",
+					"sProcessing": "", //"در حال پردازش...",
+					"sSearch": "",
+					"sZeroRecords": "هیچ رویدادی یافت نشد.",
+					"oPaginate": {
+						"sNext": "بعدی",
+						"sFirst": "اول",
+						"sPrevious": "قبلی",
+						"sLast": "آخر"						
+					}
+				},
+				"aoColumns": [
+					{ "bSortable": false },
+					null,
+					null,
+					null,
+					{ "bSortable": false }
+				],
+				"order": [[ 2, "desc" ], [ 1, "asc" ]],
+				"bProcessing": true,
+				"bServerSide": true,
+				"sAjaxSource": "{% url 'list_event_json' %}",
+				"fnServerParams": function (aoData) {					
+					var filters = $(".dataTables_filter :input").serializeArray();
+					$.each(filters, function() {
+					  aoData.push(this);
+					});
+				},
+				"fnPreDrawCallback": function() {					
+					ajaxIndicatorStart("{{ STATIC_URL }}images/ajax-loader.gif", "در حال پردازش...");
+				},
+				"fnDrawCallback": function(settings) {
+					ajaxIndicatorStop();
+					$("#events_count").text(settings._iRecordsTotal);					
+					if (settings._iRecordsDisplay <= settings._iDisplayLength) {
+						$(".bottom").hide();
+					}
+					else {
+						$(".bottom").show();
+					}
+				}
+			});	
+			
+			var sSearch = $("#events_filter input[type=search]");
+			sSearch.attr({"name": "sSearch", "title": "جستجوی سریع", "placeholder": "جستجوی سریع"});
+			
+			$('.event-ended', dt).livequery(function() {
+				$(this).addClass("label label-default").text('پایان یافته');
+			});
+			
+			{% if request.user.is_authenticated %}
+				sSearch.parent().after($("#status_filter").removeClass("hide"));	
+				$('#status_filter').attr("title", "وضعیت رویداد را فیلتر کنید").on('change', function() {
+					dt.fnDraw();
+				});
+			{% endif %}
+		});
+	</script>
+{% endblock %}

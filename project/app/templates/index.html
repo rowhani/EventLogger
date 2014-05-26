@@ -1,0 +1,22 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}خانه{% endblock %}
+
+{% block header %}<span class="glyphicon glyphicon-home"></span> خانه{% endblock %}
+
+{% block head %}
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/jquery-powertip/css/jquery.powertip-orange.min.css"/>
+{% endblock %}
+
+{% block content %}
+    <div class="jumbotron">
+		{% if event %}
+			<h1 title="تازه ترین رویداد" data-placement="ne">{{ event.location }}: {{ event.subject }} <small>(<span class="convert-date">{{ event.date_happened|date:"c" }}</span>)</small></h1>
+			<p>{{ event.truncated_description|safe }}</p>
+			<p><a class="btn btn-primary btn-lg" href="{% url 'detail_event' event.id %}">بیشتر بدانید &raquo;</a></p>
+		{% else %}
+			<h1>هیچ رویدادی ثبت نشده است.</h1>
+			<p><a class="btn btn-primary btn-lg" href="{% url 'add_event' %}">ایجاد اولین رویداد &raquo;</a></p>
+		{% endif %}
+    </div>
+{% endblock %}

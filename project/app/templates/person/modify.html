@@ -1,0 +1,39 @@
+﻿{% extends 'base.html' %}
+
+{% load bootstrap_tags %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block header %}{{ title }}{% endblock %}
+
+{% block content %}	
+	<p class="alert alert-danger"><strong>پر کردن مواردی که با <span class="icon-required"></span> مشخص شده اند الزامی است.</strong></p>
+	<form action="{{ action }}" method="post" class="form-horizontal" role="form" enctype="multipart/form-data" novalidate>
+		{% csrf_token %}
+		<input type="hidden" name="person_photo_path" value="{{ person_photo }}"/>
+		{{ person_form|as_bootstrap }}
+		{%if person_photo %}
+			<hr/>
+		{% endif %}
+		{%if person_photo %}
+			<div id="div_remove_photo" class="form-group">        
+				<label for="div_remove_photo" class="control-label">
+					حذف تصویر فعلی
+				</label>  
+				<div>
+					<input class="form-control" id="remove_photo" name="remove_photo" type="checkbox" value="1">
+					<div class="col-lg-2">
+						<span class="thumbnail">
+						  <img src="{{ PERSON_IMAGES_URL }}{{ person_photo }}">
+						</span>
+					</div>
+				</div>        
+			</div>
+		{% endif %}		
+	    <br/>
+		<div class="form-actions pull-right">
+			<button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+			<a href="{% if not person_id %}{% url 'list_person' %}{% else %}{% url 'detail_person' person_id %}{% endif %}" class="btn btn-default">لغو</a>
+		</div>				
+	</form>	
+{% endblock %}

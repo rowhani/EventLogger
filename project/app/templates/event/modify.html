@@ -1,0 +1,146 @@
+﻿{% extends 'base.html' %}
+
+{% block head %}
+	<link rel="stylesheet" href="{{ STATIC_URL }}libs/jquery-filetype/jquery-filetype.css">	
+{% endblock %}
+
+{% load bootstrap_tags %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block header %}{{ title }}{% endblock %}
+
+{% block content %}	
+	<p class="alert alert-danger"><strong>پر کردن مواردی که با <span class="icon-required"></span> مشخص شده اند الزامی است.</strong></p>
+	<div class="hide main-person-form">
+		<div class="panel panel-warning">
+			<div class="panel-body">
+				<a class="close" title="حذف">&times;</a><br/><br/>
+				{{ main_person_form|as_bootstrap }}
+			</div>
+		</div>
+	</div>
+	<form action="{{ action }}" method="post" class="form-horizontal" role="form" enctype="multipart/form-data" novalidate>
+		{% csrf_token %}
+		<input type="hidden" name="photo_path" value="{{ event_photo }}"/>
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#event-tab" data-toggle="tab">اطلاعات رویداد</a></li>
+			<li><a href="#person-tab" data-toggle="tab">اشخاص مرتبط</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane active" id="event-tab">
+				<p class="alert alert-warning alert-sm">اطلاعات این بخش برای رویدادهای عمومی یا شخصی مورد نیاز است.</p>
+				{{ event_form|as_bootstrap }}
+				{%if event_photo or attachments %}
+				<hr/>
+				{% endif %}
+				{%if event_photo %}
+					<div id="div_remove_photo" class="form-group">        
+						<label for="div_remove_photo" class="control-label">
+							حذف تصویر فعلی
+						</label>  
+						<div>
+							<input class="form-control" id="remove_photo" name="remove_photo" type="checkbox" value="1">
+							<div class="col-lg-2">
+								<span class="thumbnail">
+								  <img src="{{ EVENT_IMAGES_URL }}{{ event_photo }}">
+								</span>
+							</div>
+						</div>        
+					</div>
+				{% endif %}
+				{%if attachments %}
+					<div id="div_remove_attachments" class="form-group">        
+						<label for="div_remove_attachments" class="control-label">
+							حذف ضمائم فعلی
+						</label>  
+						<div class="attachments-panel" style="margin-top: 5px;">
+							{% for attachment in attachments %}
+								<p>
+									<input class="form-control" name="remove_attachments" type="checkbox" value="{{ attachment.id }}" style="margin-top: -5px">
+									<a href="{{ EVENT_ATTACHMENTS_URL }}{{ attachment.filename }}">{{ attachment.name }}</a>
+								</p>
+							{% endfor %}
+						</div>        
+					</div>
+				{% endif %}
+			</div>
+			<div class="tab-pane" id="person-tab">
+				<p class="alert alert-warning alert-sm">اگر این رویداد جنبه عمومی دارد این قسمت را خالی بگذارید.</p>
+				<div class="panel panel-primary">
+					<div class="panel-body" >
+						{{ existing_persons_form|as_bootstrap }}
+					</div>
+				</div>
+				<div class="person-forms-panel">
+					{%for person_form in person_forms %}
+						<div data-prefix="{{ person_form.prefix }}">
+							<div class="panel panel-warning">
+								<div class="panel-body" >
+									<a class="close" title="حذف">&times;</a><br/><br/>
+									{{ person_form|as_bootstrap }}
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+				<a id="add_person" class="btn btn-warning" href="#"><span class="glyphicon glyphicon-plus"></span> اضافه کردن یک شخص جدید</a>
+			</div>
+		</div>	
+	    <br/>
+		<div class="form-actions pull-right">
+			<button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+			<a href="{% if not event_id %}{% url 'list_event' %}{% else %}{% url 'detail_event' event_id %}{% endif %}" class="btn btn-default">لغو</a>
+		</div>				
+	</form>	
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ STATIC_URL }}libs/jquery-filetype/jquery-filetype.js"></script>	
+	<script>
+		$(document).ready(function() {
+			window.location.hash = "{{ hash }}";
+			$('ul.nav a[href="#{{ hash }}"]').tab('show');
+
+			$(".attachments-panel").linktype();
+			
+			var person_form_prefix = "{{ person_form_prefix }}"
+			var person_form_number = {{ person_form_number }};
+			
+			$("#add_person").click(function() {
+				var form_prefix = person_form_prefix + person_form_number;
+				var form = $(".main-person-form").clone().removeClass("hide main-person-form").attr('data-prefix', form_prefix).hide();				
+				form.find('*').each(function() {
+					var item = $(this);
+					if (item.attr("id") && item.attr("id").indexOf("main") == 0) {
+						item.attr("id", item.attr("id").replace("main", form_prefix));
+					}
+					if (item.attr("name") && item.attr("name").indexOf("main") == 0) {
+						item.attr("name", item.attr("name").replace("main", form_prefix));
+					}
+				});		
+				form.appendTo($(".person-forms-panel")).slideDown('slow');
+				var data = $("#new_persons").val();
+				if (data != '') {
+					data += ',';
+				}
+				$("#new_persons").val(data + form_prefix);
+				person_form_number += 1;
+				return false;
+			});
+			
+			$(".close").livequery(function() {
+				$(this).on('click', function() {
+					var parent = $(this).closest(".panel").parent();
+					var prefix = parent.attr("data-prefix");
+					parent.slideUp('slow', function () {
+						$(this).remove();
+					});
+					var data = $("#new_persons").val();
+					$("#new_persons").val(data.replace(prefix, "").replace(",,", ","));
+					return false;
+				});
+			});
+		});
+	</script>
+{% endblock %}

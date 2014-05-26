@@ -1,0 +1,40 @@
+﻿{% extends 'global.html' %}
+
+{% block title %}ورود به سیستم{% endblock %}
+
+{% block head %}<link rel="stylesheet" href="{{ STATIC_URL }}css/login.css">{% endblock %}
+
+{% block body %}
+    <div class="container">
+		<div class="row">
+			<div class="col-sm-6 col-md-4 col-md-offset-4">
+				<h1 class="text-center login-welcome-title">
+					<image class="login-logo" alt="رویداد نگار" src="{{ STATIC_URL }}images/logo.png" />
+					<br/>
+					به رویداد نگار خوش آمدید!
+				</h1>
+				<h1 class="text-center login-title">ورود به سیستم برای ایجاد تغییرات در رویداد نگار</h1>
+				<div class="account-wall">
+					<img class="profile-img" src="{{ STATIC_URL }}images/login-profile.png" alt="">
+					<form class="form-signin" method="post" action="{% url 'login' %}">
+						{% csrf_token %}
+						{% if error %}<div class="alert alert-danger login-error">{{ error }}</div>{% endif %}
+						<input type="hidden" name="next" value="{{ next }}">
+						<input name="username" value="{{ username }}" type="text" class="form-control" placeholder="نام کاربری" title="نام کاربری" data-placement="ne" required autofocus>
+						{% if username_error %}<span class="error-msg">{{ username_error  }}</span>{% endif %}
+						<input name="password" type="password" class="form-control" placeholder="گذرواژه" title="گذرواژه" data-placement="ne" required>
+						{% if password_error %}<span class="error-msg">{{ password_error  }}</span>{% endif %}
+						<button class="btn btn-lg btn-primary btn-block" type="submit">
+							ورود به سیستم</button>
+						<label class="checkbox pull-left">
+							<input name="remember" type="checkbox" value="1" {% if remember %}checked="checked"{% endif %}>
+							ماندن در سیستم
+						</label>
+						<a href="#" class="pull-right need-help not-implemented">به راهنمایی نیاز دارید؟ </a><span class="clearfix"></span>
+					</form>
+				</div>
+				<a href="#" class="text-center new-account not-implemented">یک اعتبار ایجاد کنید </a>
+			</div>
+		</div>
+	</div>
+{% endblock %}

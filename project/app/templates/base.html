@@ -1,0 +1,124 @@
+﻿{% extends 'global.html' %}
+
+{% block body %}
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="{% url 'index' %}" title="خانه">
+					<image class="logo" alt="رویداد نگار" src="{{ STATIC_URL }}images/logo.png" />
+					رویداد نگار
+				</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul id="top-nav-links" class="nav navbar-nav" data-active-link-id="{{ active_link_id }}">
+					<li id="event-link"><a href="{% url 'list_event' %}"><span class="glyphicon glyphicon-list"></span> رویداد ها</a></li>
+					<li id="person-link"><a href="{% url 'list_person' %}"><span class="fa fa-users"></span> اشخاص</a></li>
+					<li id="tag-link"><a href="{% url 'list_tag' %}"><span class="fa fa-tags"></span> دسته ها</a></li>
+					<li id="calendar-link"><a href="{% url 'calendar' %}"><span class="glyphicon glyphicon-calendar"></span> تقویم</a></li>
+					<li id="search-link"><a href="{% url 'search' %}"><span class="glyphicon glyphicon-search"></span> جستجو</a></li>
+					{% if request.user.is_authenticated %}
+						<li id="setting-link"><a href="{% url 'setting' %}"><span class="glyphicon glyphicon-cog"></span> تنظیمات</a></li>
+					{% endif %}
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					{% if request.user.is_authenticated %}									
+						<li><a style="cursor: default;"><span class="glyphicon glyphicon-user"></span> خوش آمدید {{ request.user }}</a></li>
+						<li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> خروج</a></li>					
+					{% else %}
+						<li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> ورود</a></li>
+					{% endif %}
+				</ul>
+			</div><!--/.navbar-collapse -->
+		</div>
+	</nav>
+
+	<div class="container-fluid main-body">
+		<div class="row">
+			<div class="col-lg-3">
+				<div class="panel panel-success shadowable-success">
+					<div class="panel-heading"><span class="fa fa-calendar"></span> تقویم سال جاری</div>
+					<div class="panel-body">
+						<ul id="calendar-sidebar" class="fa-ul"></ul>
+						<a class="btn btn-success btn-sm" href="{% url 'calendar' %}?mode=yearly">بیشتر...</a>
+					</div>
+				</div>
+				<div class="panel panel-info shadowable-info">
+					<div class="panel-heading"><span class="fa fa-list"></span> رویداد های اخیر</div>
+					<div class="panel-body">
+						<ul id="recent-events-sidebar" class="fa-ul"></ul>
+						<a class="btn btn-info btn-sm" href="{% url 'list_event' %}">بیشتر...</a>
+					</div>
+				</div>
+				<div class="panel panel-warning shadowable-warning">
+					<div class="panel-heading"><span class="fa fa-mail-reply"></span> میانبر ها</div>
+					<div class="panel-body">
+						<div class="btn-group-vertical">
+							<a class="btn btn-warning btn-sm" href="{% url 'add_event' %}"><span class="glyphicon glyphicon-list"></span>
+								{% if request.user.is_authenticated %}
+									ایجاد رویداد جدید
+								{% else %}
+									ارسال رویداد جدید
+								{% endif %}
+							</a>
+							{% if request.user.is_authenticated %}
+								<a class="btn btn-warning btn-sm" href="{% url 'add_person' %}"><span class="glyphicon glyphicon-user"></span>
+									ایجاد شخص جدید
+								</a>
+								<a class="btn btn-warning btn-sm" href="{% url 'add_tag' %}" data-toggle="modal"><span class="glyphicon glyphicon-tag"></span>		
+									ایجاد دسته جدید
+								</a>
+								<a class="btn btn-warning btn-sm" href="/admin"><span class="fa fa-gears"></span>		
+									ورود به پانل مدیریت
+								</a>
+							{% endif %}
+						</div>
+						<form action="{% url 'search' %}" method="get" class="input-group input-group-sm">
+							<div class="input-group-btn">
+								<button type="submit" class="btn btn-warning" title="جستجو"><span class="fa fa-search"></span></button>
+							</div>
+							<input id="query" name="query" type="text" class="form-control" placeholder="کلمه ی مورد نظر" title="کلمه ی مورد نظر">
+						</form>
+					</div>
+				</div>
+			</div><!--/.right-sidebar -->
+			<div class="col-lg-9">
+				<div class="container-fluid shadowable-inverse">
+					{% block pre_header %}{% endblock %}
+					<div class="page-header alert">
+						<h1>{% block header %}{% endblock %}</h1>
+					</div>
+					<div class="panel panel-primary content">			
+						<div class="panel-body" >
+							{% block content %}{% endblock %}
+						</div>
+					</div>
+					
+				</div>
+			</div><!--/.content-body -->
+		</div>
+	</div>	
+{% endblock %}
+
+{% block base_scripts %}
+	<script>
+		$(document).ready(function() {
+			var calendarMonths = {{ calendar_months|safe }};
+			$.each(calendarMonths, function(i, v) {
+				$("<a>").attr("href", v[1]).html('<i class="fa fa-calendar-o" style="margin-right: -40px; margin-left: 5px"></i> ' + v[0]).appendTo($("<li>").appendTo($("#calendar-sidebar")));
+			});
+			
+			var recentEvents = {{ recent_events|safe }};
+			$.each(recentEvents, function(i, v) {
+				$("<a>").attr("href", v[3]).html('<i class="fa fa-list-alt" style="margin-right: -40px; margin-left: 5px"></i> ' + v[2] + ": " + v[0] + " (<span class='convert-date'>" + v[1] + "</span>)").appendTo($("<li>").appendTo($("#recent-events-sidebar")));
+			});
+			if (!recentEvents.length) {
+				$("#recent-events-sidebar").parent().text("هیچ رویدادی ثبت نشده است.");
+			}
+		});
+	</script>
+{% endblock %}					

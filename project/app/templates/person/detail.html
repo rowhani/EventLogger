@@ -1,0 +1,128 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}جزئیات شخص {{ person.first_name }} {{ person.last_name }}{% endblock %}
+
+{% block header %}
+	{% if person.gender == 'male' %}
+		<span class="fa fa-male" title="آقا"></span>
+	{% else %}
+		<span class="fa fa-female" title="خانم"></span>
+	{% endif %}
+	{{ person.first_name }} {{ person.last_name }}
+	<small>
+		(
+		{% if request.user.is_authenticated %}
+			{% if person.status == 'public' %}
+				<span class="glyphicon glyphicon-eye-open" title="این شخص قابل مشاهده برای همه است"></span> 
+			{% elif person.status == 'hidden' %}
+				<span class="glyphicon glyphicon-eye-close" title="این شخص مخفی است"></span> 
+			{% elif person.status == 'unconfirmed' %}
+				<span class="glyphicon glyphicon-ban-circle" title="این شخص تایید نشده است"></span> 
+			{% endif %}
+		{% endif %}
+		جزئیات شخص
+		)
+	</small>
+{% endblock %}
+
+{% block pre_header %}
+	<h4 class="pull-right" style="margin-top: 90px">
+		{% if person.birth_date or person.death_date %}
+			<p>
+				<span class="label label-danger">
+					<span class="convert-date" data-date-format="DD، dd MM yy" title="تاریخ تولد">{{ person.birth_date|date:"c" }}</span>
+					{% if person.death_date %}
+						- <span class="convert-date" data-date-format="DD، dd MM yy" title="تاریخ صعود">{{ person.death_date|date:"c" }}</span>
+					{% endif %}
+				</span>
+			</p>
+		{% endif %}
+		{% if person.birth_place or person.death_place %}
+			<p>
+				<span class="label label-info">
+					<span title="مکان تولد">{{ person.birth_place }}</span>
+					{% if person.death_place %}
+						- <span title="مکان صعود">{{ person.death_place }}</span>
+					{% endif %}
+				</span>
+			</p>
+		{% endif %}
+	</h4>
+{% endblock %}
+
+{% load app_extras %}
+
+{% block content %}
+	{% if request.user.is_authenticated %}
+		<div class="pull-left">
+			<a class="btn btn-warning" href="{% url 'edit_person' person.id %}"><span class="glyphicon glyphicon-edit"></span> ویرایش</a>
+			<a class="btn btn-warning" href="{% url 'delete_person' person.id %}" data-confirm="آبا وافعا مایل به حذف شخص {{ person.first_name }} {{ person.last_name }} هستید؟"><span class="glyphicon glyphicon-trash"></span> حذف</a>
+			{% if person.status == 'public' %}
+				<a class="btn btn-warning" href="{% url 'change_status_person' person.id 'hidden' %}?show_detail=1"><span class="glyphicon glyphicon-eye-close"></span> مخفی سازی</a>
+			{% elif person.status == 'hidden' %}
+				<a class="btn btn-warning" href="{% url 'change_status_person' person.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-eye-open"></span> آشکار سازی</a>
+			{% elif person.status == 'unconfirmed' %}
+				<a class="btn btn-warning" href="{% url 'change_status_person' person.id 'public' %}?show_detail=1"><span class="glyphicon glyphicon-ok"></span> تایید</a>
+			{% endif %}
+		</div>
+		<div class="clearfix"></div><br/>
+	{% endif %}	
+	{% if person.person_photo %}
+		<div class="col-lg-12" style="padding-left: 0">
+			<span class="thumbnail">         
+				<img src="{{ PERSON_IMAGES_URL }}{{ person.person_photo }}"/>
+			</span>
+		</div>
+	{% endif %}
+	<div class="clearfix"></div><br/>
+	<div class="panel panel-warning">
+		<div class="panel-heading">
+			رویدادهای مرتبط
+		</div>
+		<div class="panel-body">	
+			{% if person.events.all|public %}
+				<table id="events" class="table" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<th></th>
+							<th>موضوع</th>
+							<th>تاریخ وقوع</th>
+							<th>مکان وقوع</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in person.events.all|public %}
+							<tr>
+								<td>
+									<a href="{% url 'detail_event' item.id %}">
+										<span class="thumbnail" style="margin-bottom: 0px"> 											
+											{% if item.photo %}
+												<img src="{{ EVENT_IMAGES_URL }}{{ item.photo }}"/>
+											{% else %}
+												<span class="fa fa-picture-o fa-2x"></span>
+											{%endif %}											
+										</span>
+									</a>
+								</td>
+								<td>
+									<a href="{% url 'detail_event' item.id %}">{{ item.subject }}</a>
+									{% if item.date_ended %}
+										<span class="label label-default">پایان یافته</span>
+									{% endif %}
+								</td>
+								<td class="convert-date">
+									{{ item.date_happened|date:"c" }}
+								</td>
+								<td>
+									{{ item.location }}
+								</td>
+							</tr>
+						{%  endfor %}
+					</tbody>
+				</table>				
+			{% else %}
+				هیچ رویدادی ثبت نشده است.
+			{% endif %}
+		</div>
+	</div>	
+{% endblock %}
