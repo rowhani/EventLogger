@@ -1,3 +1,7 @@
+body
+{
+	background: #fbfbfb url(../images/login-bg.png) repeat center 0!important;
+}
 .form-signin
 {
     max-width: 330px;
@@ -60,13 +64,13 @@
 }
 .login-welcome-title 
 {
-	color: #555;
+	color: white;
 	font-size: 38px;
 	margin-bottom: 15px;
 }
 .login-title
 {
-    color: #555;
+    color: white;
     font-size: 18px;
     font-weight: 400;
     display: block;
