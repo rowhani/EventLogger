@@ -40,7 +40,9 @@ class PersonForm(ModelForm):
         self.fields["person_photo"].widget = FileInput(attrs={"accept":"image/*"})
         self.fields["gender"].choices = self.fields["gender"].choices[1:]
         self.fields["birth_date"].widget.attrs = {'data-role': 'calendar'}
+        self.fields["birth_date"].widget.format = '%Y/%m/%d'
         self.fields["death_date"].widget.attrs = {'data-role': 'calendar'}
+        self.fields["death_date"].widget.format = '%Y/%m/%d'
         self.fields["events"].help_text = "رویداد های که این شخص مرتبط به آن ها است."
         self.fields["events"].choices = Event.objects.filter(status="public").values_list('id', 'subject')
         self.fields["events"].widget.attrs = {'data-role': 'chosen'}
@@ -64,14 +66,22 @@ class PersonListJson(BaseDatatableView):
     columns = ['person_photo', 'first_name', 'birth_date', 'birth_place', 'events']
     order_columns = ['', 'first_name', 'birth_date', 'birth_place', 'events']
     max_display_length = 50
+    
+    def get_columns(self):
+        if self.request.user.is_authenticated():
+            self.columns.append('modified_by')
+            self.order_columns.append('modified_by')
+        return self.columns
 
     def render_column(self, row, column):  
         if column == 'first_name':
             return '<a href="%s">%s</a> <span class="%s"></span>' % (reverse('detail_person', args=[row.id]), "%s %s" % (row.first_name, row.last_name), "person-ended" if row.death_date else '')
         elif column == 'birth_date':
-            return '<span class="convert-date">%s</span>' % row.birth_date
+            return '<span class="convert-date">%s</span>' % row.birth_date.isoformat() if row.birth_date else ""
         elif column == 'death_date':
-            return '<span class="convert-date">%s</span>' % row.death_date
+            return '<span class="convert-date">%s</span>' % row.death_date.isoformat() if row.death_date else ""
+        elif column == 'modified_by':
+            return row.modified_by.username if row.modified_by else 'Anonymous'
         elif column == 'person_photo':
             resp = """
                 <a href="%(detail_url)s">
@@ -191,6 +201,7 @@ def modify_person_view(request, person_id=None, *args, **kwargs):
                     try: os.remove("%s/%s" % (settings.PERSON_IMAGES_DIR , person.person_photo))
                     except: pass
                     person.person_photo = None
+            if request.user.is_authenticated(): person.modified_by = request.user
             person.save()
             
             # Save persons

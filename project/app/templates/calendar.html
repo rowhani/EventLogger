@@ -18,10 +18,45 @@
 		<label class="btn btn-default btn-lg" id="switch-calendar-year">
 			<input type="radio" name="calendar_view_type" value="year"> نمایش سالانه
 		</label>
+		<label class="btn btn-default btn-lg" id="switch-calendar-total">
+			<input type="radio" name="calendar_view_type" value="total"> نمایش کلی
+		</label>
 	</div>
+	
 	<div class="clearfix"></div><br/>
-    <div class="month-calendars-picker" data-disable-powertip="true"></div>
-	<div class="year-calendars-picker" data-disable-powertip="true"></div>
+    <div class="month-calendars-picker" data-disable-powertip="true" style="display:none"></div>
+	<div class="year-calendars-picker" data-disable-powertip="true" style="display:none"></div>
+	<div class="total-calendars-picker" data-disable-powertip="true" style="display:none">
+		<div class="calendars calendars-rtl calendars-multi">
+			<div class="calendars-nav"><a class="calendars-cmd" style="width: 100%!important"></a></div>
+			{% for row in all_dates %}
+				<div class="calendars-month-row">
+					{% for month in row %}
+						<div class="calendars-month {% if forloop.counter == 1 %}first{% elif forloop.counter == 3 %}last{% else %}{% endif %}">				
+							<div class="calendars-month-header">{{ month.0 }}</div>
+							<table>
+								<tbody>
+									{% for week in month.1 %}
+										<tr>
+											{% for day in week %}
+												<td>
+													{% if day.0 %}
+														<a class="day{{ day.0 }}">{{ day.1 }}</a>
+													{% else %}
+														<a class="calendars-other-month">&nbsp;</a>
+													{% endif %}
+												</td>
+											{% endfor %}
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					{% endfor %}
+				</div>
+			{% endfor %}
+		</div>
+	</div>
 {% endblock %}
 
 {% block scripts %}
@@ -35,11 +70,12 @@
 		$(document).ready(function() {
 			var monthlyCalendar = null;
 			var yearlyCalendar = null;
+			var totalCalendar = null;
 			var searchUrl = "{% url 'search' %}";
 			
 			function loadEvents(calSelector, year, month, mode) {
 				ajaxIndicatorStart("{{ STATIC_URL }}images/ajax-loader.gif", "در حال بارگذاری...");
-				$.getJSON("{% url 'calendar_events' %}?mode=" + mode + "&year=" + year + "&month=" + month, function(data) {
+				$.getJSON("{% url 'calendar_monthly_events' %}?mode=" + mode + "&year=" + year + "&month=" + month, function(data) {
 					var cal = $.calendars.instance();
 					for (var date in data) {							
 						var jd = cal.parseDate("yyyy/mm/dd", date).toJD();
@@ -77,6 +113,8 @@
 			var year = {% if year %} "{{ year }}" {% else %} convert_to_jalali(new Date(), 'yy') {% endif %};
 			var month = {% if month %} "{{ month }}" {% else %} convert_to_jalali(new Date(), 'mm') {% endif %};
 			var day = {% if day %} "{{ day }}" {% else %} "01" {% endif %};
+			
+			console.log(year, month, day)
 
 			$('#switch-calendar-month').click(function() {
 				if (!monthlyCalendar) {
@@ -84,7 +122,8 @@
 						changeMonth: true,
 						changeYear: true,
 						selectDefaultDate: true,
-						showOtherMonths: true,				
+						showOtherMonths: true,	
+						yearRange: '1223:1450',	
 						calendar: $.calendars.instance('persian', 'fa'),
 						onChangeMonthYear: function(year, month) {
 							loadEvents(".month-calendars-picker", year, month, "montly");
@@ -95,6 +134,7 @@
 						}
 					});		
 				}
+				$('.total-calendars-picker').hide();
 				$('.year-calendars-picker').hide();
 				$('.month-calendars-picker').show()
 			});		
@@ -106,7 +146,7 @@
 						changeMonth: true,
 						changeYear: true,
 						selectOtherMonths: true,
-						yearRange: '1350:1450',				
+						yearRange: '1223:1450',				
 						monthsToStep: 12,
 						calendar: $.calendars.instance('persian', 'fa'),
 						defaultDate: year + '/01/01',
@@ -118,14 +158,46 @@
 						}
 					});
 				}
+				$('.total-calendars-picker').hide();
 				$('.year-calendars-picker').show();
+				$('.month-calendars-picker').hide();
+			});
+			
+			$('#switch-calendar-total').click(function() {
+				if (!totalCalendar) {
+					ajaxIndicatorStart("{{ STATIC_URL }}images/ajax-loader.gif", "در حال بارگذاری...");
+					$.getJSON("{% url 'calendar_total_events' %}", function(data) {
+						var cal = $.calendars.instance();
+						for (var date in data) {							
+							el = $(".total-calendars-picker").find(".day" + date);
+							var events = data[date];
+							el.html(el.html() + '<span class="badge" style="margin-top: -15px; background: red; color: white">' + events.length + '</span>');
+							var tooltipEl = $("<div>").addClass("tooltip");
+							$(events).each(function(i, v) {
+								tooltipEl.append($('<h4>').css("margin-top", "10px").append($("<a>").attr("href", v.url).text(v.subject)));
+							});
+							el.livequery(function() {
+								$(this).attr("title", tooltipEl.html()).powerTip({
+									smartPlacement: true,
+									mouseOnToPopup: true
+								});
+							});
+						}
+						ajaxIndicatorStop();
+					});
+					totalCalendar = true;
+				}
+				$('.total-calendars-picker').show();
+				$('.year-calendars-picker').hide();
 				$('.month-calendars-picker').hide();
 			});
 			
 			{% if mode == "monthly" %}
 				$('#switch-calendar-month').trigger('click');
-			{% else %}
+			{% elif mode == "yearly" %}
 				$('#switch-calendar-year').trigger('click');
+			{% else %}
+				$('#switch-calendar-total').trigger('click');
 			{% endif %}
 		});
 	</script>

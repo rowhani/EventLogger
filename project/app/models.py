@@ -5,6 +5,7 @@ import re
 import os
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from utils import *
 
@@ -34,6 +35,7 @@ class Event(models.Model):
     tags = models.ManyToManyField('Tag', null=True, blank=True, related_name="events", db_table="Event_Tag")
     related_events = models.ManyToManyField("self", null=True, blank=True, db_table="Event_Event")
     status = models.CharField(max_length=15, blank=True, default='public', choices=[('public', 'public'), ('unconfirmed', 'unconfirmed'), ('hidden', 'hidden')])
+    modified_by = models.ForeignKey(User, null=True, blank=True)
         
     def __unicode__(self):
         return "%s (%s)" % (self.subject, self.location)
@@ -78,6 +80,7 @@ class Person(models.Model):
     person_photo = TrimCharField(max_length=1000, null=True, blank=True)
     events = models.ManyToManyField("Event", null=True, blank=True, db_table="Event_Person")
     status = models.CharField(max_length=15, blank=True, default='public', choices=[('public', 'public'), ('unconfirmed', 'unconfirmed'), ('hidden', 'hidden')])
+    modified_by = models.ForeignKey(User, null=True, blank=True)
         
     def __unicode__(self):
         if self.birth_place:

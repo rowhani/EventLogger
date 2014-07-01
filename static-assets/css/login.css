@@ -1,6 +1,7 @@
 body
 {
 	background: #fbfbfb url(../images/login-bg.png) repeat center 0!important;
+	padding-top: 0;
 }
 .form-signin
 {

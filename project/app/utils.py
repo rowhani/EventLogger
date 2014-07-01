@@ -6,6 +6,12 @@ import re
 import jdatetime
 from django.http import HttpResponse
 
+month_names = ['فروردين', 'ارديبهشت', 'خرداد', 'تير', 'مرداد', 'شهريور', 'مهر', 'آبان', 'آذر', 'دي', 'بهمن', 'اسفند']
+digits = {0: '۰', 1: '۱', 2: '۲', 3: '۳', 4: '۴', 5: '۵', 6: '۶', 7: '۷', 8: '۸', 9: '۹'}
+
+def to_persian_digits(num):    
+    return "".join([digits[int(d)] for d in str(num)])
+
 def validate_jalali_date(form, cleaned_data, field, check_required=False):
     prefix_field = "%s-%s" % (form.prefix, field) if form.prefix else field
     dt = form.data.get(prefix_field, None)

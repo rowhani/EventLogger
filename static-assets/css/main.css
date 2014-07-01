@@ -2,7 +2,7 @@
 
 body 
 {
-	padding-top: 40px;
+	padding-top: 50px;
 	padding-bottom: 20px;
 	background: #fbfbfb url(../images/body.png) repeat center 0;
 }
@@ -378,7 +378,8 @@ input[type=checkbox]
 }
 
 .calendars-cmd, 
-.year-calendars-picker .calendars-month 
+.year-calendars-picker .calendars-month ,
+.total-calendars-picker .calendars-month
 {
 	width: 33.33333333%!important;
 	float: right!important;
