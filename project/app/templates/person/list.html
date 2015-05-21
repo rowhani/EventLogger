@@ -16,6 +16,21 @@
 
 {% block content %}	
 	{% if request.user.is_authenticated %}
+		<div class="btn-group" data-toggle="buttons">
+			<label class="btn btn-default" id="switch-status-public">
+				<input type="radio" name="status_filter_selector" value="public"> فقط اشخاص آشکار
+			</label>
+			<label class="btn btn-default" id="switch-status-hidden">
+				<input type="radio" name="status_filter_selector" value="year"> فقط اشخاص مخفی
+			</label>
+			<label class="btn btn-default" id="switch-status-unconfirmed">
+				<input type="radio" name="status_filter_selector" value="year"> فقط اشخاص تایید نشده
+			</label>
+		</div>
+		<div class="clearfix"><br/></div>
+	{% endif %}
+	
+	{% if request.user.is_authenticated %}
 		<a class="btn btn-primary pull-right" href="{% url 'add_person' %}" style="margin-bottom: 5px"><span class="glyphicon glyphicon-plus"></span>
 			ایجاد شخص جدید
 		</a>
@@ -29,14 +44,15 @@
                 <th>تاریخ تولد</th>
                 <th>مکان تولد</th>
 				<th>رویداد های مرتبط</th>
+				{% if request.user.is_authenticated %}<th>کاربر</th>{% endif %}
             </tr>
         </thead>
 	</table>
 	
 	{% if request.user.is_authenticated %}
 		<select id="status_filter" name="status_filter[]" multiple="multiple" data-role="chosen" class="form-control input-sm hide" style="margin-right: 10px;" data-width="420px">
-			<option value="public" selected="selected">اشخاص آشکار</option>
-			<option value="hidden" selected="selected">اشخاص مخفی</option>
+			<option value="public">اشخاص آشکار</option>
+			<option value="hidden">اشخاص مخفی</option>
 			<option value="unconfirmed">اشخاص تایید نشده</option>
 		</select>
 	{% endif %}
@@ -48,6 +64,16 @@
 	<script src="{{ STATIC_URL }}libs/bootstrap-datatables/js/dataTables.bootstrap.min.js"></script>	
 	<script>
 		$(document).ready(function() {
+			$("#switch-status-public").click(function() {
+				select_items_for_dropdown("#status_filter", ["public"]);
+			});
+			$("#switch-status-hidden").click(function() {
+				select_items_for_dropdown("#status_filter", ["hidden"]);
+			});
+			$("#switch-status-unconfirmed").click(function() {
+				select_items_for_dropdown("#status_filter", ["unconfirmed"]);
+			});
+			
 			var dt = $('#persons').dataTable({
 				"sDom": '<"top"f<"status-filter">>rt<"clearfix"><"bottom"<"pull-left"p><"pull-right"i>><"clear">',
 				"iDisplayLength": 20,
@@ -73,6 +99,7 @@
 					null,
 					null,
 					{ "bSortable": false },
+					{% if request.user.is_authenticated %}null{% endif %}
 				],
 				"order": [[ 1, "asc" ]],
 				"bProcessing": true,
@@ -81,7 +108,7 @@
 				"fnServerParams": function (aoData) {					
 					var filters = $(".dataTables_filter :input").serializeArray();
 					$.each(filters, function() {
-					  aoData.push(this);
+						aoData.push(this);
 					});
 				},
 				"fnPreDrawCallback": function() {					
@@ -111,6 +138,7 @@
 				$('#status_filter').attr("title", "وضعیت شخص را فیلتر کنید").on('change', function() {
 					dt.fnDraw();
 				});
+				select_items_for_dropdown("#status_filter", ['public', 'hidden']);
 			{% endif %}
 		});
 	</script>

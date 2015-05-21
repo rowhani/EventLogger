@@ -9,6 +9,7 @@ from django.template import RequestContext
 from django.shortcuts import redirect, render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.conf import settings
 from django.forms import *
@@ -45,6 +46,7 @@ class EventForm(ModelForm):
         
     def __init__(self, *args, **kwargs):
         super(EventForm, self ).__init__(*args, **kwargs)
+        self.fields["subject"].widget.attrs = {"data-provide": "typeahead", "data-url": reverse('list_event_subject')}
         self.fields["photo"].widget = FileInput(attrs={"accept":"image/*"})
         self.fields["photo"].help_text = "تصویر انتخاب شده جایگزین تصویر قبلی خواهد شد."
         self.fields["tags"].help_text = "دسته هایی را که این رویداد شامل آنها می شود انتخاب کنید."
@@ -53,7 +55,9 @@ class EventForm(ModelForm):
         self.fields["related_events"].choices = Event.objects.filter(status="public").exclude(id=self.instance.id if self.instance else 0).values_list('id', 'subject')
         self.fields["related_events"].widget.attrs = {'data-role': 'chosen'}
         self.fields["date_happened"].widget.attrs = {'data-role': 'calendar'}
-        self.fields["date_ended"].widget.attrs = {'data-role': 'calendar'}  
+        self.fields["date_happened"].widget.format = '%Y/%m/%d'
+        self.fields["date_ended"].widget.attrs = {'data-role': 'calendar'} 
+        self.fields["date_ended"].widget.format = '%Y/%m/%d'
         self.fields["description"].widget.attrs = {'data-role': 'wysihtml5'}   
         self.fields["actions_taken"].widget.attrs = {'data-role': 'wysihtml5'}         
         
@@ -85,7 +89,9 @@ class PersonForm(ModelForm):
         self.fields["person_photo"].widget = FileInput(attrs={"accept":"image/*"})
         self.fields["gender"].choices = self.fields["gender"].choices[1:]
         self.fields["birth_date"].widget.attrs = {'data-role': 'calendar'}
+        self.fields["birth_date"].widget.format = '%Y/%m/%d'
         self.fields["death_date"].widget.attrs = {'data-role': 'calendar'}
+        self.fields["death_date"].widget.format = '%Y/%m/%d'
         
     def clean(self):
         cleaned_data = super(PersonForm, self).clean()        
@@ -120,12 +126,20 @@ class EventListJson(BaseDatatableView):
     columns = ['photo', 'subject', 'date_happened', 'location', 'persons']
     order_columns = ['', 'subject', 'date_happened', 'location', '']
     max_display_length = 50
+            
+    def get_columns(self):
+        if self.request.user.is_authenticated():
+            self.columns.append('modified_by')
+            self.order_columns.append('modified_by')
+        return self.columns
 
     def render_column(self, row, column):  
         if column == 'subject':
             return '<a href="%s">%s</a> <span class="%s"></span>' % (reverse('detail_event', args=[row.id]), row.subject, "event-ended" if row.date_ended else '')
         elif column == 'date_happened':
-            return '<span class="convert-date">%s</span>' % row.date_happened
+            return '<span class="convert-date">%s</span>' % row.date_happened.isoformat() if row.date_happened else ""
+        elif column == 'modified_by':
+            return row.modified_by.username if row.modified_by else 'Anonymous'
         elif column == 'photo':
             resp = """
                 <a href="%(detail_url)s">
@@ -272,6 +286,7 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
                     except: pass
                     event.photo = None
             if not request.user.is_authenticated(): event.status = 'unconfirmed'
+            if request.user.is_authenticated(): event.modified_by = request.user
             event.save()
                 
             # Save tags
@@ -308,9 +323,11 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
             for i in request.POST.getlist('persons'):      
                 person = Person.objects.get(id=int(i))
                 event.persons.add(person)
-            for person_form in person_forms:
-                person = person_form.save()
+            for person_form in person_forms:                
+                person = person_form.save() 
                 if not request.user.is_authenticated(): person.status = 'unconfirmed'
+                if request.user.is_authenticated(): person.modified_by = request.user
+                person.save()
                 person_photo = '%s-person_photo' % person_form.prefix
                 if person_photo in request.FILES:
                     person.person_photo = save_request_file(settings.PERSON_IMAGES_DIR, request.FILES[person_photo])
@@ -335,4 +352,12 @@ def modify_event_view(request, event_id=None, *args, **kwargs):
     attachments = event_instance.attachments.all() if event_instance else []
       
     return render_to_response('event/modify.html', locals(), context_instance = RequestContext(request))
+    
+def list_event_subject_view(request, *args, **kwargs):
+    query = request.GET.get('query', '').strip()
+    if query:
+        subjects = list(Event.objects.filter(status = 'public', subject__icontains=query).values_list('subject', flat=True).order_by('subject'))
+    else:
+        subjects = []
+    return HttpResponse(json.dumps(subjects))
     

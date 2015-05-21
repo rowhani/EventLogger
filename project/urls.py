@@ -28,7 +28,8 @@ urlpatterns = patterns('',
     
     # calendar
     url(r'^calendar/$', calendar_view, name='calendar'),
-    url(r'^calendar/json/$', calendar_monthly_events, name='calendar_events'),
+    url(r'^calendar/monthly_json/$', calendar_monthly_events, name='calendar_monthly_events'),
+    url(r'^calendar/total_json/$', calendar_total_events, name='calendar_total_events'),
     
     # setting
     url(r'^setting/$', setting_view, name='setting'),
@@ -47,6 +48,7 @@ urlpatterns = patterns('',
     url(r'^event/edit/(?P<event_id>\d+)/$', modify_event_view, name='edit_event'),    
     url(r'^event/delete/(?P<event_id>\d+)/$', delete_event_view, name='delete_event'), 
     url(r'^event/change_status/(?P<event_id>\d+)/(?P<status>\w+)/$', change_status_event_view, name='change_status_event'),     
+    url(r'^event/list_subject/$', list_event_subject_view, name='list_event_subject'), 
     
     # persons
     url(r'^person/$', list_person_view, name='list_person'),

@@ -23,6 +23,10 @@ from django.forms.models import construct_instance
 from app.models import *
 from app.resources import *
 
+#Monkey Patch (put csv first)
+from tablib import formats
+formats.available = (formats.csv, formats.json, formats.xls, formats.yaml, formats.tsv, formats.html, formats.xlsx, formats.ods)
+
 media_root_base = os.path.basename(settings.MEDIA_ROOT)
 
 @login_required
@@ -80,7 +84,7 @@ def setting_restore(request, *args, **kwargs):
     def import_data(zf, model_dataset_map, dry_run=False):
         error = False
         for model, dataset in model_dataset_map.items(): 
-            dataset = tablib.import_set(zf.read(dataset).replace(": ", ":"))
+            dataset = tablib.import_set(zf.read(dataset))
             data = model().import_data(dataset, dry_run=dry_run)
             error = error or data.has_errors()
         return error

@@ -10,10 +10,13 @@ function convert_to_jalali(date, format) {
 
 function select_items_for_dropdown(dropdown_selector, items) {
 	dropdown = $(dropdown_selector);
+	dropdown.find("option").removeAttr("selected");
 	$.each(items, function(i, v) {	
 		dropdown.find("option[value=" + v + "]").attr("selected", "selected");		
 	});
-	if (dropdown.hasClass("chosen") || dropdown.hasClass("chosen-rtl")) {
+	dropdown.val(items);
+	dropdown.change();
+	if (dropdown.hasClass("chosen") || dropdown.hasClass("chosen-rtl")) {		
 		dropdown.trigger("chosen:updated");
 	}
 }
@@ -50,13 +53,13 @@ $(document).ready(function() {
 	});
 	$("[data-role=calendar]:visible").livequery(function() {
 		if (!$(this).hasClass("converted") && !$(this).attr("data-ignore-convert")) {
-			$(this).addClass("converted").val(convert_to_jalali($(this).val()));	
+			$(this).addClass("converted").val(convert_to_jalali($(this).attr("value")));	
 		}
 		$(this).datepicker({
 			changeMonth: true,
 			changeYear: true,
 			dateFormat: 'yy/mm/dd',
-			yearRange: '1350:1450'
+			yearRange: '1223:1450'
 		}); 
 	});
 	
@@ -113,7 +116,35 @@ $(document).ready(function() {
 	$(document).delegate('*[data-toggle="lightbox"]', 'click', function(event) {
 		event.preventDefault();
 		$(this).ekkoLightbox();
-	}); 
+	});
+
+	$('iframe.wysihtml5-sandbox').each(function(){
+		function injectCSS() {
+			$iframe.contents().find('head link').remove();
+			$iframe.contents().find('head').append(
+				$('<link/>', { rel: 'stylesheet', href: static_url + 'libs/bootstrap-wysihtml5/lib/css/wysiwyg5-color.css', type: 'text/css' })
+			);
+		}
+		$iframe = $(this);
+		$(this).on('load', function() {
+			$(this).contents().find('head link').remove();
+			$(this).contents().find('head').append(
+				$('<link/>', { rel: 'stylesheet', href: static_url + 'libs/bootstrap-wysihtml5/lib/css/wysiwyg5-color.css', type: 'text/css' })
+			)
+		});
+		injectCSS();
+	});	
+	
+	$('[data-provide=typeahead]').each(function() {
+		var url = $(this).data("url");
+		$(this).typeahead({
+			source: function (query, process) {
+				return $.getJSON(url, {query: query}, function (data) {
+					return process(data);
+				});
+			}
+		});
+	});
 });
 
 /********* Modal *********/
@@ -169,7 +200,7 @@ $(document).ready(function() {
 			var _this = $(this);
 
             if (!$('#dataConfirmModal').length) {
-                $('body').append('<div id="dataConfirmModal" class="modal fade" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><h3 id="dataConfirmLabel" class="confirm-delete">لطفا تایید کنید</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn btn-default" data-dismiss="modal" aria-hidden="true">خیر</button><a class="btn btn-danger" id="dataConfirmOK">بله</a></div></div>');
+                $('body').append('<div id="dataConfirmModal" class="modal fade" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><h3 id="dataConfirmLabel" class="confirm-delete">لطفا تایید کنید</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn btn-default" data-dismiss="modal" aria-hidden="true">خیر</button><a class="btn btn-danger" id="dataConfirmOK">بله</a><div style="display:none" id="dataLoadingIndicator">این عملیات ممکن است چند دقیقه به طول انجامد... <img src="{{ STATIC_URL }}images/ajax-loader-alt.gif"/></div></div></div>'.replace("{{ STATIC_URL }}", static_url));
             } 
             $('#dataConfirmModal').find('.modal-body').text($(this).attr('data-confirm'));
 			if ($(this).is("a")) {
@@ -177,7 +208,11 @@ $(document).ready(function() {
 			}
 			else {
 				$('#dataConfirmOK').click(function () {
-					$(_this).closest("form").submit();
+					if (_this.hasClass("hide-buttons")) {
+						$(".modal-footer .btn").hide();
+						$("#dataLoadingIndicator").show();
+					}
+					$(_this).closest("form").submit();					
 				});
 			}
             $('#dataConfirmModal').modal({show:true});

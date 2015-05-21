@@ -19,4 +19,27 @@
 			<p><a class="btn btn-primary btn-lg" href="{% url 'add_event' %}">ایجاد اولین رویداد &raquo;</a></p>
 		{% endif %}
     </div>
+	<br/>
+	{% if events %}
+		<table class="table">
+			<caption><h2 class="alert alert-warning">رویداد های اخیر</h2></caption>
+			{% for event in events %}
+				<tr>
+					<td style="width: 250px; max-width: 250px; vertical-align: middle; border-color: #d58512; text-align: center">
+						{% if event.photo %}
+							<span class="thumbnail" style="border-color: #f0ad4e; margin-bottom: 0px;">         
+								<img src="{{ EVENT_IMAGES_URL }}{{ event.photo }}" style="max-height: 250px"/>
+							</span>
+						{% else %}
+							<span class="fa fa-picture-o fa-5x"></span>{% endif %}
+					</td>
+					<td style="border-color: #d58512">
+						<h2>{{ event.location }}: {{ event.subject }} <small>(<span class="convert-date">{{ event.date_happened|date:"c" }}</span>)</small></h2>
+						<p>{{ event.truncated_description|safe }}</p>
+						<p><a class="btn btn-warning" href="{% url 'detail_event' event.id %}">جزئیات رویداد &raquo;</a></p>
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
 {% endblock %}
