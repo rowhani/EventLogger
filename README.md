@@ -1,6 +1,6 @@
 # EventLogger
 
-EventLogger is an application that allows you to log different events during your life. It is targeted for Iranian users.
+EventLogger is a website that allows you to log different events during your life. It is currently targeted for Iranian users only. This is primarily written using Python/Django, Bootstrap, and jQuery.
 
 ## Installation
 
@@ -13,7 +13,7 @@ You should already know what is [virtualenv](http://www.virtualenv.org/), prefer
 Now, you need the *EventLogger* project files in your workspace:
 
     $ cd /path/to/your/workspace
-    $ git clone git@github.com:artmansoft/EventLogger.git eventlogger && cd eventlogger
+    $ git clone git@github.com:rowhani/EventLogger.git eventlogger && cd eventlogger
 
 ### 3. Requirements
 Right there, you will find the *requirements.txt* file that has all the great debugging tools, django helpers and some other cool stuff. To install them, active your `virtualenv` and simply type:
