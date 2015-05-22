@@ -1,6 +1,8 @@
 # EventLogger
 
-EventLogger is a website that allows you to log different events during your life. It is currently targeted for Iranian users only. This is primarily written using Python/Django, Bootstrap, and jQuery.
+EventLogger is a website that allows you to log different events during your life. It is currently targeted for Iranian users only. 
+
+This is primarily written using **Python**, **Django**, **Bootstrap**, and **jQuery** in *2014*.
 
 ## Installation
 
